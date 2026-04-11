@@ -30,11 +30,56 @@ rand = ["dep:rand", "curve25519-dalek/rand_core"]
 serde = ["dep:serde", "dep:bincode", "curve25519-dalek/serde"]
 
 [[bench]]
-name = "proofs"
+name = "proof_primitives"
 harness = false
 required-features = ["rand"]
 
 [[bench]]
-name = "election"
+name = "election_n16"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n64"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n256"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n1024"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n4096"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n16384"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n65536"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n262144"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "election_n1048576"
+harness = false
+required-features = ["rand"]
+
+[[bench]]
+name = "proof_sizes"
 harness = false
 required-features = ["rand"]
