@@ -116,15 +116,15 @@ All benchmarks use [Criterion.rs](https://bheisler.github.io/criterion.rs/book/)
 
 | Suite | Command | What it measures | Time estimate |
 |---|---|---|---|
-| **Proof primitives** | `cargo bench --bench proof_primitives` | All 6 proof types, bit vector scaling, set proof scaling, batch verification | ~5 min |
+| **Proof primitives** | `cargo bench --bench proof_primitives` | All 6 proof types, bit vector scaling, set proof scaling, batch verify (rep, dleq, encval) | ~10 min |
 | **Proof sizes** | `cargo bench --bench proof_sizes -- --quick` | Byte sizes of all proofs and ballots (instant, no timing) | ~5 sec |
-| **Election N=16** | `cargo bench --bench election_n16` | Full election: DKG, voter reg, ballot, tally | ~1 min |
-| **Election N=64** | `cargo bench --bench election_n64` | Full election | ~2 min |
-| **Election N=256** | `cargo bench --bench election_n256` | Full election | ~5 min |
-| **Election N=1,024** | `cargo bench --bench election_n1024` | Full election | ~15 min |
-| **Election N=4,096** | `cargo bench --bench election_n4096` | Full election | ~30 min |
-| **Election N=16,384** | `cargo bench --bench election_n16384` | Full election | ~1 hr |
-| **Election N=65,536** | `cargo bench --bench election_n65536` | Full election | ~2 hr |
+| **Election N=16** | `cargo bench --bench election_n16` | Full election: DKG, voter reg, ballot, batch verify (individual + batched encval), tally | ~2 min |
+| **Election N=64** | `cargo bench --bench election_n64` | Full election | ~3 min |
+| **Election N=256** | `cargo bench --bench election_n256` | Full election | ~8 min |
+| **Election N=1,024** | `cargo bench --bench election_n1024` | Full election | ~20 min |
+| **Election N=4,096** | `cargo bench --bench election_n4096` | Full election | ~40 min |
+| **Election N=16,384** | `cargo bench --bench election_n16384` | Full election | ~1.5 hr |
+| **Election N=65,536** | `cargo bench --bench election_n65536` | Full election | ~3 hr |
 | **Election N=262,144** | `cargo bench --bench election_n262144` | Ballot create/verify + set proof only | ~30 min |
 | **Election N=1,048,576** | `cargo bench --bench election_n1048576` | Ballot create/verify + set proof only | ~2 hr |
 
@@ -165,8 +165,39 @@ cargo bench --bench proof_primitives -- "enc_validity"
 cargo bench --bench proof_primitives -- "serial_validity"
 cargo bench --bench proof_primitives -- "bit_vector"
 cargo bench --bench proof_primitives -- "commitment_set"
-cargo bench --bench proof_primitives -- "batch_verify_rep"
 ```
+
+### Batch verification benchmarks
+
+Batch verification compresses multiple proof verification equations into a single multi-scalar multiplication (MSM) using random linear combination. This amortizes the per-proof cost as batch size grows — the key efficiency property described in Section 4.1 of the paper.
+
+**Proof-level batch verification** (individual proof types, batch sizes 1-100):
+
+```bash
+# Representation proofs: individual vs batch
+cargo bench --bench proof_primitives -- "batch_verify_rep"
+
+# DLEQ proofs: individual vs batch
+cargo bench --bench proof_primitives -- "batch_verify_dleq"
+
+# Encryption validity proofs: individual vs batch
+cargo bench --bench proof_primitives -- "batch_verify_encval"
+
+# All three at once
+cargo bench --bench proof_primitives -- "batch_verify"
+```
+
+**Cross-ballot batch verification** (collect all encryption validity proofs across N ballots, batch-verify in one MSM):
+
+```bash
+# At N=256: compare individual vs batched encval verification for 1/10/50/100 ballots
+cargo bench --bench election_n256 -- "verify_batch_encval"
+
+# At N=1024
+cargo bench --bench election_n1024 -- "verify_batch_encval"
+```
+
+Each batch benchmark reports both `individual` (verify proofs one by one) and `batch` (single MSM call) timings at the same batch size, so you can directly compute the speedup factor.
 
 ### Save benchmark output to a file
 

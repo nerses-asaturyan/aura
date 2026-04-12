@@ -6,12 +6,15 @@ use curve25519_dalek::ristretto::RistrettoPoint;
 use rand::SeedableRng;
 use rand_chacha::ChaCha20Rng;
 
+use merlin::Transcript;
+
 use aura::dkg::protocol;
 use aura::election::ballot;
 use aura::election::params::{self, ElectionConfig, ElectionParams};
 use aura::election::setup::{self, VoterSecret};
 use aura::election::tally;
 use aura::elgamal::keys::PublicKeyShare;
+use aura::proofs::encryption_validity::{EncValStatement, EncryptionValidityProof};
 use aura::types::{ElectionId, PedersenCommitment, TallierIndex, VoterIndex};
 
 fn bench_rng() -> ChaCha20Rng {
@@ -250,6 +253,86 @@ pub fn bench_election_suite(c: &mut Criterion, n: u32, m: u32) {
                     }
                 })
             });
+        }
+        group.finish();
+    }
+
+    // ── Batched ballot verification using batch_verify on inner proofs ──
+    //
+    // Instead of verifying each ballot independently, collect all encryption
+    // validity proofs across N ballots and batch-verify them in one MSM.
+    // This shows the amortization benefit described in Section 4.1 of the paper.
+    {
+        let mut group = c.benchmark_group(format!("{}/verify_batch_encval", label));
+        group.sample_size(10);
+        group.sampling_mode(SamplingMode::Flat);
+        group.measurement_time(std::time::Duration::from_secs(30));
+        group.warm_up_time(std::time::Duration::from_secs(3));
+        group.noise_threshold(0.05);
+        group.significance_level(0.01);
+
+        let batch_sizes: Vec<usize> = [1, 10, 50, 100]
+            .iter()
+            .copied()
+            .filter(|&s| s <= num_voters as usize)
+            .collect();
+
+        let g = fixture.params.generators.g;
+
+        for count in &batch_sizes {
+            // Collect all encval proofs + statements from `count` ballots
+            let mut all_proofs: Vec<EncryptionValidityProof> = Vec::new();
+            let mut all_stmts: Vec<EncValStatement> = Vec::new();
+
+            for ballot_ref in fixture.ballots.iter().take(*count) {
+                for (j, (ct, proof)) in ballot_ref.encrypted_choices.iter().enumerate() {
+                    all_proofs.push(proof.clone());
+                    all_stmts.push(EncValStatement {
+                        g,
+                        y: *election_key.point(),
+                        h_i: fixture.params.generators.h_msg[j],
+                        d: ct.d,
+                        e: ct.e,
+                    });
+                }
+            }
+
+            let total_proofs = all_proofs.len();
+
+            // Individual verification (one by one)
+            group.bench_with_input(
+                BenchmarkId::new("individual", count),
+                count,
+                |b, _| {
+                    b.iter(|| {
+                        for (pr, st) in all_proofs.iter().zip(all_stmts.iter()) {
+                            let mut t = Transcript::new(b"aura-enc-val");
+                            pr.verify(st, &mut t).unwrap();
+                        }
+                    })
+                },
+            );
+
+            // Batch verification (single MSM)
+            group.bench_with_input(
+                BenchmarkId::new("batch", count),
+                count,
+                |b, _| {
+                    let mut rng = bench_rng();
+                    b.iter(|| {
+                        let mut ts: Vec<Transcript> = (0..total_proofs)
+                            .map(|_| Transcript::new(b"aura-enc-val"))
+                            .collect();
+                        EncryptionValidityProof::batch_verify(
+                            &all_proofs,
+                            &all_stmts,
+                            &mut ts,
+                            &mut rng,
+                        )
+                        .unwrap();
+                    })
+                },
+            );
         }
         group.finish();
     }

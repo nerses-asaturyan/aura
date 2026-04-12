@@ -354,6 +354,102 @@ fn bench_batch_verify(c: &mut Criterion) {
     group.finish();
 }
 
+// ── Batch DLEQ verification ─────────────────────────────────────────────
+
+fn bench_batch_verify_dleq(c: &mut Criterion) {
+    let mut rng = bench_rng();
+    let mut group = c.benchmark_group("batch_verify_dleq");
+    group.sample_size(50);
+    group.measurement_time(std::time::Duration::from_secs(15));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
+    for batch in [1, 10, 25, 50, 100] {
+        let mut proofs = Vec::new();
+        let mut statements = Vec::new();
+        for _ in 0..batch {
+            let g = RistrettoPoint::random(&mut rng);
+            let h = RistrettoPoint::random(&mut rng);
+            let y = Scalar::random(&mut rng);
+            let st = DleqStatement { g, h, y: y * g, y_prime: y * h };
+            let wi = DleqWitness { scalar: y };
+            let mut t = Transcript::new(b"b");
+            proofs.push(DleqProof::prove(&st, &wi, &mut t, &mut rng).unwrap());
+            statements.push(st);
+        }
+
+        group.bench_with_input(BenchmarkId::new("individual", batch), &batch, |b, _| {
+            b.iter(|| {
+                for (pr, st) in proofs.iter().zip(statements.iter()) {
+                    let mut t = Transcript::new(b"b");
+                    pr.verify(st, &mut t).unwrap();
+                }
+            })
+        });
+        group.bench_with_input(BenchmarkId::new("batch", batch), &batch, |b, _| {
+            let mut rng = bench_rng();
+            b.iter(|| {
+                let mut ts: Vec<Transcript> =
+                    (0..batch).map(|_| Transcript::new(b"b")).collect();
+                DleqProof::batch_verify(&proofs, &statements, &mut ts, &mut rng).unwrap();
+            })
+        });
+    }
+    group.finish();
+}
+
+// ── Batch encryption validity verification ──────────────────────────────
+
+fn bench_batch_verify_encval(c: &mut Criterion) {
+    let mut rng = bench_rng();
+    let mut group = c.benchmark_group("batch_verify_encval");
+    group.sample_size(50);
+    group.measurement_time(std::time::Duration::from_secs(15));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
+    for batch in [1, 10, 25, 50, 100] {
+        let mut proofs = Vec::new();
+        let mut statements = Vec::new();
+        for _ in 0..batch {
+            let g = RistrettoPoint::random(&mut rng);
+            let hi = RistrettoPoint::random(&mut rng);
+            let sk = Scalar::random(&mut rng);
+            let y = sk * g;
+            let r = Scalar::random(&mut rng);
+            let m = Scalar::ONE;
+            let st = EncValStatement { g, y, h_i: hi, d: r * g, e: r * y + m * hi };
+            let wi = EncValWitness { r, m };
+            let mut t = Transcript::new(b"b");
+            proofs.push(EncryptionValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap());
+            statements.push(st);
+        }
+
+        group.bench_with_input(BenchmarkId::new("individual", batch), &batch, |b, _| {
+            b.iter(|| {
+                for (pr, st) in proofs.iter().zip(statements.iter()) {
+                    let mut t = Transcript::new(b"b");
+                    pr.verify(st, &mut t).unwrap();
+                }
+            })
+        });
+        group.bench_with_input(BenchmarkId::new("batch", batch), &batch, |b, _| {
+            let mut rng = bench_rng();
+            b.iter(|| {
+                let mut ts: Vec<Transcript> =
+                    (0..batch).map(|_| Transcript::new(b"b")).collect();
+                EncryptionValidityProof::batch_verify(&proofs, &statements, &mut ts, &mut rng)
+                    .unwrap();
+            })
+        });
+    }
+    group.finish();
+}
+
 criterion_group!(
     benches,
     bench_representation,
@@ -363,5 +459,7 @@ criterion_group!(
     bench_bit_vector,
     bench_commitment_set,
     bench_batch_verify,
+    bench_batch_verify_dleq,
+    bench_batch_verify_encval,
 );
 criterion_main!(benches);
