@@ -1,9 +1,10 @@
-//! Shared code for election benchmark suites.
+//! Shared code for election benchmark suites (N <= 65536).
 //! Included via `#[path]` in each election_nXXX.rs file.
 
 use criterion::{BenchmarkId, Criterion, SamplingMode};
 use curve25519_dalek::ristretto::RistrettoPoint;
-use rand::rngs::OsRng;
+use rand::SeedableRng;
+use rand_chacha::ChaCha20Rng;
 
 use aura::dkg::protocol;
 use aura::election::ballot;
@@ -13,12 +14,16 @@ use aura::election::tally;
 use aura::elgamal::keys::PublicKeyShare;
 use aura::types::{ElectionId, PedersenCommitment, TallierIndex, VoterIndex};
 
+fn bench_rng() -> ChaCha20Rng {
+    ChaCha20Rng::seed_from_u64(20260412)
+}
+
 pub fn run_dkg(
     num_talliers: u32,
     threshold: u32,
     g: &RistrettoPoint,
 ) -> Vec<protocol::DkgResult> {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut polys = Vec::new();
     let mut r1 = Vec::new();
     for alpha in 1..=num_talliers {
@@ -70,7 +75,7 @@ pub struct ElectionFixture {
 }
 
 pub fn setup_election(n: u32, m: u32) -> ElectionFixture {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let num_voters = n.pow(m);
 
     let config = ElectionConfig {
@@ -136,32 +141,57 @@ pub fn setup_election(n: u32, m: u32) -> ElectionFixture {
 }
 
 pub fn bench_election_suite(c: &mut Criterion, n: u32, m: u32) {
-    let mut rng = OsRng;
     let num_voters = n.pow(m);
     let label = format!("N{}", num_voters);
 
     let fixture = setup_election(n, m);
     let election_key = fixture.dkg_results[0].election_public_key;
 
-    // ── DKG ──────────────────────────────────────────────────────────
+    // ── DKG (fast, ~1-2 ms) ─────────────────────────────────────────
     {
         let g = fixture.params.generators.g;
-        c.bench_function(&format!("{}/dkg_2of3", label), |b| {
+        let mut group = c.benchmark_group(format!("{}/dkg", label));
+        group.sample_size(100);
+        group.measurement_time(std::time::Duration::from_secs(10));
+        group.warm_up_time(std::time::Duration::from_secs(2));
+        group.noise_threshold(0.03);
+        group.significance_level(0.01);
+
+        group.bench_function("2of3", |b| {
             b.iter(|| run_dkg(3, 2, &g))
         });
+        group.finish();
     }
 
-    // ── Voter registration ───────────────────────────────────────────
-    c.bench_function(&format!("{}/voter_registration", label), |b| {
-        b.iter(|| setup::setup_voter(VoterIndex(0), &fixture.params, &mut rng).unwrap())
-    });
+    // ── Voter registration (fast, ~150 us) ──────────────────────────
+    {
+        let mut group = c.benchmark_group(format!("{}/voter", label));
+        group.sample_size(200);
+        group.measurement_time(std::time::Duration::from_secs(10));
+        group.warm_up_time(std::time::Duration::from_secs(2));
+        group.noise_threshold(0.03);
+        group.significance_level(0.01);
 
-    // ── Single ballot create & verify ────────────────────────────────
+        group.bench_function("registration", |b| {
+            let mut rng = bench_rng();
+            b.iter(|| setup::setup_voter(VoterIndex(0), &fixture.params, &mut rng).unwrap())
+        });
+        group.finish();
+    }
+
+    // ── Single ballot create & verify (medium, ~2-100 ms) ───────────
     {
         let choices = vec![true, false, true, false];
+
         let mut group = c.benchmark_group(format!("{}/ballot", label));
+        group.sample_size(50);
+        group.measurement_time(std::time::Duration::from_secs(20));
+        group.warm_up_time(std::time::Duration::from_secs(3));
+        group.noise_threshold(0.03);
+        group.significance_level(0.01);
 
         group.bench_function("create", |b| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 ballot::vote(
                     &fixture.voter_secrets[0],
@@ -187,15 +217,18 @@ pub fn bench_election_suite(c: &mut Criterion, n: u32, m: u32) {
                 .unwrap()
             })
         });
-
         group.finish();
     }
 
-    // ── Ballot verification batch ────────────────────────────────────
+    // ── Ballot verification batch (slow, ~2-250 ms) ─────────────────
     {
         let mut group = c.benchmark_group(format!("{}/verify_batch", label));
         group.sample_size(10);
         group.sampling_mode(SamplingMode::Flat);
+        group.measurement_time(std::time::Duration::from_secs(30));
+        group.warm_up_time(std::time::Duration::from_secs(3));
+        group.noise_threshold(0.05);
+        group.significance_level(0.01);
 
         let batch_sizes: Vec<usize> = [1, 10, 50, 100]
             .iter()
@@ -221,13 +254,18 @@ pub fn bench_election_suite(c: &mut Criterion, n: u32, m: u32) {
         group.finish();
     }
 
-    // ── Tally ────────────────────────────────────────────────────────
+    // ── Tally (slow, ~5 ms - 10+ s) ────────────────────────────────
     {
         let mut group = c.benchmark_group(format!("{}/tally", label));
         group.sample_size(10);
         group.sampling_mode(SamplingMode::Flat);
+        group.measurement_time(std::time::Duration::from_secs(60));
+        group.warm_up_time(std::time::Duration::from_secs(5));
+        group.noise_threshold(0.05);
+        group.significance_level(0.01);
 
         group.bench_function("serial_decrypt_per_tallier", |b| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 tally::tally_serial_decrypt(
                     &fixture.dkg_results[0].key_share,
@@ -241,6 +279,7 @@ pub fn bench_election_suite(c: &mut Criterion, n: u32, m: u32) {
         });
 
         group.bench_function("full_pipeline", |b| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut sp = Vec::new();
                 for t in 0..2 {

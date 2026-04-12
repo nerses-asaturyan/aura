@@ -10,7 +10,8 @@ use curve25519_dalek::ristretto::RistrettoPoint;
 use curve25519_dalek::scalar::Scalar;
 use curve25519_dalek::traits::MultiscalarMul;
 use merlin::Transcript;
-use rand::rngs::OsRng;
+use rand::SeedableRng;
+use rand_chacha::ChaCha20Rng;
 
 use aura::proofs::bit_vector::{BitVectorProof, BitVectorStatement, BitVectorWitness};
 use aura::proofs::commitment_set::{
@@ -25,26 +26,43 @@ use aura::proofs::representation::{
 };
 use aura::proofs::serial_validity::{SerValStatement, SerValWitness, SerialValidityProof};
 
-// ── Individual proof types ───────────────────────────────────────────────
+/// Deterministic RNG for reproducible, low-noise benchmarks.
+/// Avoids OsRng syscall jitter while remaining cryptographically valid.
+fn bench_rng() -> ChaCha20Rng {
+    ChaCha20Rng::seed_from_u64(20260412)
+}
+
+// ── Fast proofs: ~50-200 us each ────────────────────────────────────────
+// Config: 200 samples, 10s measurement, 3s warmup
 
 fn bench_representation(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut group = c.benchmark_group("representation");
+    group.sample_size(200);
+    group.measurement_time(std::time::Duration::from_secs(10));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03); // ignore < 3% changes
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
     for n in [1, 2, 4, 8] {
         let gens: Vec<RistrettoPoint> = (0..n).map(|_| RistrettoPoint::random(&mut rng)).collect();
         let scs: Vec<Scalar> = (0..n).map(|_| Scalar::random(&mut rng)).collect();
         let target = RistrettoPoint::multiscalar_mul(&scs, &gens);
         let st = RepresentationStatement { generators: gens, target };
         let wi = RepresentationWitness { scalars: scs };
-        let mut t = Transcript::new(b"b");
-        let pr = RepresentationProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
         group.bench_with_input(BenchmarkId::new("prove", n), &n, |b, _| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
                 RepresentationProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
             })
         });
+
+        let mut t = Transcript::new(b"b");
+        let pr = RepresentationProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
         group.bench_with_input(BenchmarkId::new("verify", n), &n, |b, _| {
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
@@ -56,22 +74,32 @@ fn bench_representation(c: &mut Criterion) {
 }
 
 fn bench_dleq(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
+    let mut group = c.benchmark_group("dleq");
+    group.sample_size(200);
+    group.measurement_time(std::time::Duration::from_secs(10));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
     let g = RistrettoPoint::random(&mut rng);
     let h = RistrettoPoint::random(&mut rng);
     let y = Scalar::random(&mut rng);
     let st = DleqStatement { g, h, y: y * g, y_prime: y * h };
     let wi = DleqWitness { scalar: y };
-    let mut t = Transcript::new(b"b");
-    let pr = DleqProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
-    let mut group = c.benchmark_group("dleq");
     group.bench_function("prove", |b| {
+        let mut rng = bench_rng();
         b.iter(|| {
             let mut t = Transcript::new(b"b");
             DleqProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
         })
     });
+
+    let mut t = Transcript::new(b"b");
+    let pr = DleqProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
     group.bench_function("verify", |b| {
         b.iter(|| {
             let mut t = Transcript::new(b"b");
@@ -82,7 +110,15 @@ fn bench_dleq(c: &mut Criterion) {
 }
 
 fn bench_encryption_validity(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
+    let mut group = c.benchmark_group("enc_validity");
+    group.sample_size(200);
+    group.measurement_time(std::time::Duration::from_secs(10));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
     let g = RistrettoPoint::random(&mut rng);
     let hi = RistrettoPoint::random(&mut rng);
     let sk = Scalar::random(&mut rng);
@@ -91,16 +127,18 @@ fn bench_encryption_validity(c: &mut Criterion) {
     let m = Scalar::ONE;
     let st = EncValStatement { g, y, h_i: hi, d: r * g, e: r * y + m * hi };
     let wi = EncValWitness { r, m };
-    let mut t = Transcript::new(b"b");
-    let pr = EncryptionValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
-    let mut group = c.benchmark_group("enc_validity");
     group.bench_function("prove", |b| {
+        let mut rng = bench_rng();
         b.iter(|| {
             let mut t = Transcript::new(b"b");
             EncryptionValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
         })
     });
+
+    let mut t = Transcript::new(b"b");
+    let pr = EncryptionValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
     group.bench_function("verify", |b| {
         b.iter(|| {
             let mut t = Transcript::new(b"b");
@@ -111,7 +149,15 @@ fn bench_encryption_validity(c: &mut Criterion) {
 }
 
 fn bench_serial_validity(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
+    let mut group = c.benchmark_group("serial_validity");
+    group.sample_size(200);
+    group.measurement_time(std::time::Duration::from_secs(10));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
     let f = RistrettoPoint::random(&mut rng);
     let g = RistrettoPoint::random(&mut rng);
     let h = RistrettoPoint::random(&mut rng);
@@ -127,16 +173,18 @@ fn bench_serial_validity(c: &mut Criterion) {
         e_prime: s * f + rdp * y,
     };
     let wi = SerValWitness { s, r_prime: rp, r_double_prime: rdp };
-    let mut t = Transcript::new(b"b");
-    let pr = SerialValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
-    let mut group = c.benchmark_group("serial_validity");
     group.bench_function("prove", |b| {
+        let mut rng = bench_rng();
         b.iter(|| {
             let mut t = Transcript::new(b"b");
             SerialValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
         })
     });
+
+    let mut t = Transcript::new(b"b");
+    let pr = SerialValidityProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
     group.bench_function("verify", |b| {
         b.iter(|| {
             let mut t = Transcript::new(b"b");
@@ -146,11 +194,19 @@ fn bench_serial_validity(c: &mut Criterion) {
     group.finish();
 }
 
-// ── Bit vector scaling over k' ──────────────────────────────────────────
+// ── Medium proofs: ~0.3-2 ms each ──────────────────────────────────────
+// Config: 100 samples, 15s measurement, 3s warmup
 
 fn bench_bit_vector(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut group = c.benchmark_group("bit_vector");
+    group.sample_size(100);
+    group.measurement_time(std::time::Duration::from_secs(15));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
+
     for k in [4, 5, 8, 12, 16, 24, 32, 48, 64] {
         let gens: Vec<RistrettoPoint> = (0..k).map(|_| RistrettoPoint::random(&mut rng)).collect();
         let h = RistrettoPoint::random(&mut rng);
@@ -169,15 +225,18 @@ fn bench_bit_vector(c: &mut Criterion) {
         let bp = RistrettoPoint::multiscalar_mul(&sc, &pt);
         let st = BitVectorStatement { generators: gens, h, b: bp, w };
         let wi = BitVectorWitness { bits, blinding: bl };
-        let mut t = Transcript::new(b"b");
-        let pr = BitVectorProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
         group.bench_with_input(BenchmarkId::new("prove", k), &k, |b, _| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
                 BitVectorProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
             })
         });
+
+        let mut t = Transcript::new(b"b");
+        let pr = BitVectorProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
         group.bench_with_input(BenchmarkId::new("verify", k), &k, |b, _| {
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
@@ -188,14 +247,19 @@ fn bench_bit_vector(c: &mut Criterion) {
     group.finish();
 }
 
-// ── Commitment set scaling over N ───────────────────────────────────────
+// ── Slow proofs: ~1-100+ ms each ───────────────────────────────────────
+// Config: 20 samples, flat mode, 60s measurement, 5s warmup
 
 fn bench_commitment_set(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut group = c.benchmark_group("commitment_set");
-    group.sample_size(10);
+    group.sample_size(20);
     group.sampling_mode(SamplingMode::Flat);
-    group.measurement_time(std::time::Duration::from_secs(60));
+    group.measurement_time(std::time::Duration::from_secs(120));
+    group.warm_up_time(std::time::Duration::from_secs(5));
+    group.noise_threshold(0.05); // 5% threshold for slow ops
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
 
     for (n, m, label) in [
         (2u32, 2u32, "N=4"),
@@ -220,15 +284,18 @@ fn bench_commitment_set(c: &mut Criterion) {
         let params = CommitmentSetParams { n, m, g, h };
         let st = CommitmentSetStatement { params, commitments: comms, c_prime: cp };
         let wi = CommitmentSetWitness { index: idx, blinding: bl };
-        let mut t = Transcript::new(b"b");
-        let pr = CommitmentSetProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
 
         group.bench_with_input(BenchmarkId::new("prove", label), &label, |b, _| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
                 CommitmentSetProof::prove(&st, &wi, &mut t, &mut rng).unwrap()
             })
         });
+
+        let mut t = Transcript::new(b"b");
+        let pr = CommitmentSetProof::prove(&st, &wi, &mut t, &mut rng).unwrap();
+
         group.bench_with_input(BenchmarkId::new("verify", label), &label, |b, _| {
             b.iter(|| {
                 let mut t = Transcript::new(b"b");
@@ -242,9 +309,14 @@ fn bench_commitment_set(c: &mut Criterion) {
 // ── Batch verification amortization ─────────────────────────────────────
 
 fn bench_batch_verify(c: &mut Criterion) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut group = c.benchmark_group("batch_verify_rep");
-    group.sample_size(20);
+    group.sample_size(50);
+    group.measurement_time(std::time::Duration::from_secs(15));
+    group.warm_up_time(std::time::Duration::from_secs(3));
+    group.noise_threshold(0.03);
+    group.significance_level(0.01);
+    group.confidence_level(0.99);
 
     for batch in [1, 10, 25, 50, 100] {
         let mut proofs = Vec::new();
@@ -270,6 +342,7 @@ fn bench_batch_verify(c: &mut Criterion) {
             })
         });
         group.bench_with_input(BenchmarkId::new("batch", batch), &batch, |b, _| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut ts: Vec<Transcript> =
                     (0..batch).map(|_| Transcript::new(b"b")).collect();

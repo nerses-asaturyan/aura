@@ -8,7 +8,12 @@ use criterion::{Criterion, SamplingMode};
 use curve25519_dalek::ristretto::RistrettoPoint;
 use curve25519_dalek::scalar::Scalar;
 use merlin::Transcript;
-use rand::rngs::OsRng;
+use rand::SeedableRng;
+use rand_chacha::ChaCha20Rng;
+
+fn bench_rng() -> ChaCha20Rng {
+    ChaCha20Rng::seed_from_u64(20260412)
+}
 
 use aura::dkg::protocol;
 use aura::election::ballot;
@@ -24,7 +29,7 @@ fn run_dkg(
     threshold: u32,
     g: &RistrettoPoint,
 ) -> Vec<protocol::DkgResult> {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let mut polys = Vec::new();
     let mut r1 = Vec::new();
     for alpha in 1..=num_talliers {
@@ -67,7 +72,7 @@ fn run_dkg(
 }
 
 pub fn bench_ballot_only(c: &mut Criterion, n: u32, m: u32) {
-    let mut rng = OsRng;
+    let mut rng = bench_rng();
     let num_voters = n.pow(m);
     let label = format!("N{}", num_voters);
 
@@ -113,8 +118,12 @@ pub fn bench_ballot_only(c: &mut Criterion, n: u32, m: u32) {
         group.sample_size(10);
         group.sampling_mode(SamplingMode::Flat);
         group.measurement_time(std::time::Duration::from_secs(300));
+        group.warm_up_time(std::time::Duration::from_secs(10));
+        group.noise_threshold(0.05);
+        group.significance_level(0.01);
 
         group.bench_function("create", |b| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 ballot::vote(
                     &voter_secret,
@@ -172,8 +181,12 @@ pub fn bench_ballot_only(c: &mut Criterion, n: u32, m: u32) {
         group.sample_size(10);
         group.sampling_mode(SamplingMode::Flat);
         group.measurement_time(std::time::Duration::from_secs(300));
+        group.warm_up_time(std::time::Duration::from_secs(10));
+        group.noise_threshold(0.05);
+        group.significance_level(0.01);
 
         group.bench_function("prove", |b| {
+            let mut rng = bench_rng();
             b.iter(|| {
                 let mut t = Transcript::new(b"bench");
                 CommitmentSetProof::prove(&statement, &witness, &mut t, &mut rng).unwrap()
