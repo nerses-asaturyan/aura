@@ -19,10 +19,99 @@ use crate::proofs::encryption_validity::{
 };
 use crate::proofs::serial_validity::{SerValStatement, SerValWitness, SerialValidityProof};
 use crate::signature::{self, SchnorrSignature};
+use crate::transcript::TranscriptProtocol;
 use crate::types::{Ciphertext, PedersenCommitment};
 
 use super::params::ElectionParams;
 use super::setup::VoterSecret;
+
+/// Compute the canonical signing message over every ballot field except the
+/// signature itself.
+///
+/// Absorbs ciphertexts, every proof component, the serial offset, and the
+/// encrypted serial into a Merlin transcript and extracts a 64-byte challenge.
+/// Signing this digest binds the Schnorr signature to the whole ballot: any
+/// mutation of any field produces a different digest and invalidates the
+/// signature.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn ballot_signing_message_for_fields(
+    encrypted_choices: &[(Ciphertext, EncryptionValidityProof)],
+    bit_proof: &BitVectorProof,
+    serial_offset: &PedersenCommitment,
+    encrypted_serial: &Ciphertext,
+    set_proof: &CommitmentSetProof,
+    serial_proof: &SerialValidityProof,
+) -> [u8; 64] {
+    let mut t = Transcript::new(b"aura/ballot-digest/v1");
+
+    t.append_u64(b"n_choices", encrypted_choices.len() as u64);
+    for (ct, proof) in encrypted_choices {
+        t.append_point(b"ct.d", &ct.d.compress());
+        t.append_point(b"ct.e", &ct.e.compress());
+        t.append_point(b"enc.cd", &proof.commitment_d);
+        t.append_point(b"enc.ce", &proof.commitment_e);
+        t.append_scalar(b"enc.sr", &proof.response_r);
+        t.append_scalar(b"enc.sm", &proof.response_m);
+    }
+
+    t.append_point(b"bit.a", &bit_proof.a);
+    t.append_point(b"bit.c", &bit_proof.c);
+    t.append_point(b"bit.d", &bit_proof.d);
+    t.append_u64(b"bit.f_len", bit_proof.f.len() as u64);
+    for fi in &bit_proof.f {
+        t.append_scalar(b"bit.f", fi);
+    }
+    t.append_scalar(b"bit.za", &bit_proof.z_a);
+    t.append_scalar(b"bit.zc", &bit_proof.z_c);
+
+    t.append_point(b"offset", &serial_offset.point().compress());
+    t.append_point(b"serial.d", &encrypted_serial.d.compress());
+    t.append_point(b"serial.e", &encrypted_serial.e.compress());
+
+    t.append_u64(b"set.cl_outer", set_proof.cl.len() as u64);
+    for row in &set_proof.cl {
+        t.append_u64(b"set.cl_inner", row.len() as u64);
+        for p in row {
+            t.append_point(b"set.cl", p);
+        }
+    }
+    t.append_u64(b"set.ct_len", set_proof.cross_terms.len() as u64);
+    for p in &set_proof.cross_terms {
+        t.append_point(b"set.ct", p);
+    }
+    t.append_u64(b"set.f_outer", set_proof.f_matrix.len() as u64);
+    for row in &set_proof.f_matrix {
+        t.append_u64(b"set.f_inner", row.len() as u64);
+        for s in row {
+            t.append_scalar(b"set.f", s);
+        }
+    }
+    t.append_scalar(b"set.z", &set_proof.z);
+
+    t.append_point(b"ser.cc", &serial_proof.commitment_c);
+    t.append_point(b"ser.cd", &serial_proof.commitment_d);
+    t.append_point(b"ser.ce", &serial_proof.commitment_e);
+    t.append_scalar(b"ser.ss", &serial_proof.response_s);
+    t.append_scalar(b"ser.srp", &serial_proof.response_r_prime);
+    t.append_scalar(b"ser.srpp", &serial_proof.response_r_double_prime);
+
+    let mut out = [0u8; 64];
+    t.challenge_bytes(b"digest", &mut out);
+    out
+}
+
+/// Convenience wrapper that computes the signing digest from a fully-assembled
+/// `Ballot` (ignoring its `signature` field).
+pub(crate) fn ballot_signing_message(ballot: &Ballot) -> [u8; 64] {
+    ballot_signing_message_for_fields(
+        &ballot.encrypted_choices,
+        &ballot.bit_proof,
+        &ballot.serial_offset,
+        &ballot.encrypted_serial,
+        &ballot.set_proof,
+        &ballot.serial_proof,
+    )
+}
 
 /// A complete ballot posted to the bulletin board.
 #[derive(Debug, Clone)]
@@ -211,12 +300,21 @@ pub fn vote(
     let serial_proof =
         SerialValidityProof::prove(&ser_statement, &ser_witness, &mut ser_transcript, rng)?;
 
-    // Step 10: Sign the ballot with the serial key (against generator F).
-    let ballot_message = b"aura-ballot-binding";
+    // Step 10: Sign a digest of the complete ballot with the serial key
+    // (against generator F). The digest covers every ballot field except the
+    // signature itself, so any mutation invalidates the signature.
+    let ballot_message = ballot_signing_message_for_fields(
+        &encrypted_choices,
+        &bit_proof,
+        &serial_offset,
+        &encrypted_serial,
+        &set_proof,
+        &serial_proof,
+    );
     let sig = signature::sign(
         &voter_secret.serial_key,
         &f,
-        ballot_message,
+        &ballot_message,
         &params.election_id,
         rng,
     );

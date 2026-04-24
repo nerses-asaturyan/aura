@@ -8,7 +8,9 @@ use aura::election::params::{self, ElectionConfig};
 use aura::election::setup::{self, VoterRegistration, VoterSecret};
 use aura::election::tally;
 use aura::elgamal::keys::PublicKeyShare;
-use aura::types::{ElectionId, PedersenCommitment, TallierIndex, VoterIndex};
+use aura::types::{Ciphertext, ElectionId, PedersenCommitment, TallierIndex, VoterIndex};
+use curve25519_dalek::ristretto::RistrettoPoint;
+use curve25519_dalek::scalar::Scalar;
 use rand::rngs::OsRng;
 
 /// Run a complete election and verify the result.
@@ -436,4 +438,261 @@ fn coercion_resistance_ballot_recast() {
     assert_eq!(result.tally[0].1, 3, "Yes should be 3");
     assert_eq!(result.tally[1].1, 1, "No should be 1");
     assert_eq!(result.duplicate_count, 1);
+}
+
+// ---- Helpers for negative tests below ----
+
+struct TestEnv {
+    params: aura::election::params::ElectionParams,
+    dkg_results: Vec<aura::dkg::protocol::DkgResult>,
+    public_shares: Vec<PublicKeyShare>,
+    voter_secrets: Vec<VoterSecret>,
+    all_ballot_keys: Vec<PedersenCommitment>,
+}
+
+fn setup_test_env(
+    num_voters: u32,
+    num_talliers: u32,
+    threshold: u32,
+    set_base: u32,
+    set_depth: u32,
+    rng: &mut OsRng,
+) -> TestEnv {
+    let config = ElectionConfig {
+        election_id: ElectionId(b"negative-test".to_vec()),
+        description: "negative-test".into(),
+        num_choices: 2,
+        choice_descriptions: vec!["Yes".into(), "No".into()],
+        min_choices: 1,
+        max_choices: 1,
+        num_voters,
+        set_base,
+        set_depth,
+        num_talliers,
+        threshold,
+    };
+    let params = params::setup_election(config);
+    let g = params.generators.g;
+
+    let mut polynomials = Vec::new();
+    let mut round1_outputs: Vec<DkgRound1Output> = Vec::new();
+    for alpha in 1..=num_talliers {
+        let (poly, output) = protocol::dkg_round1(TallierIndex(alpha), threshold, &g, rng);
+        polynomials.push(poly);
+        round1_outputs.push(output);
+    }
+    let all_round2: Vec<DkgRound2Output> = polynomials
+        .iter()
+        .map(|p| protocol::dkg_round2(p, num_talliers))
+        .collect();
+    let mut dkg_results = Vec::new();
+    for alpha in 1..=num_talliers {
+        let alpha_idx = (alpha - 1) as usize;
+        let received_shares: Vec<_> = (0..num_talliers as usize)
+            .filter(|&b| b != alpha_idx)
+            .map(|b| {
+                let share = all_round2[b]
+                    .shares
+                    .iter()
+                    .find(|(idx, _)| *idx == TallierIndex(alpha))
+                    .unwrap()
+                    .1;
+                (TallierIndex((b + 1) as u32), share)
+            })
+            .collect();
+        dkg_results.push(
+            protocol::dkg_finalize(
+                TallierIndex(alpha),
+                &polynomials[alpha_idx],
+                &received_shares,
+                &round1_outputs,
+                &g,
+                rng,
+            )
+            .unwrap(),
+        );
+    }
+    let public_shares: Vec<PublicKeyShare> =
+        dkg_results.iter().map(|r| r.public_share.clone()).collect();
+
+    let mut voter_secrets = Vec::new();
+    let mut voter_registrations: Vec<VoterRegistration> = Vec::new();
+    for i in 0..num_voters {
+        let (secret, reg) = setup::setup_voter(VoterIndex(i), &params, rng).unwrap();
+        voter_secrets.push(secret);
+        voter_registrations.push(reg);
+    }
+    let all_ballot_keys: Vec<PedersenCommitment> =
+        voter_registrations.iter().map(|r| r.ballot_key).collect();
+
+    TestEnv {
+        params,
+        dkg_results,
+        public_shares,
+        voter_secrets,
+        all_ballot_keys,
+    }
+}
+
+/// Bug 1 regression: a malicious tallier submitting a bad vote-partial must
+/// not corrupt the final tally. With DLEQ verification wired in, the bogus
+/// share is dropped, the remaining honest shares meet threshold, and the
+/// correct result still comes out. Without the fix, the bad point was silently
+/// combined and `solve_dlog` failed with `DecryptionFailed`.
+#[test]
+fn malicious_tallier_vote_partial_is_dropped() {
+    let mut rng = OsRng;
+    let env = setup_test_env(2, 3, 2, 2, 1, &mut rng);
+    let election_key = env.dkg_results[0].election_public_key;
+
+    // Two voters both vote "Yes" (choice 0).
+    let b0 = ballot::vote(
+        &env.voter_secrets[0], 0, &[true, false],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+    let b1 = ballot::vote(
+        &env.voter_secrets[1], 1, &[true, false],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+    let ballots = vec![b0, b1];
+
+    // All 3 talliers honestly produce serial partials.
+    let mut serial_partials = Vec::new();
+    for t in 0..3 {
+        let sp = tally::tally_serial_decrypt(
+            &env.dkg_results[t].key_share,
+            &env.dkg_results[t].public_share.point,
+            &ballots, &env.params, &mut rng,
+        ).unwrap();
+        serial_partials.push(sp);
+    }
+    let (valid_indices, vote_sums) = tally::tally_and_verify(
+        &ballots, &serial_partials, &env.public_shares, &env.params, &mut rng,
+    ).unwrap();
+    assert_eq!(valid_indices.len(), 2);
+
+    // All 3 talliers honestly produce vote partials.
+    let mut vote_partials = Vec::new();
+    for t in 0..3 {
+        let vp = tally::tally_vote_decrypt(
+            &env.dkg_results[t].key_share,
+            &env.dkg_results[t].public_share.point,
+            &vote_sums, &env.params, &mut rng,
+        ).unwrap();
+        vote_partials.push(vp);
+    }
+
+    // Malicious tallier #2 corrupts both of its vote partials by replacing
+    // the partial point with a random point. The attached DLEQ proof is now
+    // over the wrong target and will fail to verify.
+    for vp in vote_partials[2].iter_mut() {
+        vp.partial.partial = RistrettoPoint::random(&mut rng);
+    }
+
+    let result = tally::compute_result(
+        &vote_sums, &vote_partials, &env.public_shares,
+        &env.params, 2, 0,
+    ).unwrap();
+
+    // The two honest talliers still meet threshold → correct tally.
+    assert_eq!(result.tally[0].1, 2, "Yes must be 2");
+    assert_eq!(result.tally[1].1, 0, "No must be 0");
+}
+
+/// Bug 1 regression: if corruption drops enough partials below threshold,
+/// `compute_result` must return `ThresholdNotMet` rather than silently
+/// combining bad shares.
+#[test]
+fn compute_result_errors_when_corruption_breaks_threshold() {
+    let mut rng = OsRng;
+    let env = setup_test_env(2, 3, 2, 2, 1, &mut rng);
+    let election_key = env.dkg_results[0].election_public_key;
+
+    let b0 = ballot::vote(
+        &env.voter_secrets[0], 0, &[true, false],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+    let b1 = ballot::vote(
+        &env.voter_secrets[1], 1, &[false, true],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+    let ballots = vec![b0, b1];
+
+    let mut serial_partials = Vec::new();
+    for t in 0..3 {
+        serial_partials.push(tally::tally_serial_decrypt(
+            &env.dkg_results[t].key_share,
+            &env.dkg_results[t].public_share.point,
+            &ballots, &env.params, &mut rng,
+        ).unwrap());
+    }
+    let (_, vote_sums) = tally::tally_and_verify(
+        &ballots, &serial_partials, &env.public_shares, &env.params, &mut rng,
+    ).unwrap();
+
+    let mut vote_partials = Vec::new();
+    for t in 0..3 {
+        vote_partials.push(tally::tally_vote_decrypt(
+            &env.dkg_results[t].key_share,
+            &env.dkg_results[t].public_share.point,
+            &vote_sums, &env.params, &mut rng,
+        ).unwrap());
+    }
+
+    // Corrupt two talliers' vote partials for choice 0 → only one honest
+    // partial remains, below the 2-of-3 threshold.
+    vote_partials[1][0].partial.partial = RistrettoPoint::random(&mut rng);
+    vote_partials[2][0].partial.partial = RistrettoPoint::random(&mut rng);
+
+    let err = tally::compute_result(
+        &vote_sums, &vote_partials, &env.public_shares,
+        &env.params, 2, 0,
+    );
+    assert!(err.is_err(), "expected ThresholdNotMet, got {:?}", err);
+}
+
+/// Bug 2 regression: mutating any ballot field after signing must invalidate
+/// the signature and get the ballot dropped at tally time. Before the fix the
+/// signature was over a constant string and did not bind ballot contents, so
+/// any mutation still verified.
+#[test]
+fn mutated_ballot_field_invalidates_signature() {
+    let mut rng = OsRng;
+    let env = setup_test_env(2, 2, 2, 2, 1, &mut rng);
+    let election_key = env.dkg_results[0].election_public_key;
+
+    let b0 = ballot::vote(
+        &env.voter_secrets[0], 0, &[true, false],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+    let mut b1 = ballot::vote(
+        &env.voter_secrets[1], 1, &[false, true],
+        &env.params, &election_key, &env.all_ballot_keys, &mut rng,
+    ).unwrap();
+
+    // Mutate voter 1's ballot: shift the E component of the first encrypted
+    // choice. The signature digest no longer matches.
+    let g = env.params.generators.g;
+    let old = b1.encrypted_choices[0].0;
+    b1.encrypted_choices[0].0 = Ciphertext {
+        d: old.d,
+        e: old.e + Scalar::ONE * g,
+    };
+
+    let ballots = vec![b0, b1];
+
+    let mut serial_partials = Vec::new();
+    for t in 0..2 {
+        serial_partials.push(tally::tally_serial_decrypt(
+            &env.dkg_results[t].key_share,
+            &env.dkg_results[t].public_share.point,
+            &ballots, &env.params, &mut rng,
+        ).unwrap());
+    }
+    let (valid_indices, _) = tally::tally_and_verify(
+        &ballots, &serial_partials, &env.public_shares, &env.params, &mut rng,
+    ).unwrap();
+
+    // Only the untouched ballot (index 0) survives signature verification.
+    assert_eq!(valid_indices, vec![0]);
 }

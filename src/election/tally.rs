@@ -12,7 +12,7 @@ use crate::errors::{AuraError, AuraResult};
 use crate::signature;
 use crate::types::{Ciphertext, ChoiceIndex};
 
-use super::ballot::Ballot;
+use super::ballot::{ballot_signing_message, Ballot};
 use super::params::ElectionParams;
 
 /// A tallier's partial decryption of ballot serial numbers.
@@ -76,11 +76,11 @@ pub fn tally_serial_decrypt(
 pub fn tally_and_verify(
     ballots: &[Ballot],
     serial_partials: &[Vec<SerialPartialDecryption>], // one vec per tallier
-    _public_shares: &[PublicKeyShare],
+    public_shares: &[PublicKeyShare],
     params: &ElectionParams,
     _rng: &mut impl CryptoRngCore,
 ) -> AuraResult<(Vec<usize>, Vec<Ciphertext>)> {
-    let _g = params.generators.g;
+    let g = params.generators.g;
     let f = params.generators.f;
     let k = params.num_choices as usize;
 
@@ -88,19 +88,29 @@ pub fn tally_and_verify(
     let mut serial_public_keys: Vec<Option<RistrettoPoint>> = vec![None; ballots.len()];
 
     for i in 0..ballots.len() {
-        // Collect partial decryptions for ballot i from all talliers.
-        let partials: Vec<PartialDecryption> = serial_partials
-            .iter()
-            .filter_map(|tallier_partials| {
-                tallier_partials
-                    .iter()
-                    .find(|p| p.ballot_index == i)
-                    .map(|p| p.partial.clone())
-            })
-            .collect();
+        // Collect partial decryptions for ballot i from all talliers, verifying
+        // each partial's DLEQ proof against the claimed tallier's public share
+        // before accepting it. Unverifiable shares are silently dropped; the
+        // ballot is only tallied if at least `threshold` verified shares remain.
+        let mut partials: Vec<PartialDecryption> = Vec::new();
+        for tallier_partials in serial_partials {
+            if let Some(sp) = tallier_partials.iter().find(|p| p.ballot_index == i) {
+                let Some(share) = public_shares.iter().find(|s| s.index == sp.partial.tallier)
+                else {
+                    continue; // unknown tallier index — drop
+                };
+                let mut transcript = Transcript::new(b"aura-serial-dec");
+                if sp.partial
+                    .verify(&ballots[i].encrypted_serial, &g, share, &mut transcript)
+                    .is_ok()
+                {
+                    partials.push(sp.partial.clone());
+                }
+            }
+        }
 
         if partials.len() < params.threshold as usize {
-            continue; // Skip ballots without enough partial decryptions
+            continue; // Skip ballots without enough verified partial decryptions
         }
 
         // Combine partial decryptions to get S_i = s_i * F (without brute-forcing dlog)
@@ -109,15 +119,15 @@ pub fn tally_and_verify(
     }
 
     // Verify signatures using recovered serial public keys.
-    let ballot_message = b"aura-ballot-binding";
     for (i, ballot) in ballots.iter().enumerate() {
         if let Some(ref s_i) = serial_public_keys[i] {
+            let msg = ballot_signing_message(ballot);
             // Verify signature using S_i as public key against generator F
             if signature::verify(
                 &ballot.signature,
                 s_i,
                 &f,
-                ballot_message,
+                &msg,
                 &params.election_id,
             )
             .is_err()
@@ -194,25 +204,38 @@ pub fn tally_vote_decrypt(
 pub fn compute_result(
     vote_sums: &[Ciphertext],
     vote_partials: &[Vec<VotePartialDecryption>], // one vec per tallier
-    _public_shares: &[PublicKeyShare],
+    public_shares: &[PublicKeyShare],
     params: &ElectionParams,
     valid_ballot_count: usize,
     duplicate_count: usize,
 ) -> AuraResult<ElectionResult> {
+    let g = params.generators.g;
     let k = params.num_choices as usize;
     let mut tally = Vec::with_capacity(k);
 
     for l in 0..k {
-        // Collect partials for choice l from all talliers
-        let partials: Vec<PartialDecryption> = vote_partials
-            .iter()
-            .filter_map(|tallier_partials| {
-                tallier_partials
-                    .iter()
-                    .find(|p| p.choice == ChoiceIndex(l as u32))
-                    .map(|p| p.partial.clone())
-            })
-            .collect();
+        // Collect partials for choice l from all talliers, verifying each
+        // partial's DLEQ proof against the claimed tallier's public share.
+        // Invalid shares are dropped; we require `threshold` verified shares.
+        let mut partials: Vec<PartialDecryption> = Vec::new();
+        for tallier_partials in vote_partials {
+            if let Some(vp) = tallier_partials
+                .iter()
+                .find(|p| p.choice == ChoiceIndex(l as u32))
+            {
+                let Some(share) = public_shares.iter().find(|s| s.index == vp.partial.tallier)
+                else {
+                    continue;
+                };
+                let mut transcript = Transcript::new(b"aura-vote-dec");
+                if vp.partial
+                    .verify(&vote_sums[l], &g, share, &mut transcript)
+                    .is_ok()
+                {
+                    partials.push(vp.partial.clone());
+                }
+            }
+        }
 
         if partials.len() < params.threshold as usize {
             return Err(AuraError::ThresholdNotMet {
