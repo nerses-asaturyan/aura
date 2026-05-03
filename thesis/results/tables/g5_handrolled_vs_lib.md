@@ -1,0 +1,22 @@
+| Group          | Op     | Scale  | Hand-rolled | Library  | lib / hand-rolled |
+| -------------- | ------ | ------ | ----------- | -------- | ----------------- |
+| bitvec_compare | prove  | 16     | 932.4 µs    | 5.636 ms | 6.04×             |
+| bitvec_compare | prove  | 64     | 2.961 ms    | 20.25 ms | 6.84×             |
+| bitvec_compare | verify | 16     | 569.1 µs    | 1.503 ms | 2.64×             |
+| bitvec_compare | verify | 64     | 1.860 ms    | 4.609 ms | 2.48×             |
+| dleq_compare   | prove  | —      | 126.8 µs    | 119.1 µs | 0.94×             |
+| dleq_compare   | verify | —      | 207.3 µs    | 219.4 µs | 1.06×             |
+| encval_compare | prove  | —      | 184.6 µs    | 243.3 µs | 1.32×             |
+| encval_compare | verify | —      | 282.7 µs    | 196.4 µs | 0.69×             |
+| rep_compare    | prove  | 1      | 63.21 µs    | 104.9 µs | 1.66×             |
+| rep_compare    | prove  | 2      | 80.40 µs    | 144.8 µs | 1.80×             |
+| rep_compare    | prove  | 4      | 116.8 µs    | 214.4 µs | 1.84×             |
+| rep_compare    | verify | 1      | 104.4 µs    | 87.49 µs | 0.84×             |
+| rep_compare    | verify | 2      | 123.4 µs    | 111.6 µs | 0.90×             |
+| rep_compare    | verify | 4      | 162.1 µs    | 155.8 µs | 0.96×             |
+| serval_compare | prove  | —      | 295.2 µs    | 363.4 µs | 1.23×             |
+| serval_compare | verify | —      | 384.0 µs    | 300.2 µs | 0.78×             |
+| set_compare    | prove  | N=1024 | 64.87 ms    | 596.1 ms | 9.19×             |
+| set_compare    | prove  | N=256  | 18.97 ms    | 123.5 ms | 6.51×             |
+| set_compare    | verify | N=1024 | 14.09 ms    | 72.22 ms | 5.13×             |
+| set_compare    | verify | N=256  | 4.017 ms    | 20.36 ms | 5.07×             |

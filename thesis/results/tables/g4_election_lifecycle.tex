@@ -1,0 +1,60 @@
+\begin{table}[h]
+  \centering
+  \caption{Full-election lifecycle timings (hand-rolled, deterministic seed 20260412).}
+  \label{tab:g4_election_lifecycle}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    N & Phase & Op & Param & Samples & Time \\
+    \midrule
+16 & ballot & create & — & 50 & 4.198 ms $\pm$ 2.1\% \\
+16 & ballot & verify & — & 50 & 2.326 ms $\pm$ 4.1\% \\
+16 & dkg & 2of3 & — & 100 & 1.566 ms $\pm$ 2.1\% \\
+16 & dkg\_2of3 & — & — & 100 & 1.472 ms $\pm$ 1.8\% \\
+16 & tally & full\_pipeline & — & 10 & 21.18 ms $\pm$ 1.5\% \\
+16 & tally & serial\_decrypt\_per\_tallier & — & 10 & 2.745 ms $\pm$ 3.3\% \\
+16 & verify\_batch & — & 1 & 10 & 2.483 ms $\pm$ 4.7\% \\
+16 & verify\_batch & — & 10 & 10 & 25.32 ms $\pm$ 3.3\% \\
+16 & verify\_batch\_encval & batch & 1 & 10 & 577.4 $\mu$s $\pm$ 2.6\% \\
+16 & verify\_batch\_encval & batch & 10 & 10 & 4.866 ms $\pm$ 2.4\% \\
+16 & verify\_batch\_encval & individual & 1 & 10 & 1.259 ms $\pm$ 1.9\% \\
+16 & verify\_batch\_encval & individual & 10 & 10 & 13.08 ms $\pm$ 3.6\% \\
+16 & voter & registration & — & 200 & 179.7 $\mu$s $\pm$ 3.2\% \\
+16 & voter\_registration & — & — & 100 & 150.6 $\mu$s $\pm$ 1.8\% \\
+64 & ballot & create & — & 50 & 7.412 ms $\pm$ 2.0\% \\
+64 & ballot & verify & — & 50 & 3.282 ms $\pm$ 2.1\% \\
+64 & dkg & 2of3 & — & 100 & 1.590 ms $\pm$ 2.0\% \\
+64 & dkg\_2of3 & — & — & 100 & 1.428 ms $\pm$ 1.7\% \\
+64 & tally & full\_pipeline & — & 10 & 75.04 ms $\pm$ 2.4\% \\
+64 & tally & serial\_decrypt\_per\_tallier & — & 10 & 11.15 ms $\pm$ 2.7\% \\
+64 & verify\_batch & — & 1 & 10 & 2.975 ms $\pm$ 8.8\% \\
+64 & verify\_batch & — & 10 & 10 & 32.32 ms $\pm$ 2.1\% \\
+64 & verify\_batch & — & 50 & 10 & 162.3 ms $\pm$ 1.9\% \\
+64 & verify\_batch\_encval & batch & 1 & 10 & 470.4 $\mu$s $\pm$ 8.6\% \\
+64 & verify\_batch\_encval & batch & 10 & 10 & 4.840 ms $\pm$ 1.6\% \\
+64 & verify\_batch\_encval & batch & 50 & 10 & 21.40 ms $\pm$ 2.1\% \\
+64 & verify\_batch\_encval & individual & 1 & 10 & 959.1 $\mu$s $\pm$ 0.2\% \\
+64 & verify\_batch\_encval & individual & 10 & 10 & 12.87 ms $\pm$ 2.5\% \\
+64 & verify\_batch\_encval & individual & 50 & 10 & 66.57 ms $\pm$ 4.1\% \\
+64 & voter & registration & — & 200 & 166.4 $\mu$s $\pm$ 1.4\% \\
+64 & voter\_registration & — & — & 100 & 149.9 $\mu$s $\pm$ 2.1\% \\
+256 & ballot & create & — & 50 & 20.56 ms $\pm$ 2.4\% \\
+256 & ballot & verify & — & 50 & 6.383 ms $\pm$ 6.3\% \\
+256 & dkg & 2of3 & — & 100 & 1.588 ms $\pm$ 3.0\% \\
+256 & tally & full\_pipeline & — & 10 & 284.2 ms $\pm$ 2.3\% \\
+256 & tally & serial\_decrypt\_per\_tallier & — & 10 & 41.38 ms $\pm$ 1.1\% \\
+256 & verify\_batch & — & 1 & 10 & 5.988 ms $\pm$ 1.6\% \\
+256 & verify\_batch & — & 10 & 10 & 59.20 ms $\pm$ 2.0\% \\
+256 & verify\_batch & — & 100 & 10 & 633.1 ms $\pm$ 2.1\% \\
+256 & verify\_batch & — & 50 & 10 & 310.1 ms $\pm$ 3.1\% \\
+256 & verify\_batch\_encval & batch & 1 & 10 & 568.8 $\mu$s $\pm$ 2.6\% \\
+256 & verify\_batch\_encval & batch & 10 & 10 & 5.235 ms $\pm$ 0.9\% \\
+256 & verify\_batch\_encval & batch & 100 & 10 & 45.07 ms $\pm$ 1.5\% \\
+256 & verify\_batch\_encval & batch & 50 & 10 & 22.54 ms $\pm$ 1.5\% \\
+256 & verify\_batch\_encval & individual & 1 & 10 & 1.271 ms $\pm$ 2.2\% \\
+256 & verify\_batch\_encval & individual & 10 & 10 & 13.00 ms $\pm$ 2.8\% \\
+256 & verify\_batch\_encval & individual & 100 & 10 & 130.4 ms $\pm$ 4.1\% \\
+256 & verify\_batch\_encval & individual & 50 & 10 & 64.77 ms $\pm$ 2.6\% \\
+256 & voter & registration & — & 200 & 183.2 $\mu$s $\pm$ 1.8\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}

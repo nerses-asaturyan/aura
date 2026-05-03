@@ -1,0 +1,647 @@
+   Compiling aura v0.1.0 (/home/nerses/aura)
+    Finished `bench` profile [optimized] target(s) in 2.26s
+     Running benches/proof_primitives.rs (target/release/deps/proof_primitives-becd5f333cf33c99)
+Benchmarking representation/prove/1
+Benchmarking representation/prove/1: Warming up for 3.0000 s
+Benchmarking representation/prove/1: Collecting 200 samples in estimated 10.877 s (221k iterations)
+Benchmarking representation/prove/1: Analyzing
+representation/prove/1  time:   [47.903 µs 48.060 µs 48.209 µs]
+Found 21 outliers among 200 measurements (10.50%)
+  6 (3.00%) low severe
+  5 (2.50%) low mild
+  7 (3.50%) high mild
+  3 (1.50%) high severe
+Benchmarking representation/verify/1
+Benchmarking representation/verify/1: Warming up for 3.0000 s
+Benchmarking representation/verify/1: Collecting 200 samples in estimated 10.410 s (141k iterations)
+Benchmarking representation/verify/1: Analyzing
+representation/verify/1 time:   [74.362 µs 74.415 µs 74.461 µs]
+Found 2 outliers among 200 measurements (1.00%)
+  1 (0.50%) low mild
+  1 (0.50%) high mild
+Benchmarking representation/prove/2
+Benchmarking representation/prove/2: Warming up for 3.0000 s
+Benchmarking representation/prove/2: Collecting 200 samples in estimated 11.370 s (161k iterations)
+Benchmarking representation/prove/2: Analyzing
+representation/prove/2  time:   [62.382 µs 62.503 µs 62.692 µs]
+Found 22 outliers among 200 measurements (11.00%)
+  2 (1.00%) low severe
+  3 (1.50%) low mild
+  1 (0.50%) high mild
+  16 (8.00%) high severe
+Benchmarking representation/verify/2
+Benchmarking representation/verify/2: Warming up for 3.0000 s
+Benchmarking representation/verify/2: Collecting 200 samples in estimated 10.048 s (100k iterations)
+Benchmarking representation/verify/2: Analyzing
+representation/verify/2 time:   [99.794 µs 99.907 µs 100.00 µs]
+Found 1 outliers among 200 measurements (0.50%)
+  1 (0.50%) high mild
+Benchmarking representation/prove/4
+Benchmarking representation/prove/4: Warming up for 3.0000 s
+Benchmarking representation/prove/4: Collecting 200 samples in estimated 10.543 s (100k iterations)
+Benchmarking representation/prove/4: Analyzing
+representation/prove/4  time:   [90.832 µs 90.869 µs 90.910 µs]
+Found 10 outliers among 200 measurements (5.00%)
+  4 (2.00%) low mild
+  3 (1.50%) high mild
+  3 (1.50%) high severe
+Benchmarking representation/verify/4
+Benchmarking representation/verify/4: Warming up for 3.0000 s
+Benchmarking representation/verify/4: Collecting 200 samples in estimated 10.969 s (100k iterations)
+Benchmarking representation/verify/4: Analyzing
+representation/verify/4 time:   [103.20 µs 103.44 µs 103.73 µs]
+Found 3 outliers among 200 measurements (1.50%)
+  1 (0.50%) high mild
+  2 (1.00%) high severe
+Benchmarking representation/prove/8
+Benchmarking representation/prove/8: Warming up for 3.0000 s
+Benchmarking representation/prove/8: Collecting 200 samples in estimated 12.259 s (80k iterations)
+Benchmarking representation/prove/8: Analyzing
+representation/prove/8  time:   [147.76 µs 149.01 µs 150.74 µs]
+Found 11 outliers among 200 measurements (5.50%)
+  1 (0.50%) low severe
+  1 (0.50%) low mild
+  2 (1.00%) high mild
+  7 (3.50%) high severe
+Benchmarking representation/verify/8
+Benchmarking representation/verify/8: Warming up for 3.0000 s
+Benchmarking representation/verify/8: Collecting 200 samples in estimated 10.563 s (60k iterations)
+Benchmarking representation/verify/8: Analyzing
+representation/verify/8 time:   [167.86 µs 168.13 µs 168.37 µs]
+
+Benchmarking dleq/prove
+Benchmarking dleq/prove: Warming up for 3.0000 s
+Benchmarking dleq/prove: Collecting 200 samples in estimated 11.180 s (121k iterations)
+Benchmarking dleq/prove: Analyzing
+dleq/prove              time:   [90.776 µs 90.803 µs 90.831 µs]
+Found 9 outliers among 200 measurements (4.50%)
+  5 (2.50%) low mild
+  3 (1.50%) high mild
+  1 (0.50%) high severe
+Benchmarking dleq/verify
+Benchmarking dleq/verify: Warming up for 3.0000 s
+Benchmarking dleq/verify: Collecting 200 samples in estimated 13.089 s (80k iterations)
+Benchmarking dleq/verify: Analyzing
+dleq/verify             time:   [151.63 µs 151.86 µs 152.09 µs]
+Found 1 outliers among 200 measurements (0.50%)
+  1 (0.50%) high mild
+
+Benchmarking enc_validity/prove
+Benchmarking enc_validity/prove: Warming up for 3.0000 s
+Benchmarking enc_validity/prove: Collecting 200 samples in estimated 10.221 s (80k iterations)
+Benchmarking enc_validity/prove: Analyzing
+enc_validity/prove      time:   [127.43 µs 127.48 µs 127.52 µs]
+Found 10 outliers among 200 measurements (5.00%)
+  8 (4.00%) low mild
+  1 (0.50%) high mild
+  1 (0.50%) high severe
+Benchmarking enc_validity/verify
+Benchmarking enc_validity/verify: Warming up for 3.0000 s
+Benchmarking enc_validity/verify: Collecting 200 samples in estimated 11.440 s (60k iterations)
+Benchmarking enc_validity/verify: Analyzing
+enc_validity/verify     time:   [186.28 µs 186.60 µs 186.87 µs]
+Found 1 outliers among 200 measurements (0.50%)
+  1 (0.50%) high mild
+
+Benchmarking serial_validity/prove
+Benchmarking serial_validity/prove: Warming up for 3.0000 s
+Benchmarking serial_validity/prove: Collecting 200 samples in estimated 12.189 s (60k iterations)
+Benchmarking serial_validity/prove: Analyzing
+serial_validity/prove   time:   [204.18 µs 204.32 µs 204.50 µs]
+Found 15 outliers among 200 measurements (7.50%)
+  8 (4.00%) low mild
+  1 (0.50%) high mild
+  6 (3.00%) high severe
+Benchmarking serial_validity/verify
+Benchmarking serial_validity/verify: Warming up for 3.0000 s
+Benchmarking serial_validity/verify: Collecting 200 samples in estimated 11.942 s (40k iterations)
+Benchmarking serial_validity/verify: Analyzing
+serial_validity/verify  time:   [291.69 µs 292.12 µs 292.51 µs]
+Found 3 outliers among 200 measurements (1.50%)
+  3 (1.50%) high severe
+
+Benchmarking bit_vector/prove/4
+Benchmarking bit_vector/prove/4: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/4: Collecting 100 samples in estimated 15.205 s (61k iterations)
+Benchmarking bit_vector/prove/4: Analyzing
+bit_vector/prove/4      time:   [251.01 µs 251.24 µs 251.65 µs]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+  1 (1.00%) high severe
+Benchmarking bit_vector/verify/4
+Benchmarking bit_vector/verify/4: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/4: Collecting 100 samples in estimated 15.097 s (61k iterations)
+Benchmarking bit_vector/verify/4: Analyzing
+bit_vector/verify/4     time:   [254.06 µs 254.39 µs 254.64 µs]
+Benchmarking bit_vector/prove/5
+Benchmarking bit_vector/prove/5: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/5: Collecting 100 samples in estimated 16.048 s (45k iterations)
+Benchmarking bit_vector/prove/5: Analyzing
+bit_vector/prove/5      time:   [347.27 µs 348.30 µs 349.35 µs]
+Benchmarking bit_vector/verify/5
+Benchmarking bit_vector/verify/5: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/5: Collecting 100 samples in estimated 15.257 s (56k iterations)
+Benchmarking bit_vector/verify/5: Analyzing
+bit_vector/verify/5     time:   [275.57 µs 275.67 µs 275.75 µs]
+Found 2 outliers among 100 measurements (2.00%)
+  2 (2.00%) low mild
+Benchmarking bit_vector/prove/8
+Benchmarking bit_vector/prove/8: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/8: Collecting 100 samples in estimated 15.342 s (40k iterations)
+Benchmarking bit_vector/prove/8: Analyzing
+bit_vector/prove/8      time:   [377.37 µs 378.19 µs 378.83 µs]
+Benchmarking bit_vector/verify/8
+Benchmarking bit_vector/verify/8: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/8: Collecting 100 samples in estimated 15.942 s (56k iterations)
+Benchmarking bit_vector/verify/8: Analyzing
+bit_vector/verify/8     time:   [283.25 µs 284.53 µs 285.97 µs]
+Found 19 outliers among 100 measurements (19.00%)
+  18 (18.00%) low severe
+  1 (1.00%) high mild
+Benchmarking bit_vector/prove/12
+Benchmarking bit_vector/prove/12: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/12: Collecting 100 samples in estimated 16.168 s (25k iterations)
+Benchmarking bit_vector/prove/12: Analyzing
+bit_vector/prove/12     time:   [645.01 µs 647.79 µs 652.71 µs]
+Found 4 outliers among 100 measurements (4.00%)
+  2 (2.00%) low mild
+  2 (2.00%) high severe
+Benchmarking bit_vector/verify/12
+Benchmarking bit_vector/verify/12: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/12: Collecting 100 samples in estimated 16.430 s (35k iterations)
+Benchmarking bit_vector/verify/12: Analyzing
+bit_vector/verify/12    time:   [493.28 µs 502.02 µs 508.72 µs]
+Benchmarking bit_vector/prove/16
+Benchmarking bit_vector/prove/16: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/16: Collecting 100 samples in estimated 17.300 s (20k iterations)
+Benchmarking bit_vector/prove/16: Analyzing
+bit_vector/prove/16     time:   [824.53 µs 840.96 µs 861.76 µs]
+Benchmarking bit_vector/verify/16
+Benchmarking bit_vector/verify/16: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/16: Collecting 100 samples in estimated 17.182 s (30k iterations)
+Benchmarking bit_vector/verify/16: Analyzing
+bit_vector/verify/16    time:   [555.02 µs 565.43 µs 577.20 µs]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+Benchmarking bit_vector/prove/24
+Benchmarking bit_vector/prove/24: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/24: Collecting 100 samples in estimated 17.474 s (15k iterations)
+Benchmarking bit_vector/prove/24: Analyzing
+bit_vector/prove/24     time:   [1.1883 ms 1.2421 ms 1.2935 ms]
+Found 14 outliers among 100 measurements (14.00%)
+  2 (2.00%) high mild
+  12 (12.00%) high severe
+Benchmarking bit_vector/verify/24
+Benchmarking bit_vector/verify/24: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/24: Collecting 100 samples in estimated 17.174 s (20k iterations)
+Benchmarking bit_vector/verify/24: Analyzing
+bit_vector/verify/24    time:   [759.78 µs 775.00 µs 789.15 µs]
+Benchmarking bit_vector/prove/32
+Benchmarking bit_vector/prove/32: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/32: Collecting 100 samples in estimated 16.819 s (10k iterations)
+Benchmarking bit_vector/prove/32: Analyzing
+bit_vector/prove/32     time:   [1.5580 ms 1.6106 ms 1.6681 ms]
+Found 16 outliers among 100 measurements (16.00%)
+  15 (15.00%) high mild
+  1 (1.00%) high severe
+Benchmarking bit_vector/verify/32
+Benchmarking bit_vector/verify/32: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/32: Collecting 100 samples in estimated 15.254 s (15k iterations)
+Benchmarking bit_vector/verify/32: Analyzing
+bit_vector/verify/32    time:   [937.93 µs 956.60 µs 977.82 µs]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+Benchmarking bit_vector/prove/48
+Benchmarking bit_vector/prove/48: Warming up for 3.0000 s
+Benchmarking bit_vector/prove/48: Collecting 100 samples in estimated 22.891 s (10k iterations)
+Benchmarking bit_vector/prove/48: Analyzing
+bit_vector/prove/48     time:   [2.3643 ms 2.4554 ms 2.5448 ms]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+Benchmarking bit_vector/verify/48
+Benchmarking bit_vector/verify/48: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/48: Collecting 100 samples in estimated 22.394 s (15k iterations)
+Benchmarking bit_vector/verify/48: Analyzing
+bit_vector/verify/48    time:   [1.3632 ms 1.3915 ms 1.4172 ms]
+Benchmarking bit_vector/prove/64
+Benchmarking bit_vector/prove/64: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 15.0s. You may wish to increase target time to 16.6s, enable flat sampling, or reduce sample count to 60.
+Benchmarking bit_vector/prove/64: Collecting 100 samples in estimated 16.564 s (5050 iterations)
+Benchmarking bit_vector/prove/64: Analyzing
+bit_vector/prove/64     time:   [2.9982 ms 3.0780 ms 3.1678 ms]
+Benchmarking bit_vector/verify/64
+Benchmarking bit_vector/verify/64: Warming up for 3.0000 s
+Benchmarking bit_vector/verify/64: Collecting 100 samples in estimated 18.819 s (10k iterations)
+Benchmarking bit_vector/verify/64: Analyzing
+bit_vector/verify/64    time:   [1.7450 ms 1.8172 ms 1.9003 ms]
+Found 6 outliers among 100 measurements (6.00%)
+  4 (4.00%) high mild
+  2 (2.00%) high severe
+
+Benchmarking commitment_set/prove/N=4
+Benchmarking commitment_set/prove/N=4: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=4: Collecting 20 samples in estimated 120.00 s (184k iterations)
+Benchmarking commitment_set/prove/N=4: Analyzing
+commitment_set/prove/N=4
+                        time:   [636.29 µs 651.23 µs 668.43 µs]
+Benchmarking commitment_set/verify/N=4
+Benchmarking commitment_set/verify/N=4: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=4: Collecting 20 samples in estimated 120.00 s (878k iterations)
+Benchmarking commitment_set/verify/N=4: Analyzing
+commitment_set/verify/N=4
+                        time:   [136.50 µs 138.61 µs 141.23 µs]
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
+Benchmarking commitment_set/prove/N=16
+Benchmarking commitment_set/prove/N=16: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=16: Collecting 20 samples in estimated 120.02 s (73k iterations)
+Benchmarking commitment_set/prove/N=16: Analyzing
+commitment_set/prove/N=16
+                        time:   [1.6060 ms 1.6496 ms 1.6989 ms]
+Benchmarking commitment_set/verify/N=16
+Benchmarking commitment_set/verify/N=16: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=16: Collecting 20 samples in estimated 120.00 s (353k iterations)
+Benchmarking commitment_set/verify/N=16: Analyzing
+commitment_set/verify/N=16
+                        time:   [304.36 µs 324.12 µs 340.51 µs]
+Benchmarking commitment_set/prove/N=64
+Benchmarking commitment_set/prove/N=64: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=64: Collecting 20 samples in estimated 120.02 s (26k iterations)
+Benchmarking commitment_set/prove/N=64: Analyzing
+commitment_set/prove/N=64
+                        time:   [4.5021 ms 4.6032 ms 4.7170 ms]
+Benchmarking commitment_set/verify/N=64
+Benchmarking commitment_set/verify/N=64: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=64: Collecting 20 samples in estimated 120.00 s (107k iterations)
+Benchmarking commitment_set/verify/N=64: Analyzing
+commitment_set/verify/N=64
+                        time:   [1.1096 ms 1.1304 ms 1.1524 ms]
+Benchmarking commitment_set/prove/N=256
+Benchmarking commitment_set/prove/N=256: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=256: Collecting 20 samples in estimated 120.28 s (7180 iterations)
+Benchmarking commitment_set/prove/N=256: Analyzing
+commitment_set/prove/N=256
+                        time:   [16.098 ms 16.439 ms 16.805 ms]
+Benchmarking commitment_set/verify/N=256
+Benchmarking commitment_set/verify/N=256: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=256: Collecting 20 samples in estimated 120.04 s (32k iterations)
+Benchmarking commitment_set/verify/N=256: Analyzing
+commitment_set/verify/N=256
+                        time:   [3.7966 ms 3.8499 ms 3.9098 ms]
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
+Benchmarking commitment_set/prove/N=1024
+Benchmarking commitment_set/prove/N=1024: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=1024: Collecting 20 samples in estimated 120.21 s (1960 iterations)
+Benchmarking commitment_set/prove/N=1024: Analyzing
+commitment_set/prove/N=1024
+                        time:   [58.339 ms 59.933 ms 61.583 ms]
+Benchmarking commitment_set/verify/N=1024
+Benchmarking commitment_set/verify/N=1024: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=1024: Collecting 20 samples in estimated 120.05 s (8780 iterations)
+Benchmarking commitment_set/verify/N=1024: Analyzing
+commitment_set/verify/N=1024
+                        time:   [13.426 ms 13.695 ms 14.000 ms]
+Benchmarking commitment_set/prove/N=4096
+Benchmarking commitment_set/prove/N=4096: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=4096: Collecting 20 samples in estimated 121.74 s (540 iterations)
+Benchmarking commitment_set/prove/N=4096: Analyzing
+commitment_set/prove/N=4096
+                        time:   [225.69 ms 230.00 ms 234.85 ms]
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
+Benchmarking commitment_set/verify/N=4096
+Benchmarking commitment_set/verify/N=4096: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=4096: Collecting 20 samples in estimated 120.70 s (2240 iterations)
+Benchmarking commitment_set/verify/N=4096: Analyzing
+commitment_set/verify/N=4096
+                        time:   [51.467 ms 52.152 ms 52.881 ms]
+Benchmarking commitment_set/prove/N=64_n4
+Benchmarking commitment_set/prove/N=64_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=64_n4: Collecting 20 samples in estimated 120.07 s (37k iterations)
+Benchmarking commitment_set/prove/N=64_n4: Analyzing
+commitment_set/prove/N=64_n4
+                        time:   [2.4950 ms 2.6981 ms 2.8970 ms]
+Benchmarking commitment_set/verify/N=64_n4
+Benchmarking commitment_set/verify/N=64_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=64_n4: Collecting 20 samples in estimated 120.02 s (110k iterations)
+Benchmarking commitment_set/verify/N=64_n4: Analyzing
+commitment_set/verify/N=64_n4
+                        time:   [1.0566 ms 1.0798 ms 1.1038 ms]
+Benchmarking commitment_set/prove/N=256_n4
+Benchmarking commitment_set/prove/N=256_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=256_n4: Collecting 20 samples in estimated 120.17 s (14k iterations)
+Benchmarking commitment_set/prove/N=256_n4: Analyzing
+commitment_set/prove/N=256_n4
+                        time:   [8.8569 ms 9.1211 ms 9.4174 ms]
+Benchmarking commitment_set/verify/N=256_n4
+Benchmarking commitment_set/verify/N=256_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=256_n4: Collecting 20 samples in estimated 120.04 s (32k iterations)
+Benchmarking commitment_set/verify/N=256_n4: Analyzing
+commitment_set/verify/N=256_n4
+                        time:   [3.5971 ms 3.6579 ms 3.7368 ms]
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
+Benchmarking commitment_set/prove/N=1024_n4
+Benchmarking commitment_set/prove/N=1024_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/prove/N=1024_n4: Collecting 20 samples in estimated 120.06 s (3900 iterations)
+Benchmarking commitment_set/prove/N=1024_n4: Analyzing
+commitment_set/prove/N=1024_n4
+                        time:   [28.783 ms 29.573 ms 30.413 ms]
+Benchmarking commitment_set/verify/N=1024_n4
+Benchmarking commitment_set/verify/N=1024_n4: Warming up for 5.0000 s
+Benchmarking commitment_set/verify/N=1024_n4: Collecting 20 samples in estimated 120.13 s (8940 iterations)
+Benchmarking commitment_set/verify/N=1024_n4: Analyzing
+commitment_set/verify/N=1024_n4
+                        time:   [13.030 ms 13.296 ms 13.591 ms]
+
+Benchmarking batch_verify_rep/individual/1
+Benchmarking batch_verify_rep/individual/1: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/individual/1: Collecting 50 samples in estimated 15.090 s (139k iterations)
+Benchmarking batch_verify_rep/individual/1: Analyzing
+batch_verify_rep/individual/1
+                        time:   [114.78 µs 118.94 µs 123.21 µs]
+                        change: [+2.2232% +6.1478% +10.118%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Benchmarking batch_verify_rep/batch/1
+Benchmarking batch_verify_rep/batch/1: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/batch/1: Collecting 50 samples in estimated 15.069 s (170k iterations)
+Benchmarking batch_verify_rep/batch/1: Analyzing
+batch_verify_rep/batch/1
+                        time:   [83.667 µs 86.951 µs 89.475 µs]
+                        change: [-4.9392% -1.6101% +1.7061%] (p = 0.21 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_rep/individual/10
+Benchmarking batch_verify_rep/individual/10: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/individual/10: Collecting 50 samples in estimated 15.863 s (14k iterations)
+Benchmarking batch_verify_rep/individual/10: Analyzing
+batch_verify_rep/individual/10
+                        time:   [1.1201 ms 1.1571 ms 1.1941 ms]
+                        change: [+1.3058% +5.7580% +11.030%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high severe
+Benchmarking batch_verify_rep/batch/10
+Benchmarking batch_verify_rep/batch/10: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/batch/10: Collecting 50 samples in estimated 15.559 s (24k iterations)
+Benchmarking batch_verify_rep/batch/10: Analyzing
+batch_verify_rep/batch/10
+                        time:   [616.00 µs 632.19 µs 649.58 µs]
+                        change: [-3.1450% -0.2454% +3.0790%] (p = 0.84 > 0.01)
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high severe
+Benchmarking batch_verify_rep/individual/25
+Benchmarking batch_verify_rep/individual/25: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/individual/25: Collecting 50 samples in estimated 18.004 s (6375 iterations)
+Benchmarking batch_verify_rep/individual/25: Analyzing
+batch_verify_rep/individual/25
+                        time:   [2.7668 ms 2.8406 ms 2.9316 ms]
+                        change: [+2.2461% +6.3036% +11.159%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_rep/batch/25
+Benchmarking batch_verify_rep/batch/25: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/batch/25: Collecting 50 samples in estimated 15.661 s (10k iterations)
+Benchmarking batch_verify_rep/batch/25: Analyzing
+batch_verify_rep/batch/25
+                        time:   [1.4786 ms 1.5189 ms 1.5681 ms]
+                        change: [-1.7040% +2.9589% +9.8189%] (p = 0.17 > 0.01)
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high severe
+Benchmarking batch_verify_rep/individual/50
+Benchmarking batch_verify_rep/individual/50: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/individual/50: Collecting 50 samples in estimated 22.169 s (3825 iterations)
+Benchmarking batch_verify_rep/individual/50: Analyzing
+batch_verify_rep/individual/50
+                        time:   [5.7309 ms 5.8944 ms 6.0811 ms]
+                        change: [-3.3125% -0.0647% +3.7302%] (p = 0.96 > 0.01)
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_rep/batch/50
+Benchmarking batch_verify_rep/batch/50: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/batch/50: Collecting 50 samples in estimated 17.796 s (6375 iterations)
+Benchmarking batch_verify_rep/batch/50: Analyzing
+batch_verify_rep/batch/50
+                        time:   [2.8896 ms 2.9688 ms 3.0485 ms]
+                        change: [-5.9872% -3.0601% +0.1490%] (p = 0.02 > 0.01)
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_rep/individual/100
+Benchmarking batch_verify_rep/individual/100: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/individual/100: Collecting 50 samples in estimated 28.973 s (2550 iterations)
+Benchmarking batch_verify_rep/individual/100: Analyzing
+batch_verify_rep/individual/100
+                        time:   [11.468 ms 11.749 ms 12.098 ms]
+                        change: [+2.9107% +6.4914% +10.292%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Benchmarking batch_verify_rep/batch/100
+Benchmarking batch_verify_rep/batch/100: Warming up for 3.0000 s
+Benchmarking batch_verify_rep/batch/100: Collecting 50 samples in estimated 21.175 s (3825 iterations)
+Benchmarking batch_verify_rep/batch/100: Analyzing
+batch_verify_rep/batch/100
+                        time:   [5.4136 ms 5.5430 ms 5.6786 ms]
+                        change: [+2.7746% +5.5396% +8.5659%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+
+Benchmarking batch_verify_dleq/individual/1
+Benchmarking batch_verify_dleq/individual/1: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/individual/1: Collecting 50 samples in estimated 15.255 s (73k iterations)
+Benchmarking batch_verify_dleq/individual/1: Analyzing
+batch_verify_dleq/individual/1
+                        time:   [205.29 µs 213.78 µs 221.82 µs]
+                        change: [+4.1719% +8.2185% +12.025%] (p = 0.00 < 0.01)
+                        Performance has regressed.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_dleq/batch/1
+Benchmarking batch_verify_dleq/batch/1: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/batch/1: Collecting 50 samples in estimated 15.098 s (124k iterations)
+Benchmarking batch_verify_dleq/batch/1: Analyzing
+batch_verify_dleq/batch/1
+                        time:   [115.88 µs 120.85 µs 125.63 µs]
+                        change: [-2.3935% +1.1321% +4.6829%] (p = 0.39 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_dleq/individual/10
+Benchmarking batch_verify_dleq/individual/10: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/individual/10: Collecting 50 samples in estimated 15.015 s (7650 iterations)
+Benchmarking batch_verify_dleq/individual/10: Analyzing
+batch_verify_dleq/individual/10
+                        time:   [1.9349 ms 2.0032 ms 2.0868 ms]
+                        change: [+0.7984% +4.2290% +8.3720%] (p = 0.01 < 0.01)
+                        Change within noise threshold.
+Found 6 outliers among 50 measurements (12.00%)
+  4 (8.00%) high mild
+  2 (4.00%) high severe
+Benchmarking batch_verify_dleq/batch/10
+Benchmarking batch_verify_dleq/batch/10: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/batch/10: Collecting 50 samples in estimated 15.497 s (15k iterations)
+Benchmarking batch_verify_dleq/batch/10: Analyzing
+batch_verify_dleq/batch/10
+                        time:   [888.20 µs 911.62 µs 938.90 µs]
+                        change: [-5.5947% -2.7879% +0.1141%] (p = 0.02 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_dleq/individual/25
+Benchmarking batch_verify_dleq/individual/25: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/individual/25: Collecting 50 samples in estimated 19.352 s (3825 iterations)
+Benchmarking batch_verify_dleq/individual/25: Analyzing
+batch_verify_dleq/individual/25
+                        time:   [5.0099 ms 5.2066 ms 5.4012 ms]
+                        change: [+2.7627% +6.5054% +10.275%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 2 outliers among 50 measurements (4.00%)
+  2 (4.00%) high mild
+Benchmarking batch_verify_dleq/batch/25
+Benchmarking batch_verify_dleq/batch/25: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/batch/25: Collecting 50 samples in estimated 17.852 s (7650 iterations)
+Benchmarking batch_verify_dleq/batch/25: Analyzing
+batch_verify_dleq/batch/25
+                        time:   [2.3004 ms 2.3821 ms 2.4628 ms]
+                        change: [-1.5410% +1.6235% +4.7117%] (p = 0.18 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_dleq/individual/50
+Benchmarking batch_verify_dleq/individual/50: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/individual/50: Collecting 50 samples in estimated 27.044 s (2550 iterations)
+Benchmarking batch_verify_dleq/individual/50: Analyzing
+batch_verify_dleq/individual/50
+                        time:   [9.7394 ms 10.004 ms 10.335 ms]
+                        change: [-4.2954% -0.1576% +4.5373%] (p = 0.93 > 0.01)
+                        No change in performance detected.
+Found 2 outliers among 50 measurements (4.00%)
+  1 (2.00%) high mild
+  1 (2.00%) high severe
+Benchmarking batch_verify_dleq/batch/50
+Benchmarking batch_verify_dleq/batch/50: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/batch/50: Collecting 50 samples in estimated 17.135 s (3825 iterations)
+Benchmarking batch_verify_dleq/batch/50: Analyzing
+batch_verify_dleq/batch/50
+                        time:   [4.2170 ms 4.3538 ms 4.4539 ms]
+                        change: [-5.6796% -2.0511% +1.1103%] (p = 0.12 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_dleq/individual/100
+Benchmarking batch_verify_dleq/individual/100: Warming up for 3.0000 s
+
+Warning: Unable to complete 50 samples in 15.0s. You may wish to increase target time to 27.7s, enable flat sampling, or reduce sample count to 20.
+Benchmarking batch_verify_dleq/individual/100: Collecting 50 samples in estimated 27.681 s (1275 iterations)
+Benchmarking batch_verify_dleq/individual/100: Analyzing
+batch_verify_dleq/individual/100
+                        time:   [19.772 ms 20.265 ms 20.850 ms]
+                        change: [+3.8650% +6.5628% +9.4137%] (p = 0.00 < 0.01)
+                        Performance has regressed.
+Found 5 outliers among 50 measurements (10.00%)
+  4 (8.00%) high mild
+  1 (2.00%) high severe
+Benchmarking batch_verify_dleq/batch/100
+Benchmarking batch_verify_dleq/batch/100: Warming up for 3.0000 s
+Benchmarking batch_verify_dleq/batch/100: Collecting 50 samples in estimated 19.579 s (2550 iterations)
+Benchmarking batch_verify_dleq/batch/100: Analyzing
+batch_verify_dleq/batch/100
+                        time:   [5.9444 ms 6.0081 ms 6.1217 ms]
+                        change: [-19.027% -14.599% -8.6704%] (p = 0.00 < 0.01)
+                        Performance has improved.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+
+Benchmarking batch_verify_encval/individual/1
+Benchmarking batch_verify_encval/individual/1: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/individual/1: Collecting 50 samples in estimated 15.122 s (69k iterations)
+Benchmarking batch_verify_encval/individual/1: Analyzing
+batch_verify_encval/individual/1
+                        time:   [190.44 µs 190.67 µs 190.97 µs]
+                        change: [-25.937% -23.762% -21.753%] (p = 0.00 < 0.01)
+                        Performance has improved.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_encval/batch/1
+Benchmarking batch_verify_encval/batch/1: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/batch/1: Collecting 50 samples in estimated 15.036 s (152k iterations)
+Benchmarking batch_verify_encval/batch/1: Analyzing
+batch_verify_encval/batch/1
+                        time:   [96.362 µs 96.913 µs 97.593 µs]
+                        change: [-29.301% -27.893% -26.441%] (p = 0.00 < 0.01)
+                        Performance has improved.
+Benchmarking batch_verify_encval/individual/10
+Benchmarking batch_verify_encval/individual/10: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/individual/10: Collecting 50 samples in estimated 16.914 s (8925 iterations)
+Benchmarking batch_verify_encval/individual/10: Analyzing
+batch_verify_encval/individual/10
+                        time:   [1.9215 ms 2.0117 ms 2.1285 ms]
+                        change: [-22.873% -19.618% -16.096%] (p = 0.00 < 0.01)
+                        Performance has improved.
+Found 8 outliers among 50 measurements (16.00%)
+  1 (2.00%) high mild
+  7 (14.00%) high severe
+Benchmarking batch_verify_encval/batch/10
+Benchmarking batch_verify_encval/batch/10: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/batch/10: Collecting 50 samples in estimated 15.064 s (17k iterations)
+Benchmarking batch_verify_encval/batch/10: Analyzing
+batch_verify_encval/batch/10
+                        time:   [975.70 µs 1.0164 ms 1.0509 ms]
+                        change: [-18.283% -13.464% -8.2242%] (p = 0.00 < 0.01)
+                        Performance has improved.
+Benchmarking batch_verify_encval/individual/25
+Benchmarking batch_verify_encval/individual/25: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/individual/25: Collecting 50 samples in estimated 18.234 s (2550 iterations)
+Benchmarking batch_verify_encval/individual/25: Analyzing
+batch_verify_encval/individual/25
+                        time:   [6.1040 ms 6.3516 ms 6.6026 ms]
+                        change: [+2.2007% +7.0388% +12.526%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking batch_verify_encval/batch/25
+Benchmarking batch_verify_encval/batch/25: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/batch/25: Collecting 50 samples in estimated 16.390 s (6375 iterations)
+Benchmarking batch_verify_encval/batch/25: Analyzing
+batch_verify_encval/batch/25
+                        time:   [2.6340 ms 2.7135 ms 2.8052 ms]
+                        change: [-3.9396% -0.3317% +3.7096%] (p = 0.82 > 0.01)
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high severe
+Benchmarking batch_verify_encval/individual/50
+Benchmarking batch_verify_encval/individual/50: Warming up for 3.0000 s
+
+Warning: Unable to complete 50 samples in 15.0s. You may wish to increase target time to 15.6s, enable flat sampling, or reduce sample count to 30.
+Benchmarking batch_verify_encval/individual/50: Collecting 50 samples in estimated 15.551 s (1275 iterations)
+Benchmarking batch_verify_encval/individual/50: Analyzing
+batch_verify_encval/individual/50
+                        time:   [12.019 ms 12.454 ms 12.910 ms]
+                        change: [-3.3211% +0.1486% +3.9899%] (p = 0.92 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_encval/batch/50
+Benchmarking batch_verify_encval/batch/50: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/batch/50: Collecting 50 samples in estimated 17.973 s (3825 iterations)
+Benchmarking batch_verify_encval/batch/50: Analyzing
+batch_verify_encval/batch/50
+                        time:   [4.6472 ms 4.7115 ms 4.8110 ms]
+                        change: [-1.9622% +3.0465% +7.7474%] (p = 0.11 > 0.01)
+                        No change in performance detected.
+Benchmarking batch_verify_encval/individual/100
+Benchmarking batch_verify_encval/individual/100: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/individual/100: Collecting 50 samples in estimated 16.301 s (600 iterations)
+Benchmarking batch_verify_encval/individual/100: Analyzing
+batch_verify_encval/individual/100
+                        time:   [24.540 ms 25.291 ms 26.197 ms]
+                        change: [+1.0220% +4.6971% +8.8568%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 7 outliers among 50 measurements (14.00%)
+  6 (12.00%) high mild
+  1 (2.00%) high severe
+Benchmarking batch_verify_encval/batch/100
+Benchmarking batch_verify_encval/batch/100: Warming up for 3.0000 s
+Benchmarking batch_verify_encval/batch/100: Collecting 50 samples in estimated 21.464 s (2550 iterations)
+Benchmarking batch_verify_encval/batch/100: Analyzing
+batch_verify_encval/batch/100
+                        time:   [8.7776 ms 8.9795 ms 9.1958 ms]
+                        change: [+0.7365% +3.1723% +5.7560%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+

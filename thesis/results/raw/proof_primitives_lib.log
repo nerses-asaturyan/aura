@@ -1,0 +1,333 @@
+warning: method `append_point` is never used
+  --> vendor/one-of-many-proofs/src/transcript.rs:20:8
+   |
+ 9 | pub trait TranscriptProtocol {
+   |           ------------------ method in this trait
+...
+20 |     fn append_point(&mut self, label: &'static [u8], point: &CompressedRistretto);
+   |        ^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `one-of-many-proofs` (lib) generated 1 warning
+   Compiling aura v0.1.0 (/home/nerses/aura)
+    Finished `bench` profile [optimized] target(s) in 6.55s
+     Running benches/proof_primitives_lib.rs (target/release/deps/proof_primitives_lib-6cf364cd02318eeb)
+Benchmarking rep_compare/prove/handrolled/1
+Benchmarking rep_compare/prove/handrolled/1: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/handrolled/1: Collecting 50 samples in estimated 5.0746 s (79k iterations)
+Benchmarking rep_compare/prove/handrolled/1: Analyzing
+rep_compare/prove/handrolled/1
+                        time:   [62.536 µs 64.021 µs 65.327 µs]
+Benchmarking rep_compare/prove/lib/1
+Benchmarking rep_compare/prove/lib/1: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/lib/1: Collecting 50 samples in estimated 5.1103 s (48k iterations)
+Benchmarking rep_compare/prove/lib/1: Analyzing
+rep_compare/prove/lib/1 time:   [103.31 µs 104.14 µs 105.07 µs]
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking rep_compare/verify/handrolled/1
+Benchmarking rep_compare/verify/handrolled/1: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/handrolled/1: Collecting 50 samples in estimated 5.0668 s (46k iterations)
+Benchmarking rep_compare/verify/handrolled/1: Analyzing
+rep_compare/verify/handrolled/1
+                        time:   [102.43 µs 103.34 µs 104.49 µs]
+Found 6 outliers among 50 measurements (12.00%)
+  2 (4.00%) high mild
+  4 (8.00%) high severe
+Benchmarking rep_compare/verify/lib/1
+Benchmarking rep_compare/verify/lib/1: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/lib/1: Collecting 50 samples in estimated 5.0182 s (59k iterations)
+Benchmarking rep_compare/verify/lib/1: Analyzing
+rep_compare/verify/lib/1
+                        time:   [84.900 µs 85.373 µs 85.937 µs]
+Found 5 outliers among 50 measurements (10.00%)
+  2 (4.00%) high mild
+  3 (6.00%) high severe
+Benchmarking rep_compare/prove/handrolled/2
+Benchmarking rep_compare/prove/handrolled/2: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/handrolled/2: Collecting 50 samples in estimated 5.0890 s (62k iterations)
+Benchmarking rep_compare/prove/handrolled/2: Analyzing
+rep_compare/prove/handrolled/2
+                        time:   [77.783 µs 78.887 µs 80.166 µs]
+Found 4 outliers among 50 measurements (8.00%)
+  2 (4.00%) high mild
+  2 (4.00%) high severe
+Benchmarking rep_compare/prove/lib/2
+Benchmarking rep_compare/prove/lib/2: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/lib/2: Collecting 50 samples in estimated 5.1183 s (36k iterations)
+Benchmarking rep_compare/prove/lib/2: Analyzing
+rep_compare/prove/lib/2 time:   [142.04 µs 144.26 µs 146.83 µs]
+Found 3 outliers among 50 measurements (6.00%)
+  2 (4.00%) high mild
+  1 (2.00%) high severe
+Benchmarking rep_compare/verify/handrolled/2
+Benchmarking rep_compare/verify/handrolled/2: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/handrolled/2: Collecting 50 samples in estimated 5.0107 s (43k iterations)
+Benchmarking rep_compare/verify/handrolled/2: Analyzing
+rep_compare/verify/handrolled/2
+                        time:   [122.75 µs 126.61 µs 130.29 µs]
+Benchmarking rep_compare/verify/lib/2
+Benchmarking rep_compare/verify/lib/2: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/lib/2: Collecting 50 samples in estimated 5.0264 s (45k iterations)
+Benchmarking rep_compare/verify/lib/2: Analyzing
+rep_compare/verify/lib/2
+                        time:   [108.26 µs 109.27 µs 110.48 µs]
+Found 5 outliers among 50 measurements (10.00%)
+  2 (4.00%) high mild
+  3 (6.00%) high severe
+Benchmarking rep_compare/prove/handrolled/4
+Benchmarking rep_compare/prove/handrolled/4: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/handrolled/4: Collecting 50 samples in estimated 5.0834 s (40k iterations)
+Benchmarking rep_compare/prove/handrolled/4: Analyzing
+rep_compare/prove/handrolled/4
+                        time:   [114.50 µs 116.09 µs 117.87 µs]
+Found 3 outliers among 50 measurements (6.00%)
+  3 (6.00%) high severe
+Benchmarking rep_compare/prove/lib/4
+Benchmarking rep_compare/prove/lib/4: Warming up for 3.0000 s
+Benchmarking rep_compare/prove/lib/4: Collecting 50 samples in estimated 5.0386 s (23k iterations)
+Benchmarking rep_compare/prove/lib/4: Analyzing
+rep_compare/prove/lib/4 time:   [207.68 µs 209.67 µs 212.11 µs]
+Found 4 outliers among 50 measurements (8.00%)
+  4 (8.00%) high mild
+Benchmarking rep_compare/verify/handrolled/4
+Benchmarking rep_compare/verify/handrolled/4: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/handrolled/4: Collecting 50 samples in estimated 5.1820 s (36k iterations)
+Benchmarking rep_compare/verify/handrolled/4: Analyzing
+rep_compare/verify/handrolled/4
+                        time:   [160.11 µs 162.18 µs 164.55 µs]
+Found 12 outliers among 50 measurements (24.00%)
+  5 (10.00%) low mild
+  5 (10.00%) high mild
+  2 (4.00%) high severe
+Benchmarking rep_compare/verify/lib/4
+Benchmarking rep_compare/verify/lib/4: Warming up for 3.0000 s
+Benchmarking rep_compare/verify/lib/4: Collecting 50 samples in estimated 5.1580 s (33k iterations)
+Benchmarking rep_compare/verify/lib/4: Analyzing
+rep_compare/verify/lib/4
+                        time:   [153.51 µs 154.96 µs 156.67 µs]
+Found 3 outliers among 50 measurements (6.00%)
+  1 (2.00%) high mild
+  2 (4.00%) high severe
+
+Benchmarking dleq_compare/prove/handrolled
+Benchmarking dleq_compare/prove/handrolled: Warming up for 3.0000 s
+Benchmarking dleq_compare/prove/handrolled: Collecting 50 samples in estimated 5.0479 s (38k iterations)
+Benchmarking dleq_compare/prove/handrolled: Analyzing
+dleq_compare/prove/handrolled
+                        time:   [123.14 µs 125.90 µs 128.39 µs]
+                        change: [+37.005% +39.769% +42.898%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 3 outliers among 50 measurements (6.00%)
+  3 (6.00%) high mild
+Benchmarking dleq_compare/prove/lib
+Benchmarking dleq_compare/prove/lib: Warming up for 3.0000 s
+Benchmarking dleq_compare/prove/lib: Collecting 50 samples in estimated 5.0574 s (43k iterations)
+Benchmarking dleq_compare/prove/lib: Analyzing
+dleq_compare/prove/lib  time:   [119.05 µs 122.07 µs 125.01 µs]
+                        change: [+8.3785% +10.387% +13.100%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 2 outliers among 50 measurements (4.00%)
+  1 (2.00%) high mild
+  1 (2.00%) high severe
+Benchmarking dleq_compare/verify/handrolled
+Benchmarking dleq_compare/verify/handrolled: Warming up for 3.0000 s
+Benchmarking dleq_compare/verify/handrolled: Collecting 50 samples in estimated 5.1729 s (24k iterations)
+Benchmarking dleq_compare/verify/handrolled: Analyzing
+dleq_compare/verify/handrolled
+                        time:   [204.07 µs 209.56 µs 214.90 µs]
+                        change: [+4.1370% +8.8250% +14.169%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 2 outliers among 50 measurements (4.00%)
+  2 (4.00%) high mild
+Benchmarking dleq_compare/verify/lib
+Benchmarking dleq_compare/verify/lib: Warming up for 3.0000 s
+Benchmarking dleq_compare/verify/lib: Collecting 50 samples in estimated 5.0648 s (24k iterations)
+Benchmarking dleq_compare/verify/lib: Analyzing
+dleq_compare/verify/lib time:   [215.10 µs 220.29 µs 225.70 µs]
+                        change: [+35.529% +39.698% +43.772%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+
+Benchmarking encval_compare/prove/handrolled
+Benchmarking encval_compare/prove/handrolled: Warming up for 3.0000 s
+Benchmarking encval_compare/prove/handrolled: Collecting 50 samples in estimated 5.0501 s (28k iterations)
+Benchmarking encval_compare/prove/handrolled: Analyzing
+encval_compare/prove/handrolled
+                        time:   [185.21 µs 187.46 µs 189.62 µs]
+Found 13 outliers among 50 measurements (26.00%)
+  5 (10.00%) low severe
+  3 (6.00%) low mild
+  3 (6.00%) high mild
+  2 (4.00%) high severe
+Benchmarking encval_compare/prove/lib
+Benchmarking encval_compare/prove/lib: Warming up for 3.0000 s
+Benchmarking encval_compare/prove/lib: Collecting 50 samples in estimated 5.2039 s (22k iterations)
+Benchmarking encval_compare/prove/lib: Analyzing
+encval_compare/prove/lib
+                        time:   [237.54 µs 239.80 µs 242.71 µs]
+Found 7 outliers among 50 measurements (14.00%)
+  4 (8.00%) high mild
+  3 (6.00%) high severe
+Benchmarking encval_compare/verify/handrolled
+Benchmarking encval_compare/verify/handrolled: Warming up for 3.0000 s
+Benchmarking encval_compare/verify/handrolled: Collecting 50 samples in estimated 5.2434 s (20k iterations)
+Benchmarking encval_compare/verify/handrolled: Analyzing
+encval_compare/verify/handrolled
+                        time:   [279.09 µs 284.25 µs 288.73 µs]
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking encval_compare/verify/lib
+Benchmarking encval_compare/verify/lib: Warming up for 3.0000 s
+Benchmarking encval_compare/verify/lib: Collecting 50 samples in estimated 5.2200 s (27k iterations)
+Benchmarking encval_compare/verify/lib: Analyzing
+encval_compare/verify/lib
+                        time:   [192.80 µs 194.63 µs 196.85 µs]
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high severe
+
+Benchmarking serval_compare/prove/handrolled
+Benchmarking serval_compare/prove/handrolled: Warming up for 3.0000 s
+Benchmarking serval_compare/prove/handrolled: Collecting 50 samples in estimated 5.2303 s (18k iterations)
+Benchmarking serval_compare/prove/handrolled: Analyzing
+serval_compare/prove/handrolled
+                        time:   [265.67 µs 271.69 µs 279.85 µs]
+Found 2 outliers among 50 measurements (4.00%)
+  2 (4.00%) high mild
+Benchmarking serval_compare/prove/lib
+Benchmarking serval_compare/prove/lib: Warming up for 3.0000 s
+Benchmarking serval_compare/prove/lib: Collecting 50 samples in estimated 5.0370 s (14k iterations)
+Benchmarking serval_compare/prove/lib: Analyzing
+serval_compare/prove/lib
+                        time:   [354.30 µs 357.15 µs 360.74 µs]
+Found 3 outliers among 50 measurements (6.00%)
+  2 (4.00%) high mild
+  1 (2.00%) high severe
+Benchmarking serval_compare/verify/handrolled
+Benchmarking serval_compare/verify/handrolled: Warming up for 3.0000 s
+Benchmarking serval_compare/verify/handrolled: Collecting 50 samples in estimated 5.2259 s (14k iterations)
+Benchmarking serval_compare/verify/handrolled: Analyzing
+serval_compare/verify/handrolled
+                        time:   [371.45 µs 378.69 µs 387.29 µs]
+Found 7 outliers among 50 measurements (14.00%)
+  7 (14.00%) high mild
+Benchmarking serval_compare/verify/lib
+Benchmarking serval_compare/verify/lib: Warming up for 3.0000 s
+Benchmarking serval_compare/verify/lib: Collecting 50 samples in estimated 5.2765 s (18k iterations)
+Benchmarking serval_compare/verify/lib: Analyzing
+serval_compare/verify/lib
+                        time:   [290.35 µs 293.86 µs 298.11 µs]
+Found 2 outliers among 50 measurements (4.00%)
+  1 (2.00%) high mild
+  1 (2.00%) high severe
+
+Benchmarking bitvec_compare/prove/handrolled/16
+Benchmarking bitvec_compare/prove/handrolled/16: Warming up for 3.0000 s
+Benchmarking bitvec_compare/prove/handrolled/16: Collecting 20 samples in estimated 5.0560 s (5670 iterations)
+Benchmarking bitvec_compare/prove/handrolled/16: Analyzing
+bitvec_compare/prove/handrolled/16
+                        time:   [918.35 µs 965.56 µs 997.80 µs]
+Benchmarking bitvec_compare/prove/lib/16
+Benchmarking bitvec_compare/prove/lib/16: Warming up for 3.0000 s
+Benchmarking bitvec_compare/prove/lib/16: Collecting 20 samples in estimated 5.9514 s (1050 iterations)
+Benchmarking bitvec_compare/prove/lib/16: Analyzing
+bitvec_compare/prove/lib/16
+                        time:   [5.4262 ms 5.6631 ms 5.9278 ms]
+Benchmarking bitvec_compare/verify/handrolled/16
+Benchmarking bitvec_compare/verify/handrolled/16: Warming up for 3.0000 s
+Benchmarking bitvec_compare/verify/handrolled/16: Collecting 20 samples in estimated 5.0773 s (9030 iterations)
+Benchmarking bitvec_compare/verify/handrolled/16: Analyzing
+bitvec_compare/verify/handrolled/16
+                        time:   [528.26 µs 547.35 µs 573.64 µs]
+Benchmarking bitvec_compare/verify/lib/16
+Benchmarking bitvec_compare/verify/lib/16: Warming up for 3.0000 s
+Benchmarking bitvec_compare/verify/lib/16: Collecting 20 samples in estimated 5.2727 s (3570 iterations)
+Benchmarking bitvec_compare/verify/lib/16: Analyzing
+bitvec_compare/verify/lib/16
+                        time:   [1.4297 ms 1.5086 ms 1.5897 ms]
+Found 1 outliers among 20 measurements (5.00%)
+  1 (5.00%) high mild
+Benchmarking bitvec_compare/prove/handrolled/64
+Benchmarking bitvec_compare/prove/handrolled/64: Warming up for 3.0000 s
+Benchmarking bitvec_compare/prove/handrolled/64: Collecting 20 samples in estimated 5.5668 s (1680 iterations)
+Benchmarking bitvec_compare/prove/handrolled/64: Analyzing
+bitvec_compare/prove/handrolled/64
+                        time:   [2.8598 ms 2.8986 ms 2.9384 ms]
+Found 2 outliers among 20 measurements (10.00%)
+  2 (10.00%) high severe
+Benchmarking bitvec_compare/prove/lib/64
+Benchmarking bitvec_compare/prove/lib/64: Warming up for 3.0000 s
+Benchmarking bitvec_compare/prove/lib/64: Collecting 20 samples in estimated 9.2805 s (420 iterations)
+Benchmarking bitvec_compare/prove/lib/64: Analyzing
+bitvec_compare/prove/lib/64
+                        time:   [19.503 ms 20.317 ms 21.277 ms]
+Benchmarking bitvec_compare/verify/handrolled/64
+Benchmarking bitvec_compare/verify/handrolled/64: Warming up for 3.0000 s
+Benchmarking bitvec_compare/verify/handrolled/64: Collecting 20 samples in estimated 5.0161 s (2730 iterations)
+Benchmarking bitvec_compare/verify/handrolled/64: Analyzing
+bitvec_compare/verify/handrolled/64
+                        time:   [1.7692 ms 1.8295 ms 1.8723 ms]
+Found 5 outliers among 20 measurements (25.00%)
+  1 (5.00%) low severe
+  2 (10.00%) low mild
+  2 (10.00%) high severe
+Benchmarking bitvec_compare/verify/lib/64
+Benchmarking bitvec_compare/verify/lib/64: Warming up for 3.0000 s
+Benchmarking bitvec_compare/verify/lib/64: Collecting 20 samples in estimated 5.6903 s (1260 iterations)
+Benchmarking bitvec_compare/verify/lib/64: Analyzing
+bitvec_compare/verify/lib/64
+                        time:   [4.3484 ms 4.4102 ms 4.5206 ms]
+
+Benchmarking set_compare/prove/handrolled/N=256
+Benchmarking set_compare/prove/handrolled/N=256: Warming up for 3.0000 s
+Benchmarking set_compare/prove/handrolled/N=256: Collecting 10 samples in estimated 10.900 s (660 iterations)
+Benchmarking set_compare/prove/handrolled/N=256: Analyzing
+set_compare/prove/handrolled/N=256
+                        time:   [18.916 ms 19.405 ms 19.820 ms]
+Benchmarking set_compare/prove/lib/N=256
+Benchmarking set_compare/prove/lib/N=256: Warming up for 3.0000 s
+Benchmarking set_compare/prove/lib/N=256: Collecting 10 samples in estimated 13.631 s (110 iterations)
+Benchmarking set_compare/prove/lib/N=256: Analyzing
+set_compare/prove/lib/N=256
+                        time:   [121.96 ms 123.72 ms 124.97 ms]
+Benchmarking set_compare/verify/handrolled/N=256
+Benchmarking set_compare/verify/handrolled/N=256: Warming up for 3.0000 s
+Benchmarking set_compare/verify/handrolled/N=256: Collecting 10 samples in estimated 10.164 s (2475 iterations)
+Benchmarking set_compare/verify/handrolled/N=256: Analyzing
+set_compare/verify/handrolled/N=256
+                        time:   [3.8457 ms 3.9643 ms 4.1441 ms]
+Benchmarking set_compare/verify/lib/N=256
+Benchmarking set_compare/verify/lib/N=256: Warming up for 3.0000 s
+Benchmarking set_compare/verify/lib/N=256: Collecting 10 samples in estimated 11.089 s (550 iterations)
+Benchmarking set_compare/verify/lib/N=256: Analyzing
+set_compare/verify/lib/N=256
+                        time:   [19.939 ms 20.108 ms 20.279 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+Benchmarking set_compare/prove/handrolled/N=1024
+Benchmarking set_compare/prove/handrolled/N=1024: Warming up for 3.0000 s
+Benchmarking set_compare/prove/handrolled/N=1024: Collecting 10 samples in estimated 10.575 s (165 iterations)
+Benchmarking set_compare/prove/handrolled/N=1024: Analyzing
+set_compare/prove/handrolled/N=1024
+                        time:   [61.571 ms 64.004 ms 67.575 ms]
+Benchmarking set_compare/prove/lib/N=1024
+Benchmarking set_compare/prove/lib/N=1024: Warming up for 3.0000 s
+Benchmarking set_compare/prove/lib/N=1024: Collecting 10 samples in estimated 11.923 s (20 iterations)
+Benchmarking set_compare/prove/lib/N=1024: Analyzing
+set_compare/prove/lib/N=1024
+                        time:   [592.03 ms 596.07 ms 600.95 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+Benchmarking set_compare/verify/handrolled/N=1024
+Benchmarking set_compare/verify/handrolled/N=1024: Warming up for 3.0000 s
+Benchmarking set_compare/verify/handrolled/N=1024: Collecting 10 samples in estimated 10.360 s (715 iterations)
+Benchmarking set_compare/verify/handrolled/N=1024: Analyzing
+set_compare/verify/handrolled/N=1024
+                        time:   [13.546 ms 13.951 ms 14.647 ms]
+Benchmarking set_compare/verify/lib/N=1024
+Benchmarking set_compare/verify/lib/N=1024: Warming up for 3.0000 s
+Benchmarking set_compare/verify/lib/N=1024: Collecting 10 samples in estimated 11.805 s (165 iterations)
+Benchmarking set_compare/verify/lib/N=1024: Analyzing
+set_compare/verify/lib/N=1024
+                        time:   [71.661 ms 72.129 ms 72.523 ms]
+

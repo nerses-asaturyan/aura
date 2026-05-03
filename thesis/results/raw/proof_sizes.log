@@ -1,0 +1,75 @@
+    Finished `bench` profile [optimized] target(s) in 0.07s
+     Running benches/proof_sizes.rs (target/release/deps/proof_sizes-4b94d748edae15da)
+
+╔══════════════════════════════════════════════════════════════════╗
+║                  AURA PROOF SIZE REPORT                         ║
+╠══════════════════════════════════════════════════════════════════╣
+║ Element sizes: Point = 32 B, Scalar = 32 B                      ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║ INDIVIDUAL PROOF SIZES                                         ║
+║                                                                ║
+║  Representation (n=2):        96 B  (  3 elements)              ║
+║  DLEQ:                        96 B  (  3 elements)              ║
+║  Encryption validity:        128 B  (  4 elements)              ║
+║  Serial validity:            192 B  (  6 elements)              ║
+║                                                                ║
+║ BIT VECTOR PROOF SIZES (varies with k')                        ║
+║                                                                ║
+║  k'=4  :                     256 B  (  8 elements)              ║
+║  k'=5  :                     288 B  (  9 elements)              ║
+║  k'=8  :                     384 B  ( 12 elements)              ║
+║  k'=16 :                     640 B  ( 20 elements)              ║
+║  k'=32 :                    1152 B  ( 36 elements)              ║
+║  k'=64 :                    2176 B  ( 68 elements)              ║
+║                                                                ║
+║ COMMITMENT SET PROOF SIZES (varies with N = n^m)               ║
+║                                                                ║
+║  N=16         (n=2,m=4 ):    672 B  ( 21 elements)              ║
+║  N=64         (n=2,m=6 ):    992 B  ( 31 elements)              ║
+║  N=256        (n=2,m=8 ):   1312 B  ( 41 elements)              ║
+║  N=1024       (n=2,m=10):   1632 B  ( 51 elements)              ║
+║  N=4096       (n=2,m=12):   1952 B  ( 61 elements)              ║
+║  N=16384      (n=2,m=14):   2272 B  ( 71 elements)              ║
+║  N=65536      (n=2,m=16):   2592 B  ( 81 elements)              ║
+║  N=262144     (n=2,m=18):   2912 B  ( 91 elements)              ║
+║  N=1048576    (n=2,m=20):   3232 B  (101 elements)              ║
+║                                                                ║
+║ FULL BALLOT SIZES (k=4, kmin=1, kmax=2, k'=5)                 ║
+║                                                                ║
+║  N=16        :              2272 B  (2.2 KB)                   ║
+║  N=64        :              2592 B  (2.5 KB)                   ║
+║  N=256       :              2912 B  (2.8 KB)                   ║
+║  N=1024      :              3232 B  (3.2 KB)                   ║
+║  N=4096      :              3552 B  (3.5 KB)                   ║
+║  N=16384     :              3872 B  (3.8 KB)                   ║
+║  N=65536     :              4192 B  (4.1 KB)                   ║
+║  N=262144    :              4512 B  (4.4 KB)                   ║
+║  N=1048576   :              4832 B  (4.7 KB)                   ║
+║                                                                ║
+║ COMPARISON WITH ELECTIONGUARD (k'=5)                           ║
+║                                                                ║
+║  Aura (batch):        29 elements  (  928 B)                  ║
+║  Aura (no batch):     24 elements  (  768 B)                  ║
+║  ElectionGuard (batch):   43 elements  ( 1376 B)              ║
+║  ElectionGuard (no batch):  22 elements  (  704 B)            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Benchmarking _size_report_noop
+Benchmarking _size_report_noop: Analyzing
+_size_report_noop       time:   [158.39 ps 158.46 ps 158.76 ps]
+                        change: [-22.255% -21.008% -19.722%] (p = 0.05 > 0.05)
+                        No change in performance detected.
+
+
+── Actual vs computed size verification ──
+  RepProof(n=2): actual=96 B, computed=96 B  OK
+  SetProof(N=256): actual=1312 B, computed=1312 B  OK
+  BitVecProof(k'=5): actual=288 B, computed=288 B  OK
+
+Benchmarking actual_proof_sizes/noop
+Benchmarking actual_proof_sizes/noop: Analyzing
+actual_proof_sizes/noop time:   [158.97 ps 159.38 ps 159.48 ps]
+                        change: [-12.594% -11.896% -11.189%] (p = 0.07 > 0.05)
+                        No change in performance detected.
+

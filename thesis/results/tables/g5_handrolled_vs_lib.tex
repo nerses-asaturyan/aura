@@ -1,0 +1,31 @@
+\begin{table}[h]
+  \centering
+  \caption{Hand-rolled vs library-backed prove/verify (statement-fidelity caveats noted in Section X).}
+  \label{tab:g5_handrolled_vs_lib}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Group & Op & Scale & Hand-rolled & Library & lib / hand-rolled \\
+    \midrule
+bitvec\_compare & prove & 16 & 932.4 $\mu$s & 5.636 ms & 6.04× \\
+bitvec\_compare & prove & 64 & 2.961 ms & 20.25 ms & 6.84× \\
+bitvec\_compare & verify & 16 & 569.1 $\mu$s & 1.503 ms & 2.64× \\
+bitvec\_compare & verify & 64 & 1.860 ms & 4.609 ms & 2.48× \\
+dleq\_compare & prove & — & 126.8 $\mu$s & 119.1 $\mu$s & 0.94× \\
+dleq\_compare & verify & — & 207.3 $\mu$s & 219.4 $\mu$s & 1.06× \\
+encval\_compare & prove & — & 184.6 $\mu$s & 243.3 $\mu$s & 1.32× \\
+encval\_compare & verify & — & 282.7 $\mu$s & 196.4 $\mu$s & 0.69× \\
+rep\_compare & prove & 1 & 63.21 $\mu$s & 104.9 $\mu$s & 1.66× \\
+rep\_compare & prove & 2 & 80.40 $\mu$s & 144.8 $\mu$s & 1.80× \\
+rep\_compare & prove & 4 & 116.8 $\mu$s & 214.4 $\mu$s & 1.84× \\
+rep\_compare & verify & 1 & 104.4 $\mu$s & 87.49 $\mu$s & 0.84× \\
+rep\_compare & verify & 2 & 123.4 $\mu$s & 111.6 $\mu$s & 0.90× \\
+rep\_compare & verify & 4 & 162.1 $\mu$s & 155.8 $\mu$s & 0.96× \\
+serval\_compare & prove & — & 295.2 $\mu$s & 363.4 $\mu$s & 1.23× \\
+serval\_compare & verify & — & 384.0 $\mu$s & 300.2 $\mu$s & 0.78× \\
+set\_compare & prove & N=1024 & 64.87 ms & 596.1 ms & 9.19× \\
+set\_compare & prove & N=256 & 18.97 ms & 123.5 ms & 6.51× \\
+set\_compare & verify & N=1024 & 14.09 ms & 72.22 ms & 5.13× \\
+set\_compare & verify & N=256 & 4.017 ms & 20.36 ms & 5.07× \\
+    \bottomrule
+  \end{tabular}
+\end{table}
