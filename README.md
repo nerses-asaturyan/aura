@@ -17,12 +17,20 @@ Aura is an election protocol that dissociates ballots from voter identity crypto
 
 ```
 src/
-  proofs/           6 proving systems (representation, DLEQ, enc validity,
-                    serial validity, bit vector, commitment set)
-  elgamal/          Threshold ElGamal (encrypt, partial decrypt, BSGS dlog)
-  dkg/              Pedersen distributed key generation
-  signature.rs      Context-bound Schnorr signatures
-  election/         Protocol orchestration (setup, ballot, tally, bulletin board)
+  proofs/                6 proving systems (representation, DLEQ, enc validity,
+                         serial validity, bit vector, commitment set)
+    lib_backed/          Optional library-backed equivalents of the 6 proofs
+                         (feature `lib-proofs`, see "Library-backed proofs" below)
+  elgamal/               Threshold ElGamal (encrypt, partial decrypt, BSGS dlog)
+  dkg/                   Pedersen distributed key generation
+  signature.rs           Context-bound Schnorr signatures
+  election/              Protocol orchestration (setup, ballot, tally, bulletin board)
+vendor/
+  one-of-many-proofs/    Vendored fork of cargodog/one-of-many-proofs, used by
+                         `lib_backed::commitment_set`. Patched to drop the
+                         `simd_backend`/`nightly` features (those pulled in
+                         `packed_simd_2`, which no longer compiles on stable
+                         rustc). MIT-licensed; original by cargodog.
 ```
 
 ## Cryptographic Stack
@@ -52,10 +60,11 @@ brew install gnuplot         # macOS
 ### Run all tests (debug mode)
 
 ```bash
-cargo test
+cargo test                          # hand-rolled (default): 57 unit + 5 integration
+cargo test --features lib-proofs    # adds 22 lib-backed unit tests → 79 + 5
 ```
 
-Output: 59 tests across unit tests and integration tests.
+Output: 62 tests by default; 84 with `lib-proofs` enabled.
 
 ### Run all tests (release mode, faster)
 
@@ -114,21 +123,22 @@ All benchmarks use [Criterion.rs](https://bheisler.github.io/criterion.rs/book/)
 
 ### Benchmark suites
 
-| Suite | Command | What it measures | Time estimate |
-|---|---|---|---|
-| **Proof primitives** | `cargo bench --bench proof_primitives` | All 6 proof types, bit vector scaling, set proof scaling, batch verify (rep, dleq, encval) | ~10 min |
-| **Proof sizes** | `cargo bench --bench proof_sizes -- --quick` | Byte sizes of all proofs and ballots (instant, no timing) | ~5 sec |
-| **Election N=16** | `cargo bench --bench election_n16` | Full election: DKG, voter reg, ballot, batch verify (individual + batched encval), tally | ~2 min |
-| **Election N=64** | `cargo bench --bench election_n64` | Full election | ~3 min |
-| **Election N=256** | `cargo bench --bench election_n256` | Full election | ~8 min |
-| **Election N=1,024** | `cargo bench --bench election_n1024` | Full election | ~20 min |
-| **Election N=4,096** | `cargo bench --bench election_n4096` | Full election | ~40 min |
-| **Election N=16,384** | `cargo bench --bench election_n16384` | Full election | ~1.5 hr |
-| **Election N=65,536** | `cargo bench --bench election_n65536` | Full election | ~3 hr |
-| **Election N=262,144** | `cargo bench --bench election_n262144` | Ballot create/verify + set proof only | ~30 min |
-| **Election N=1,048,576** | `cargo bench --bench election_n1048576` | Ballot create/verify + set proof only | ~2 hr |
+| Suite | Command | What it measures |
+|---|---|---|
+| **Proof primitives** | `cargo bench --bench proof_primitives` | All 6 proof types, bit vector scaling, set proof scaling, batch verify (rep, dleq, encval) |
+| **Proof sizes** | `cargo bench --bench proof_sizes -- --quick` | Byte sizes of all proofs and ballots |
+| **Election N=16** | `cargo bench --bench election_n16` | Full election: DKG, voter reg, ballot, batch verify (individual + batched encval), tally |
+| **Election N=64** | `cargo bench --bench election_n64` | Full election |
+| **Election N=256** | `cargo bench --bench election_n256` | Full election |
+| **Election N=1,024** | `cargo bench --bench election_n1024` | Full election |
+| **Election N=4,096** | `cargo bench --bench election_n4096` | Full election |
+| **Election N=16,384** | `cargo bench --bench election_n16384` | Full election |
+| **Election N=65,536** | `cargo bench --bench election_n65536` | Full election |
+| **Election N=262,144** | `cargo bench --bench election_n262144` | Ballot create/verify + set proof only |
+| **Election N=1,048,576** | `cargo bench --bench election_n1048576` | Ballot create/verify + set proof only |
+| **Lib comparison** | `cargo bench --bench proof_primitives_lib --features lib-proofs` | Hand-rolled vs library-backed prove/verify for all 6 proofs |
 
-> **Note**: For N >= 262,144, only ballot-level operations are benchmarked (creating all N ballots for a full tally would be prohibitively slow). For N <= 65,536, the full pipeline is measured including DKG, tally serial decryption, and tally result computation.
+> **Note**: For N >= 262,144, only ballot-level operations are benchmarked. For N <= 65,536, the full pipeline is measured including DKG, tally serial decryption, and tally result computation.
 
 ### Run all benchmarks
 
@@ -136,7 +146,7 @@ All benchmarks use [Criterion.rs](https://bheisler.github.io/criterion.rs/book/)
 cargo bench
 ```
 
-> **Warning**: Running all suites end-to-end takes many hours. Run individual suites instead.
+> Running all suites end-to-end is slow. Prefer individual suites.
 
 ### Run a specific suite
 
@@ -258,22 +268,22 @@ Example output:
 For a complete performance profile:
 
 ```bash
-# 1. Proof sizes (instant)
+# 1. Proof sizes
 cargo bench --bench proof_sizes -- --quick
 
-# 2. Individual proof costs (~5 min)
+# 2. Individual proof costs
 cargo bench --bench proof_primitives
 
-# 3. Small-scale full elections (~10 min total)
+# 3. Small-scale full elections
 cargo bench --bench election_n16
 cargo bench --bench election_n64
 cargo bench --bench election_n256
 
-# 4. Medium-scale full elections (~1 hr total)
+# 4. Medium-scale full elections
 cargo bench --bench election_n1024
 cargo bench --bench election_n4096
 
-# 5. Large-scale ballot operations (~1-3 hr total)
+# 5. Large-scale ballot operations
 cargo bench --bench election_n16384
 cargo bench --bench election_n65536
 cargo bench --bench election_n262144
@@ -281,6 +291,92 @@ cargo bench --bench election_n1048576
 ```
 
 ---
+
+## Two implementations of the proofs
+
+Each of the six proving systems has **two** parallel implementations in this crate:
+
+1. **Hand-rolled** at [src/proofs/](src/proofs/) — the default. These reproduce the Aura paper's constructions directly: same statements, same transcript layout, same generators, same MSM strategy. This is what the protocol uses for all elections, ballots, DKG, and tally operations regardless of feature flags.
+2. **Library-backed** at [src/proofs/lib_backed/](src/proofs/lib_backed/) — only compiled when the `lib-proofs` Cargo feature is enabled. Each proof delegates to an off-the-shelf Rust ZK library on its own native crypto stack, with byte-level bridging at the module boundary.
+
+### Why both
+
+- **Hand-rolled** is the paper-faithful reference. Every byte of every transcript and every generator choice matches the Aura paper, so the implementation can be audited line-by-line against the spec, and the protocol's correctness arguments carry over unchanged.
+- **Library-backed** answers the practical question: *what would a developer get if they tried to build Aura on top of widely-used Rust ZK crates instead of writing the Sigma protocols by hand?* It surfaces the cost of (a) the library's overhead vs. a custom prover, (b) statement-fidelity compromises forced by the library's API, and (c) curve / transcript / RNG bridging when the library targets an older dalek line.
+
+Comparing the two side-by-side gives prove/verify timings, proof sizes, and a concrete sense of which library replacements are clean drop-ins versus which require substantive deviations from the paper's statement.
+
+### Library mapping
+
+| # | Proof | Library | Crypto stack | Bridged? |
+|---|---|---|---|---|
+| 1 | Representation | [`zkp` 0.8](https://crates.io/crates/zkp) | `curve25519-dalek-ng` 3 / `merlin` 2 / `rand` 0.7 | yes |
+| 2 | DLEQ | [`sigma-protocols` 0.5](https://crates.io/crates/sigma-protocols) | `curve25519-dalek` 4.1 | no |
+| 3 | EncryptionValidity | [`zkp` 0.8](https://crates.io/crates/zkp) | `curve25519-dalek-ng` 3 / `merlin` 2 / `rand` 0.7 | yes |
+| 4 | SerialValidity | [`zkp` 0.8](https://crates.io/crates/zkp) | `curve25519-dalek-ng` 3 / `merlin` 2 / `rand` 0.7 | yes |
+| 5 | BitVector | [`bulletproofs` 5 (R1CS)](https://github.com/zkcrypto/bulletproofs) | `curve25519-dalek` 4.1 / `merlin` 3 | no |
+| 6 | One-of-N | [`one-of-many-proofs` 0.1](https://docs.rs/one-of-many-proofs) (vendored) | `curve25519-dalek` 2 / `merlin` 2 / `rand` 0.7 | yes |
+
+"Bridged" means the library lives on a different curve/transcript stack than Aura's home (`curve25519-dalek` 4.1 + `merlin` 3). For those proofs, the lib_backed module converts at the API boundary via the canonical 32-byte Ristretto255 / Scalar encoding (RFC 9496) and re-keys the library's transcript with a 64-byte challenge squeezed from Aura's merlin-3 transcript. The bridge module is at [src/proofs/lib_backed/bridge.rs](src/proofs/lib_backed/bridge.rs).
+
+Bulletproofs is pinned to git/main (not crates.io 5.0.0) because the released version's R1CS code uses a pre-`CtOption` `Scalar::from_canonical_bytes` API that does not compile against `curve25519-dalek` 4.1.
+
+### Statement-fidelity caveats
+
+Two of the six library-backed proofs do not prove the **exact** statement of the hand-rolled paper construction:
+
+- **#5 BitVector (bulletproofs R1CS)**: certifies the predicate (each `b_i ∈ {0,1}`, `Σ b_i = w`) over per-bit Pedersen commitments using bulletproofs' default `PedersenGens`, **without** binding to Aura's vector commitment `B = r·H + Σ b_i·G_i`. The hand-rolled proof additionally binds to `B`.
+- **#6 One-of-N (`one-of-many-proofs`)**: uses the library's hardcoded basepoint `G = RISTRETTO_BASEPOINT_POINT` (not Aura's `params.h`), only supports set sizes that are exact powers of two, and recomputes `c_prime` internally using the library's basepoint — the lib-backed `c_prime` is stored on the proof, separate from `statement.c_prime`. The hand-rolled proof uses Aura's generators and the Spark-modified Bootle construction.
+
+These are documented in module docstrings ([bit_vector.rs](src/proofs/lib_backed/bit_vector.rs), [commitment_set.rs](src/proofs/lib_backed/commitment_set.rs)) and should be disclosed alongside any timing comparison.
+
+### Running each implementation exactly
+
+Without the `lib-proofs` feature, only the hand-rolled proofs are even compiled — there is no possibility of accidentally exercising the library-backed path.
+
+#### Hand-rolled only (default, paper-faithful)
+
+```bash
+# Tests for every hand-rolled proof + the full protocol (DKG, ballots, tally)
+cargo test
+
+# Hand-rolled proof primitives, all six types
+cargo bench --bench proof_primitives
+
+# Hand-rolled proof in any election bench
+cargo bench --bench election_n256
+```
+
+The protocol's call sites in [src/election/ballot.rs](src/election/ballot.rs), [src/elgamal/decrypt.rs](src/elgamal/decrypt.rs), [src/dkg/protocol.rs](src/dkg/protocol.rs), and [src/election/setup.rs](src/election/setup.rs) all import from `crate::proofs::*` (hand-rolled) directly, so every full-election test and every election bench exercises the hand-rolled path — even when the `lib-proofs` feature is on.
+
+#### Library-backed only
+
+```bash
+# Run only the lib-backed unit tests (22 tests, one module per proof)
+cargo test --features lib-proofs proofs::lib_backed
+
+# Or one specific lib-backed proof:
+cargo test --features lib-proofs proofs::lib_backed::dleq
+cargo test --features lib-proofs proofs::lib_backed::commitment_set
+
+# Skip-run any lib-backed test from outside, e.g.:
+cargo test --features lib-proofs --lib proofs::lib_backed::bit_vector::tests::large_k
+```
+
+#### Hand-rolled vs library-backed (side-by-side)
+
+```bash
+cargo bench --bench proof_primitives_lib --features lib-proofs
+```
+
+Each Criterion group runs four cases per proof type: `prove/handrolled`, `prove/lib`, `verify/handrolled`, `verify/lib`. Groups available: `rep_compare`, `dleq_compare`, `encval_compare`, `serval_compare`, `bitvec_compare`, `set_compare`.
+
+Filter to a single proof:
+
+```bash
+cargo bench --bench proof_primitives_lib --features lib-proofs -- 'dleq_compare'
+cargo bench --bench proof_primitives_lib --features lib-proofs -- 'set_compare'
+```
 
 ## References
 
