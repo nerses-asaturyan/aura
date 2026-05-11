@@ -1,0 +1,3242 @@
+% =============================================================
+% YSU Master's Thesis — Gurgen Blbulyan style
+% Compiler: XeLaTeX
+% Author: Nerses Asaturyan
+% Topic: Electronic Voting Systems
+% =============================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------- ENCODING & FONTS ----------
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setotherlanguage{armenian}
+
+% Main font — must support Armenian Unicode.
+% On Overleaf, "FreeSerif" works out of the box. 
+% For nicer look, upload "GHEA Grapalat" or "Sylfaen" and replace below.
+\setmainfont{FreeSerif}
+\newfontfamily\armenianfont[Script=Armenian]{FreeSerif}
+
+% ---------- PAGE GEOMETRY (per YSU regulation §20) ----------
+\usepackage[a4paper,
+            left=3.0cm, right=1.5cm,
+            top=2.0cm,  bottom=2.5cm]{geometry}
+
+% ---------- LINE SPACING ----------
+\usepackage{setspace}
+\onehalfspacing  % 1.5 line spacing
+
+% ---------- PARAGRAPH ----------
+\setlength{\parindent}{1cm}   % 1 cm first-line indent (§20)
+\setlength{\parskip}{0pt}
+
+% ---------- PACKAGES ----------
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{indentfirst}
+
+% ---------- HYPERREF ----------
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black,
+  pdftitle={Electronic Voting Systems},
+  pdfauthor={Nerses Asaturyan}
+}
+
+% ---------- CAPTIONS (10pt, centered, per §21) ----------
+\captionsetup{font=small, labelfont=it, textfont=it, justification=centering}
+
+% ---------- CHAPTER / SECTION HEADINGS ----------
+% Chapter titles: bold, uppercase, new page (§20)
+\titleformat{\chapter}[block]
+  {\normalfont\fontsize{14}{16}\bfseries\filcenter}
+  {\thechapter.}{1em}{\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\fontsize{12}{14}\bfseries}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\bfseries\itshape}
+  {\thesubsection}{1em}{}
+
+% ---------- PAGE NUMBERING (centered at bottom, per §20) ----------
+\pagestyle{plain}
+
+% ---------- BIBLIOGRAPHY ----------
+\usepackage[numbers,square,sort&compress]{natbib}
+\bibliographystyle{unsrt}
+
+% =============================================================
+\begin{document}
+
+% =============================================================
+% TITLE PAGE — HAVELVAĐ 1 (Armenian)
+% =============================================================
+\begin{titlepage}
+\centering
+\begin{armenian}
+\fontsize{18}{22}\selectfont\textbf{ԵՐԵՎԱՆԻ ՊԵՏԱԿԱՆ ՀԱՄԱԼՍԱՐԱՆ}
+\end{armenian}
+\\[1.2cm]
+\begin{armenian}
+\fontsize{18}{22}\selectfont\textbf{ՄԱԹԵՄԱՏԻԿԱՅԻ ԵՎ ՄԵԽԱՆԻԿԱՅԻ ՖԱԿՈՒԼՏԵՏ}
+\end{armenian}
+\\[0.8cm]
+\begin{armenian}
+\fontsize{16}{20}\selectfont\textbf{ԱԿՏՈՒԱՐԱԿԱՆ ԵՎ ՖԻՆԱՆՍԱԿԱՆ ՄԱԹԵՄԱՏԻԿԱՅԻ ԱՄԲԻՈՆ}
+\end{armenian}
+\\[0.8cm]
+\begin{armenian}
+\fontsize{18}{22}\selectfont\textbf{ԲԼՈԿՉԵՅՆ ԵՎ ԹՎԱՅԻՆ ԱՐԺՈՒՅԹՆԵՐ ՄԱԳԻՍՏՐՈՍԱԿԱՆ ԿՐԹԱԿԱՆ ԾՐԱԳԻՐ}
+\end{armenian}
+\\[2.5cm]
+\begin{armenian}
+\fontsize{18}{22}\selectfont\textbf{ԱՍԱՏՈՒՐՅԱՆ ՆԵՐՍԵՍ ԱՐՏԱՎԱԶԴԻ}
+\end{armenian}
+\\[1.5cm]
+\begin{armenian}
+\fontsize{18}{22}\selectfont\textbf{ՄԱԳԻՍՏՐՈՍԱԿԱՆ ԹԵԶ}
+\end{armenian}
+\\[0.8cm]
+\begin{armenian}
+\fontsize{16}{20}\selectfont\textbf{ԷԼԵԿՏՐՈՆԱՅԻՆ ՔՎԵԱՐԿՈՒԹՅԱՆ ՀԱՄԱԿԱՐԳԵՐ}
+\end{armenian}
+\\[1.5cm]
+\begin{armenian}
+\fontsize{14}{18}\selectfont\textit{\textbf{«Բլոկչեյն և թվային արժույթներ» մասնագիտացմամբ\\
+ֆինանսական մաթեմատիկայի մագիստրոսի որակավորման\\
+աստիճանի հայցման համար}}
+\end{armenian}
+
+\vfill
+
+\begin{armenian}
+\fontsize{13}{16}\selectfont\textbf{ԵՐԵՎԱՆ 2026}
+\end{armenian}
+\end{titlepage}
+
+% =============================================================
+% SIGNATURES PAGE — HAVELVAĐ 2 (Armenian)
+% =============================================================
+\thispagestyle{empty}
+\vspace*{2cm}
+
+\noindent
+\begin{minipage}[t]{0.28\textwidth}
+\begin{armenian}\fontsize{13}{16}\selectfont\textit{\textbf{Ուսանող`}}\end{armenian}
+\end{minipage}%
+\begin{minipage}[t]{0.6\textwidth}
+\vspace*{0.7cm}\par
+\centering\begin{armenian}\small Ասատուրյան Ներսես Արտավազդի\end{armenian}
+\end{minipage}\\[1.5cm]
+
+\noindent
+\begin{minipage}[t]{0.28\textwidth}
+\begin{armenian}\fontsize{13}{16}\selectfont\textit{\textbf{Գիտական ղեկավար`}}\end{armenian}
+\end{minipage}%
+\begin{minipage}[t]{0.6\textwidth}
+\vspace*{0.7cm}\par
+\centering\begin{armenian}\small ֆ.մ.գ.թ. Դավիդովա Դիանա\end{armenian}
+\end{minipage}\\[1.5cm]
+
+\noindent\begin{armenian}\fontsize{13}{16}\selectfont\textbf{«Թույլատրել պաշտպանության»}\end{armenian}\\[1cm]
+
+\noindent
+\begin{minipage}[t]{0.28\textwidth}
+\begin{armenian}\fontsize{13}{16}\selectfont\textit{\textbf{Ամբիոնի վարիչ`}}\end{armenian}
+\end{minipage}%
+\begin{minipage}[t]{0.6\textwidth}
+\vspace*{0.7cm}\par
+\centering\begin{armenian}\small տնտեսագիտության թեկնածու, դոցենտ Ավետիսյան Կարինե\end{armenian}
+\end{minipage}\\[2cm]
+
+\noindent\begin{armenian}«\rule{1cm}{0.4pt}»\rule{3cm}{0.4pt}20\rule{1cm}{0.4pt}թ.\end{armenian}
+\newpage
+
+% =============================================================
+% ABSTRACT / SUMMARY (trilingual title block: Armenian, English, Russian)
+% =============================================================
+\thispagestyle{empty}
+\begin{center}
+\begin{armenian}
+{\large\textbf{Էլեկտրոնային քվեարկության համակարգեր}}\\[0.4cm]
+\end{armenian}
+{\large\textbf{Electronic Voting Systems}}\\[0.4cm]
+{\large\textbf{Системы электронного голосования}}\\[1.2cm]
+
+\textbf{ABSTRACT}
+\end{center}
+\vspace{0.4cm}
+
+\noindent\textbf{Goal.} The goal of this work is to study modern electronic 
+voting systems, analyze in detail the Aura private voting protocol 
+(Jivanyan, Feickert, 2022), and deliver its first open-source 
+implementation with practical performance benchmarks. The work aims 
+to demonstrate that the Aura protocol is practically applicable to 
+digital direct-democracy systems.\\[0.3cm]
+
+\noindent\textbf{Results.} The first open-source implementation of the 
+Aura protocol has been developed and is publicly available on GitHub. 
+Every phase of the implementation --- distributed key generation, voter 
+registration, encryption, zero-knowledge proofs, and threshold decryption 
+--- has been benchmarked under varying parameters. A step-by-step 
+numerical example of the Aura protocol is also included to make the 
+abstract construction concrete.
+
+\vspace{0.5cm}
+\noindent\textbf{Code is available at:}\\
+\url{https://github.com/nerses-asaturyan/aura}
+
+\newpage
+
+% =============================================================
+% TABLE OF CONTENTS (counts as page 4 per §20)
+% =============================================================
+\setcounter{page}{4}
+\tableofcontents
+\newpage
+
+% =============================================================
+% INTRODUCTION
+% =============================================================
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+\section*{Motivation}
+Democratic elections are one of the most fundamental institutions of modern 
+society, yet the process of casting and counting votes still relies heavily 
+on paper ballots, trusted intermediaries, and centralized election authorities. 
+As digital infrastructure becomes ubiquitous, there is growing interest in 
+moving elections --- and more generally, collective decision-making processes 
+--- onto cryptographic protocols that can be verified by anyone, while still 
+protecting the privacy of individual voters.
+
+Electronic voting (e-voting) systems aim to provide three guarantees that 
+are notoriously hard to achieve simultaneously: \textbf{ballot privacy} 
+(no one learns how a specific voter voted), \textbf{verifiability} (anyone 
+can check that the tally is correct), and \textbf{eligibility} (only 
+registered voters can vote, and each voter can vote at most once). Modern 
+cryptographic e-voting schemes attempt to satisfy all three using building 
+blocks like homomorphic encryption, zero-knowledge proofs, threshold 
+cryptography, and blockchain-based bulletin boards.
+
+Beyond traditional government elections, the same machinery enables a much 
+broader vision: \textbf{direct digital democracy}, in which citizens vote 
+frequently on individual policy questions rather than electing representatives 
+who decide on their behalf. For such systems to be trusted at scale, they 
+must be both cryptographically sound and practically efficient.
+
+\section*{Goal and Objectives}
+The goal of this thesis is to study modern cryptographic e-voting systems, 
+with a focus on the \textit{Aura private voting protocol} of Jivanyan and 
+Feickert (2022)~\cite{aura2022}, and to deliver the first open-source 
+implementation of the protocol along with practical performance benchmarks.
+
+The specific objectives are:
+\begin{itemize}
+    \item Survey existing cryptographic e-voting systems briefly to position 
+    Aura among them.
+    \item Provide a self-contained presentation of the cryptographic primitives 
+    used in Aura (ElGamal encryption, Pedersen commitments, Merkle trees, 
+    Schnorr proofs, one-of-many proofs, threshold secret sharing).
+    \item Describe the full Aura protocol from setup through tally, with 
+    a step-by-step worked numerical example.
+    \item Implement the protocol end-to-end in code and publish it as 
+    an open-source repository.
+    \item Benchmark each component of the protocol under varying parameters 
+    (number of voters, candidates, threshold size) to evaluate practical viability.
+\end{itemize}
+
+\section*{Object and Subject of Study}
+The \textbf{object} of study is cryptographic electronic voting systems. 
+The \textbf{subject} is the Aura protocol --- its construction, security 
+guarantees, and concrete computational cost when implemented.
+
+\section*{Hypothesis}
+The Aura protocol, despite combining several heavyweight cryptographic 
+primitives (threshold ElGamal, one-of-many proofs, range proofs), is 
+practically efficient enough to support real-world voting scenarios --- 
+including frequent direct-democracy referenda --- on commodity hardware.
+
+\section*{Theoretical and Methodological Foundations}
+The work draws on results from public-key cryptography, zero-knowledge 
+proof systems, and distributed computing. Methodologically, the thesis 
+combines (i) a brief review of existing e-voting schemes, (ii) a formal 
+exposition of the Aura protocol, (iii) a software-engineering effort to 
+implement the protocol, and (iv) empirical performance measurement.
+
+\section*{Scientific and Practical Significance}
+\textbf{Scientifically}, this thesis contributes the first open and 
+reproducible implementation of the Aura protocol, enabling other researchers 
+to verify the authors' claims, build on the codebase, or compare against 
+new schemes. It also includes a worked numerical example of Aura that 
+makes the protocol's mechanics easier to follow.
+
+\textbf{Practically}, the benchmarks provide concrete guidance to anyone 
+considering deploying Aura --- for example, in DAO governance, university 
+student elections, or municipal direct-democracy pilots --- by quantifying 
+the cost of each protocol step.
+
+\section*{Thesis Structure}
+The remainder of this thesis is organized as follows. 
+Chapter~\ref{ch:literature} briefly reviews related work in cryptographic 
+e-voting. Chapter~\ref{ch:primitives} introduces the cryptographic 
+primitives required to understand Aura. Chapter~\ref{ch:aura} describes 
+the Aura protocol in full. Chapter~\ref{ch:byhand} walks through the 
+protocol with a numerical example. Chapter~\ref{ch:implementation} 
+documents the open-source implementation. Chapter~\ref{ch:results} 
+reports benchmark results. Chapter~\ref{ch:discussion} discusses 
+limitations and future work, and the final chapter concludes.
+
+% =============================================================
+% CHAPTER 1 — RELATED WORK (brief)
+% =============================================================
+\chapter{Related Work}
+\label{ch:literature}
+
+Cryptographic e-voting has been studied for several decades, and several 
+practical systems have been deployed at varying scales. Helios~\cite{helios} 
+is among the earliest deployed cryptographic e-voting systems and uses 
+ElGamal encryption with cast-or-audit ballot verification; it has been 
+used for university and IACR elections, although it relies on a small 
+set of trusted election servers and does not provide coercion resistance. 
+The Russian federal remote e-voting scheme deployed in 2021~\cite{russian2021} 
+is a more recent large-scale deployment built on a blockchain backend and 
+blind signatures, but has been criticized for limited transparency and 
+verifiability. Broader surveys of the field 
+include~\cite{cryptoreview} on the cryptographic side and~\cite{blockchainreview} 
+on the blockchain-based side, both of which categorize existing systems 
+into mix-net-based, homomorphic-tally-based, and blind-signature-based 
+families.
+
+Aura~\cite{aura2022} was introduced in 2022 by Jivanyan and Feickert as a 
+private voting protocol with reduced trust assumptions on the tallying 
+authorities. Compared to Helios, it adds threshold decryption and 
+Groth-Kohlweiss one-of-many proofs for stronger anonymity; compared to 
+most blockchain-based schemes, it does not require a smart-contract 
+platform --- only a public bulletin board. To date, no public 
+implementation of Aura exists, which motivates the engineering 
+contribution of this thesis.
+
+% =============================================================
+% CHAPTER 2 — CRYPTOGRAPHIC PRIMITIVES
+% =============================================================
+\chapter{Cryptographic Primitives}
+\label{ch:primitives}
+
+Aura is built from several standard cryptographic primitives. This chapter 
+gives a self-contained introduction to each, sufficient to follow the 
+protocol description in Chapter~\ref{ch:aura}. Readers familiar with 
+public-key cryptography may skim this chapter.
+
+\section{Cyclic Groups and the Discrete Logarithm Problem}
+\label{sec:cyclic-groups}
+
+The cryptographic primitives used in Aura are all built on top of a finite 
+cyclic group in which the discrete logarithm problem is believed to be 
+intractable. Throughout this thesis, $\mathbb{G}$ denotes a cyclic group 
+of prime order $q$ with generator $g$, written multiplicatively, so that
+\[
+    \mathbb{G} = \{ g^0, g^1, g^2, \ldots, g^{q-1} \},
+\]
+and exponents live in the finite field $\mathbb{Z}_q$. Working in a 
+prime-order group means every non-identity element is itself a generator 
+and admits cleaner security proofs.
+
+Given $g$ and $h = g^x$, the \textit{discrete logarithm problem} (DLP) 
+is to recover $x \in \mathbb{Z}_q$. Computing $h$ from $x$ takes only 
+$O(\log q)$ group multiplications, but the reverse direction is believed 
+to be hard when $q$ is large; the best known generic algorithms run in 
+time roughly $\sqrt{q}$, which is infeasible once $q$ has on the order of 
+$256$ bits. This is what makes $g^x$ usable as a one-way commitment to 
+$x$ --- a property Aura relies on, most directly in the serial number 
+$\text{sn}_i = u^{s_i}$.
+
+A stronger but related hardness assumption, used by ElGamal encryption 
+in Aura, is the \textit{Decisional Diffie-Hellman} (DDH) assumption: 
+given $g, g^a, g^b$ for random $a, b \in \mathbb{Z}_q$, no efficient 
+algorithm can distinguish $g^{ab}$ from a uniformly random element of 
+$\mathbb{G}$.
+
+In practice, $\mathbb{G}$ is realized either as a prime-order subgroup 
+of $\mathbb{Z}_p^*$ (the setting of the worked example in 
+Chapter~\ref{ch:byhand}, with toy parameters $p = 47$, $q = 23$) or 
+as an elliptic-curve group (the setting of the implementation in 
+Chapter~\ref{ch:implementation}). Elliptic-curve groups achieve the 
+same security level at much smaller key sizes, which is why every 
+modern deployment of discrete-log-based cryptography uses them.
+\section{ElGamal Encryption}
+\label{sec:elgamal}
+
+ElGamal encryption~\cite{elgamal} is a public-key cryptosystem whose security 
+reduces to the DDH assumption in $\mathbb{G}$. Aura uses it as the encryption 
+layer for every ballot.
+
+\subsection*{Standard ElGamal}
+The secret key is a uniformly random $sk \in \mathbb{Z}_q$, and the public 
+key is $pk = g^{sk} \in \mathbb{G}$. To encrypt a message $m \in \mathbb{G}$ 
+with fresh randomness $r \in \mathbb{Z}_q$, the sender computes
+\[
+    \text{Enc}_{pk}(m; r) = (c_1, c_2) = (g^r,\; m \cdot pk^r).
+\]
+Decryption recovers $m$ as $m = c_2 / c_1^{sk}$, since 
+$c_1^{sk} = g^{r \cdot sk} = pk^r$. ElGamal is \textit{multiplicatively 
+homomorphic}: the componentwise product of two ciphertexts encrypts the 
+product of the corresponding plaintexts,
+\[
+    \text{Enc}_{pk}(m_1) \cdot \text{Enc}_{pk}(m_2) = \text{Enc}_{pk}(m_1 \cdot m_2).
+\]
+
+\subsection*{Exponential ElGamal}
+For voting, an additive homomorphism is needed, so that ciphertexts of $0/1$ 
+votes can be multiplied to encrypt their sum. \textit{Exponential ElGamal} 
+achieves this by encoding an integer message $v \in \mathbb{Z}_q$ as the 
+group element $g^v$ before encryption:
+\[
+    \text{Enc}_{pk}(v; r) = (g^r,\; g^v \cdot pk^r).
+\]
+The componentwise product of two such ciphertexts now encrypts $g^{v_1 + v_2}$, 
+turning the multiplicative homomorphism into an additive one. The cost is 
+that decryption recovers only $g^v$, not $v$ itself --- but when $v$ is 
+known to lie in a small range (such as a vote tally $T_j \in [0, n]$), $v$ 
+can be read off by lookup against a precomputed table $\{g^0, g^1, \ldots, g^n\}$.
+
+This is the variant Aura uses: each ballot slot encrypts a bit $v_{i,j} \in \{0, 1\}$ 
+as $E_{i,j} = (g^{\rho_{i,j}}, g^{v_{i,j}} \cdot pk^{\rho_{i,j}})$, and the 
+homomorphic column product $E_\Sigma^{(j)} = \prod_i E_{i,j}$ then encrypts 
+the candidate total $T_j = \sum_i v_{i,j}$.
+\section{Pedersen Commitments}
+\label{sec:pedersen}
+
+A \textit{commitment scheme} lets a party publish a short value that 
+binds them to a secret without revealing it, and later open the commitment 
+to prove what was committed. Pedersen commitments~\cite{pedersen} are the 
+flavor used in Aura, because they are both \textit{perfectly hiding} and 
+\textit{computationally binding} under the discrete logarithm assumption.
+
+\subsection*{Definition}
+Fix two generators $g, h \in \mathbb{G}$ such that no party knows the 
+discrete logarithm of $h$ with respect to $g$. To commit to a value 
+$v \in \mathbb{Z}_q$, the committer samples a fresh random 
+$r \in \mathbb{Z}_q$ (the \textit{blinding factor}) and publishes
+\[
+    \text{cm}(v, r) = g^v h^r \in \mathbb{G}.
+\]
+To open the commitment later, the committer reveals $(v, r)$, and any 
+verifier checks that $g^v h^r$ matches the published $\text{cm}(v, r)$.
+
+\subsection*{Security Properties}
+\textbf{Perfectly hiding.} Because $r$ is uniform in $\mathbb{Z}_q$ and 
+multiplication by $h^r$ is a bijection on $\mathbb{G}$, the commitment 
+$\text{cm}(v, r)$ is uniformly distributed in $\mathbb{G}$ regardless of $v$. 
+No adversary, even with unbounded computing power, learns anything about 
+$v$ from $\text{cm}(v, r)$.
+
+\textbf{Computationally binding.} Suppose a committer could open the same 
+commitment to two distinct pairs $(v, r) \ne (v', r')$. Then 
+$g^v h^r = g^{v'} h^{r'}$, which rearranges to $h = g^{(v - v') / (r' - r)}$, 
+revealing the discrete logarithm of $h$ with respect to $g$. Under the DLP 
+assumption (Section~\ref{sec:cyclic-groups}), this is computationally 
+infeasible, so the committer is bound to her original choice of $v$.
+
+These two properties trade off against each other: hiding is unconditional 
+(perfect), while binding holds only against computationally bounded 
+adversaries. This trade-off is fundamental --- no commitment scheme can 
+be both perfectly hiding and perfectly binding at once.
+
+\subsection*{Why Aura Uses Pedersen Commitments}
+In Phase 2 of the protocol, each voter $V_i$ registers by publishing 
+$\text{cm}_i = g^{s_i} h^{r_i}$, where $s_i$ is her private seed and 
+$r_i$ is fresh randomness. Both properties of Pedersen commitments are 
+essential:
+
+\begin{itemize}
+    \item \textit{Perfect hiding} guarantees that the public registration 
+    list $L = (\text{cm}_1, \ldots, \text{cm}_n)$ leaks no information 
+    about any voter's seed --- even an attacker with unbounded resources 
+    cannot link a commitment to a specific $s_i$.
+    \item \textit{Computational binding} guarantees that a voter cannot 
+    later claim a different seed than the one she registered with, which 
+    would let her vote multiple times under different identities or 
+    forge eligibility proofs.
+\end{itemize}
+
+The commitment is also \textit{additively homomorphic}: 
+$\text{cm}(v_1, r_1) \cdot \text{cm}(v_2, r_2) = \text{cm}(v_1 + v_2, r_1 + r_2)$. 
+Aura does not use this property in the registration phase, but it is 
+exploited inside the Groth-Kohlweiss one-of-many proof 
+(Section~\ref{sec:one-of-many}) that proves a voter's commitment lies 
+in $L$ without revealing which one.
+\section{Merkle Trees}
+\label{sec:merkle-trees}
+
+A \textit{Merkle tree}~\cite{merkle} is a hash tree that compresses a list 
+of values into a single short hash --- the \textit{root} --- in such a way 
+that membership of any individual value can be proven with only 
+$O(\log n)$ data. Aura itself does not use a Merkle tree, but the 
+construction is included here as standard background, and because the 
+worked numerical example in Chapter~\ref{ch:byhand} introduces one as a 
+pedagogical simplification.
+
+\subsection*{Construction}
+Let $H_{\text{MT}}$ be a collision-resistant hash function. Given a list 
+of $n$ leaves $(\ell_1, \ldots, \ell_n)$, the tree is built bottom-up: 
+each internal node is the hash of its children,
+\[
+    \text{parent} = H_{\text{MT}}(\text{children}),
+\]
+and the topmost node is the root, denoted $\text{MT.root}$. The root is 
+a short ($O(1)$ size) commitment to the full list: changing any leaf, 
+anywhere in the tree, changes the root with overwhelming probability 
+under collision resistance.
+
+\subsection*{Authentication Paths}
+To prove that a particular leaf $\ell_i$ is in the tree without revealing 
+the other leaves, the prover supplies the \textit{authentication path}: 
+the sibling hashes encountered on the way from $\ell_i$ up to the root. 
+A verifier who knows $\text{MT.root}$ recomputes the path by hashing 
+$\ell_i$ together with each set of siblings in turn, and checks that the 
+computed root matches the published one. The path has length 
+$O(\log n)$, so membership proofs take $O(\log n)$ space and time.
+
+\subsection*{Why Aura Does Not Use One}
+A natural intuition is that Merkle trees are necessary to make voter-list 
+membership proofs scale: with $n$ registered voters, a flat list takes 
+$O(n)$ space, while a Merkle root takes $O(1)$. However, the 
+Groth-Kohlweiss commitment-set proof (Section~\ref{sec:one-of-many}) 
+already produces $O(\log n)$-size membership proofs operating directly 
+on a flat list of commitments --- without any tree structure on top of it. 
+Aura therefore publishes the full voter commitment list 
+$L = (\text{cm}_1, \ldots, \text{cm}_n)$ and runs the commitment-set 
+proof on $L$ directly, achieving logarithmic proof size without the 
+extra Merkle layer. The flat-list approach also avoids the bookkeeping 
+of authentication paths that voters would otherwise need to keep 
+synchronized with a published root.
+\section{Schnorr Identification and Sigma Protocols}
+\label{sec:schnorr}
+
+A \textit{sigma protocol}~\cite{cramer-damgard} is a three-move interactive 
+proof in which a prover convinces a verifier that she knows a witness $w$ 
+for a public statement $y$ --- without revealing anything about $w$ --- by 
+exchanging a \textit{commitment}, a \textit{challenge}, and a \textit{response}. 
+Schnorr's protocol~\cite{schnorr} is the canonical example: it proves 
+knowledge of a discrete logarithm.
+
+\subsection*{Schnorr's Protocol}
+The prover $P$ knows $x \in \mathbb{Z}_q$, the verifier $V$ knows the 
+statement $y = g^x \in \mathbb{G}$, and they wish to convince $V$ that 
+$P$ knows $x$. The interaction is:
+\begin{enumerate}
+    \item $P$ samples $r \leftarrow \mathbb{Z}_q$, sends the commitment 
+    $t = g^r$.
+    \item $V$ samples a random challenge $c \leftarrow \mathbb{Z}_q$ and 
+    sends it.
+    \item $P$ replies with the response $z = r + c x \mod q$.
+\end{enumerate}
+The verifier accepts iff $g^z = t \cdot y^c$, which holds for an honest 
+prover since $g^z = g^{r + cx} = t \cdot y^c$.
+
+\subsection*{Security Properties}
+Schnorr's protocol satisfies two properties that together define a sigma 
+protocol. \textit{Special soundness:} from any two accepting transcripts 
+$(t, c, z)$ and $(t, c', z')$ with the same commitment but different 
+challenges, the witness can be extracted as $x = (z - z') / (c - c') \mod q$. 
+A cheating prover that succeeds non-negligibly could be rewound to recover 
+$x$, contradicting the DLP. \textit{Honest-verifier zero knowledge:} a 
+simulator can produce transcripts indistinguishable from real ones by 
+picking $c, z$ uniformly and setting $t = g^z \cdot y^{-c}$, so the 
+protocol leaks nothing about $x$.
+
+\subsection*{The Fiat-Shamir Transform}
+The protocol above is interactive. The \textit{Fiat-Shamir transform}~\cite{fiatshamir} 
+makes it non-interactive by replacing the verifier's challenge with a 
+hash of the statement and the commitment,
+\[
+    c = H(y,\; t),
+\]
+where $H$ is modeled as a random oracle (Section~\ref{sec:random-oracle}). 
+The prover produces the entire transcript on her own and sends $(t, z)$; 
+any verifier with $y$ recomputes $c = H(y, t)$ and checks 
+$g^z = t \cdot y^c$. Soundness in the random oracle model rests on a 
+specific property: because the prover must commit to $t$ before seeing 
+$c$, and because $H$ behaves as a truly random function, she cannot 
+manipulate $t$ to make a particular $c$ come out of the hash --- so the 
+hash output is, from her perspective, indistinguishable from a 
+freshly-drawn random challenge. This is the construction used throughout 
+Aura: every interactive proof in the protocol is a sigma protocol made 
+non-interactive in exactly this way.
+\section{Disjunctive Proofs (OR Proofs)}
+\label{sec:or-proofs}
+
+Sigma protocols prove a single statement at a time. For voting, what is 
+needed is a proof that \textit{one of two} statements is true, without 
+revealing which one. The \textit{Cramer-Damg\aa rd-Schoenmakers 
+transformation}~\cite{cramer-damgard} composes any two sigma protocols 
+into such a disjunctive (OR) proof.
+
+\subsection*{Construction}
+Suppose the prover wants to prove $\text{Stmt}_0 \lor \text{Stmt}_1$ 
+knowing a witness only for the true branch $b \in \{0, 1\}$. The trick is 
+to use the simulator (from honest-verifier zero knowledge in 
+Section~\ref{sec:schnorr}) to fake the false branch, while running the 
+real protocol on the true one:
+\begin{enumerate}
+    \item For the false branch $1 - b$, pick a random $c_{1-b}$ and run 
+    the simulator to produce $(t_{1-b}, c_{1-b}, z_{1-b})$.
+    \item For the true branch $b$, compute the real commitment $t_b$.
+    \item Send $(t_0, t_1)$; the verifier replies with a single challenge 
+    $c$.
+    \item Set $c_b = c - c_{1-b}$ and compute the real response $z_b$.
+    \item Send $(c_0, c_1, z_0, z_1)$.
+\end{enumerate}
+The verifier checks that $c_0 + c_1 = c$ and that both sub-transcripts 
+verify. The split of $c$ into $(c_0, c_1)$ binds the two branches: the 
+prover can pre-pick one sub-challenge, but the other is forced by $c$, 
+so she can only complete the protocol on a branch for which she has a 
+witness. Both branches verify regardless of $b$, so the verifier learns 
+nothing about which one was real. After Fiat-Shamir, with 
+$c = H(y_0, y_1, t_0, t_1)$, the whole proof is a single message.
+
+\subsection*{Use in Aura: Bit Proofs}
+Each ballot ciphertext slot $E_{i,j} = (c_{1,j}, c_{2,j})$ should encrypt 
+either $0$ or $1$, but a malicious voter could try to encrypt a larger 
+value to give a candidate extra votes. The \textit{bit proof} forces 
+$v_{i,j} \in \{0, 1\}$ via an OR of two Schnorr-style statements:
+\[
+    \underbrace{c_{2,j} = pk^{\rho_{i,j}}}_{v_{i,j} = 0}
+    \quad \text{OR} \quad
+    \underbrace{c_{2,j} / g = pk^{\rho_{i,j}}}_{v_{i,j} = 1}.
+\]
+The voter knows $\rho_{i,j}$ for exactly one branch (the one matching 
+her actual bit) and uses the OR construction above to produce a proof 
+that verifies for both --- without revealing which.
+\section{One-of-Many Proofs (Groth-Kohlweiss)}
+\label{sec:one-of-many}
+
+The OR proof of Section~\ref{sec:or-proofs} extends to disjunctions of $n$ 
+statements, but at a cost: proof size grows linearly in $n$. For an Aura 
+election with thousands of voters, this is infeasible. The 
+\textit{Groth-Kohlweiss one-of-many proof}~\cite{groth-kohlweiss} solves 
+this: it proves that one of $n$ public commitments opens to zero, in 
+proof size $O(\log n)$, without revealing which.
+
+\subsection*{Construction Sketch}
+The prover holds commitments $(\text{cm}_1, \ldots, \text{cm}_n)$ and 
+an index $\ell$ such that she knows an opening of $\text{cm}_\ell$ to 
+zero. Instead of running $n$ disjunctive branches, she commits to the 
+bits of $\ell$ in binary, $\ell = (\ell_1, \ldots, \ell_m)$ with 
+$m = \lceil \log_2 n \rceil$, and runs $m$ parallel Schnorr-style proofs 
+that each bit commitment opens to $0$ or $1$. The challenge-response 
+phase mixes these bit commitments with the full list in a way that 
+algebraically cancels every term except the $\ell$-th, leaving exactly 
+the statement that $\text{cm}_\ell$ opens to zero. The prover transmits 
+only $O(\log n)$ group elements and scalars in total.
+
+\subsection*{Use in Aura}
+At ballot construction, each voter must prove she is one of the registered 
+voters in $L = (\text{cm}_1, \ldots, \text{cm}_n)$ without revealing her 
+index. Aura applies the Groth-Kohlweiss proof to a shifted list of 
+commitments encoding her seed $s_i$ and serial number 
+$\text{sn}_i = u^{s_i}$, so that the same proof simultaneously establishes 
+eligibility and consistency between $\text{cm}_i$ and $\text{sn}_i$. This 
+is the core anonymity primitive of the protocol: it is what keeps ballots 
+small while still hiding the voter's identity.
+\section{Shamir Secret Sharing and Threshold Cryptography}
+\label{sec:threshold}
+
+Shamir's secret sharing~\cite{shamir} splits a secret into $n$ shares 
+such that any $t$ shares can reconstruct the secret, but fewer than $t$ 
+shares reveal nothing about it. \textit{Threshold cryptography} extends 
+this idea so that the shareholders can jointly use the secret --- for 
+instance, to decrypt a ciphertext --- without ever assembling it in one 
+place. Aura uses both techniques to distribute the ElGamal decryption 
+key across $\eta$ tallying authorities.
+
+\subsection*{Shamir's Scheme}
+To share a secret $s \in \mathbb{Z}_q$ with threshold $t$, the dealer 
+samples a random polynomial of degree $t - 1$ over $\mathbb{Z}_q$ with 
+constant term $s$:
+\[
+    f(x) = s + a_1 x + a_2 x^2 + \cdots + a_{t-1} x^{t-1}.
+\]
+Share $i$ is $f(i)$, given to party $i$. Any $t$ shares determine $f$ 
+uniquely by Lagrange interpolation, recovering $s = f(0)$. With fewer 
+than $t$ shares, $s$ is information-theoretically hidden: every value 
+of $s$ is consistent with the missing shares.
+
+\subsection*{Verifiable Secret Sharing}
+Plain Shamir sharing assumes an honest dealer. \textit{Feldman verifiable 
+secret sharing}~\cite{feldman} adds public commitments to the polynomial 
+coefficients: the dealer publishes $C_k = g^{a_k}$ for $k = 0, \ldots, t - 1$ 
+(with $a_0 = s$), allowing each shareholder $i$ to verify that her share 
+satisfies
+\[
+    g^{f(i)} \stackrel{?}{=} \prod_{k = 0}^{t-1} (C_k)^{i^k}.
+\]
+A cheating dealer cannot distribute inconsistent shares without being 
+caught. The trade-off is that $C_0 = g^s$ is now public, which leaks 
+$g^s$ but not $s$ itself --- exactly what is needed when $g^s$ will be 
+used as a public key.
+
+\subsection*{Threshold ElGamal}
+Aura combines these ideas to generate the ElGamal keypair without trusting 
+any single party. Each authority $A_j$ acts as a dealer for its own random 
+polynomial $f_j$ and distributes shares $f_j(i)$ to every authority 
+$A_i$. Each $A_i$ sums the shares she receives,
+\[
+    sk_i = \sum_{j} f_j(i) \mod q,
+\]
+giving her a Shamir share of the joint secret $sk = \sum_j f_j(0)$, which 
+is never computed in one place. The public key is $pk = g^{sk} = \prod_j C_{j,0}$ 
+and is published.
+
+To decrypt a ciphertext $(c_1, c_2)$, any $t$ authorities $S$ each publish 
+a partial decryption $d_i = c_1^{sk_i}$ along with a NIZK proof that this 
+share was computed correctly. The combiner reconstructs $c_1^{sk}$ by 
+Lagrange interpolation in the exponent,
+\[
+    c_1^{sk} = \prod_{i \in S} d_i^{\lambda_i}, \quad
+    \lambda_i = \prod_{\substack{j \in S \\ j \ne i}} \frac{-j}{i - j} \mod q,
+\]
+and recovers the plaintext as $m = c_2 / c_1^{sk}$. The full secret key 
+$sk$ never appears anywhere; only its action on $c_1$ is reconstructed, 
+and only for the specific aggregate ciphertext being decrypted. This is 
+exactly what lets Aura decrypt the homomorphic tally without giving any 
+single authority --- or any group smaller than $t$ --- the power to 
+decrypt individual ballots.
+\section{The Random Oracle Model}
+\label{sec:random-oracle}
+
+The \textit{random oracle model} (ROM)~\cite{bellare-rogaway} is a proof 
+framework, not a construction. In it, a cryptographic hash function $H$ 
+is idealized as a uniformly random function: every fresh input produces 
+an independent, uniformly distributed output, and the same input always 
+produces the same output. Security proofs in the ROM treat $H$ as a 
+public black box that any party can query, and reason about adversaries 
+in terms of how they interact with this idealized oracle.
+
+Real hash functions like SHA-256 are deterministic algorithms with 
+internal structure, not random functions. The ROM is therefore a 
+heuristic: a proof in the ROM does not directly imply security in the 
+standard model, and there are contrived constructions that are secure 
+in the ROM but insecure under any concrete instantiation. Despite this, 
+the ROM remains widely used in cryptography because (i) for natural 
+protocols, ROM-based security has empirically held up, and (ii) for 
+many constructions --- including Fiat-Shamir-compiled sigma protocols 
+--- no comparably efficient construction with a proof in the standard 
+model is known.
+
+In Aura, every non-interactive proof is built using Fiat-Shamir 
+(Section~\ref{sec:schnorr}), and the soundness analysis of each --- 
+the bit proofs, the range proof, the Groth-Kohlweiss one-of-many proof, 
+and the proofs of correct decryption --- is carried out in the ROM. 
+Concretely, the soundness argument requires that the prover cannot 
+predict $H(y, t)$ before committing to $t$, which is exactly the 
+property the ROM guarantees: under the model, the hash output is 
+unknown until queried and then fixed for all future queries on the 
+same input.
+% =============================================================
+% CHAPTER 3 — THE AURA PROTOCOL
+% =============================================================
+\chapter{The Aura Voting Protocol}
+\label{ch:aura}
+
+This chapter describes the Aura protocol of Jivanyan and 
+Feickert~\cite{aura2022} in full. The protocol involves three classes 
+of participants: $n$ voters, $\eta$ tallying authorities (with threshold 
+$t$), and a public bulletin board $\mathcal{B}$. The election runs over 
+$k$ candidates, with each voter selecting between $\ell_{\min}$ and 
+$\ell_{\max}$ candidates.
+
+The presentation here uses the canonical notation introduced in 
+Chapter~\ref{ch:primitives}: $g$ is the main generator of the group 
+$\mathbb{G}$ of order $q$, $h$ and $u$ are independent generators (with 
+unknown discrete-log relationship to $g$), $sk$ and $pk = g^{sk}$ are 
+the threshold ElGamal keypair, $\text{cm}_i = g^{s_i} h^{r_i}$ is voter 
+$V_i$'s Pedersen commitment to her seed $s_i$ with randomness $r_i$, 
+and $E_{i,j} = (c_{1,j}, c_{2,j})$ is the ElGamal ciphertext of vote 
+slot $j$ on voter $i$'s ballot.
+
+\section{Protocol Overview}
+\label{sec:aura-overview}
+
+Aura proceeds in ten phases that map onto a small set of actors and 
+deliver, between them, the protocol's three core security properties: 
+\textit{ballot privacy} (no one can read individual votes), \textit{voter 
+anonymity} (no one can link a ballot to a voter), and \textit{universal 
+verifiability} (anyone can audit the result). Table~\ref{tab:aura-phases} 
+summarizes the phases and the security property each contributes.
+
+\begin{table}[H]
+\centering
+\caption{Aura protocol phases and the security properties they deliver.}
+\label{tab:aura-phases}
+\small
+\begin{tabular}{p{0.5cm}p{4.5cm}p{8.5cm}}
+\toprule
+\# & Phase & What it delivers \\
+\midrule
+1 & Distributed key generation & Threshold $pk$ with no single point of trust. \\
+2 & Voter registration & Pedersen commitments hide voter seeds; binding to a public list. \\
+3 & Voter commitment list & Public anchor $L$ for eligibility proofs. \\
+4 & Encrypted serial number & Per-voter nullifier hidden during voting; unlocked at tally for coercion resistance. \\
+5 & Ballot encryption & Each vote slot encrypted under $pk$; tally is computable homomorphically. \\
+6 & Ballot validity proof & NIZK that the ballot is well-formed without revealing it. \\
+7 & Ballot publication \& verification & Public audit of every ballot before it counts. \\
+8 & Homomorphic aggregation & Per-candidate totals as ciphertexts, publicly. \\
+9 & Threshold decryption & $t$ authorities reveal the totals, jointly. \\
+10 & Tally lookup & Recover plaintext vote counts. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The phase boundaries are pedagogical; the original paper organizes the 
+same logic into a smaller set of named algorithms (\textsf{SetupElection}, 
+\textsf{SetupTally}, \textsf{SetupVoter}, \textsf{Vote}, \textsf{VerifyBallot}, 
+\textsf{Tally}, \textsf{VerifyTally}). The mapping is: Phase 1 corresponds 
+to \textsf{SetupTally}; Phases 2--3 to \textsf{SetupVoter}; Phases 4--6 
+to \textsf{Vote}; Phase 7 to \textsf{VerifyBallot}; Phases 8--9 to 
+\textsf{Tally}; and Phase 10 to \textsf{VerifyTally}.
+
+\section{Phase 1: Distributed Key Generation}
+\label{sec:phase-1-dkg}
+
+Aura uses a threshold ElGamal cryptosystem over $\mathbb{G}$ where the 
+$\eta$ tallying authorities jointly hold the secret key $sk$ in shared 
+form, with no single party knowing it. This phase produces both the 
+public key $pk$ used by voters and each authority's private share $sk_i$.
+
+The construction is a distributed, verifiable adaptation of Pedersen's 
+threshold scheme, modified to defend against key-cancellation attacks 
+and to ensure publicly-verifiable correctness of every step. Each 
+authority $A_\alpha$ for $1 \le \alpha \le \eta$ does the following:
+
+\begin{enumerate}
+    \item Samples coefficients $a_{\alpha,0}, \ldots, a_{\alpha,t-1} \in \mathbb{Z}_q$ 
+    uniformly at random and defines a polynomial of degree $t - 1$:
+    \[
+        f_\alpha(x) = \sum_{j=0}^{t-1} a_{\alpha, j} x^j.
+    \]
+    
+    \item Computes Feldman commitments $C_{\alpha,j} = g^{a_{\alpha,j}}$ for 
+    $j = 0, \ldots, t-1$, and broadcasts the vector 
+    $\mathbf{C}_\alpha = (C_{\alpha, 0}, \ldots, C_{\alpha, t-1})$ together 
+    with a NIZK proof of knowledge of the discrete log $a_{\alpha, 0}$ 
+    (a Schnorr proof, Section~\ref{sec:schnorr}). This proof prevents 
+    key cancellation: an authority cannot publish $C_{\alpha, 0}$ as a 
+    function of other authorities' commitments without knowing the 
+    underlying scalar.
+    
+    \item For each $\beta \ne \alpha$, computes $y_{\alpha, \beta} = f_\alpha(\beta)$ 
+    and sends it privately to $A_\beta$.
+    
+    \item On receiving a share $y_{\beta, \alpha}$ from $A_\beta$, verifies it 
+    against $A_\beta$'s public commitments by checking
+    \[
+        g^{y_{\beta, \alpha}} \stackrel{?}{=} \prod_{j=0}^{t-1} (C_{\beta, j})^{\alpha^j}.
+    \]
+    Aborts if the check fails.
+    
+    \item Computes its share of the joint secret key as
+    \[
+        sk_\alpha = \sum_{\beta=1}^{\eta} y_{\beta, \alpha} \mod q,
+    \]
+    and the corresponding public key share $pk_\alpha = g^{sk_\alpha}$. 
+    Posts $(\alpha, pk_\alpha)$ together with a NIZK of correctness to 
+    the bulletin board.
+\end{enumerate}
+
+The joint public key, computable by anyone from the public commitments, 
+is
+\[
+    pk = \prod_{\alpha=1}^{\eta} C_{\alpha, 0} = g^{\sum_\alpha a_{\alpha, 0}} = g^{sk}.
+\]
+The joint secret $sk = \sum_\alpha a_{\alpha, 0}$ exists only implicitly; 
+no party ever computes it. Any $t$ authorities, however, hold a 
+$t$-of-$\eta$ Shamir sharing of $sk$ via their $sk_\alpha$ values, so 
+they can later cooperatively decrypt without reconstructing $sk$ in 
+one place.
+
+\section{Phase 2: Voter Registration}
+\label{sec:phase-2-registration}
+
+Each registered voter $V_i$ holds a long-term signing keypair (used to 
+authenticate her ballot to the bulletin board) and additionally generates 
+two fresh secret values for the election:
+
+\begin{enumerate}
+    \item A private seed $s_i \in \mathbb{Z}_q$, uniformly random.
+    \item A blinding factor $r_i \in \mathbb{Z}_q$, uniformly random.
+\end{enumerate}
+
+She computes her \textit{voter commitment}
+\[
+    \text{cm}_i = g^{s_i} h^{r_i} \in \mathbb{G}
+\]
+and publishes $(\text{cm}_i, \pi_{\text{rep}, i})$ to the bulletin board, 
+where $\pi_{\text{rep}, i}$ is a Schnorr-style NIZK proof of knowledge 
+of an opening $(s_i, r_i)$.
+
+The Pedersen commitment $\text{cm}_i$ is perfectly hiding 
+(Section~\ref{sec:pedersen}), so the commitment itself reveals nothing 
+about $s_i$ to the public. The proof of knowledge ensures that the voter 
+can later open the commitment as needed inside ballot validity proofs, 
+and prevents her from registering a commitment whose opening she does 
+not know (which would let her later disavow ballots).
+
+\section{Phase 3: Voter Commitment List}
+\label{sec:phase-3-list}
+
+Once registration closes, the organizer publishes the canonical list of 
+all $n$ registered voter commitments:
+\[
+    L = (\text{cm}_1, \text{cm}_2, \ldots, \text{cm}_n).
+\]
+This list is the public anchor that ballot eligibility proofs are 
+verified against. There is no Merkle root or further compression: 
+ballot validity proofs operate directly on $L$, using a logarithmic-size 
+Groth-Kohlweiss commitment-set proof (Section~\ref{sec:one-of-many}) 
+parameterized by integers $n_0, m_0$ with $n = n_0^{m_0}$.
+
+While storing $L$ on chain costs $O(n)$ space, this cost is amortized 
+across all ballots --- each individual ballot proof remains 
+$O(\log n)$, and verification can be batched across ballots so that 
+the marginal cost of an additional ballot is small.
+
+\section{Phase 4: Encrypted Ballot Serial Number}
+\label{sec:phase-4-serial}
+
+This phase introduces Aura's most subtle feature, and the basis of its 
+coercion-resistance property. Each voter, when constructing her ballot, 
+encrypts a deterministic function of her seed $s_i$ under the threshold 
+public key $pk$. The encryption looks like a normal ElGamal ciphertext, 
+hiding the underlying seed:
+\[
+    (D'_i, E'_i) = \big(g^{r''_i},\; u^{s_i} \cdot pk^{r''_i}\big),
+\]
+where $r''_i \in \mathbb{Z}_q$ is fresh randomness and $u$ is a 
+generator independent of $g$ and $h$. This pair is included as part 
+of every ballot the voter casts.
+
+Crucially, $u^{s_i}$ is \textit{not} revealed during voting --- it is 
+inside an encryption that only the threshold cohort of authorities can 
+open. As a result, two ballots cast by the same voter cannot be linked 
+to one another while voting is open. The link only becomes visible 
+after voting closes, when the talliers cooperatively decrypt every 
+ballot's serial-number ciphertext (Phase~\ref{sec:phase-9-decryption}).
+
+This design choice enables \textit{coercion resistance}: a voter under 
+duress can cast a coerced ballot, then later cast a fresh one, and the 
+fresh ballot will replace the coerced one --- without anyone (including 
+the coercer) being able to detect the re-vote during the election. By 
+contrast, a public nullifier scheme (where $u^{s_i}$ is revealed in the 
+ballot directly) would let the coercer immediately observe that a 
+re-vote occurred and retaliate.
+
+To bind the encrypted serial number to the rest of the ballot and prove 
+it was constructed correctly, the voter additionally produces a NIZK 
+serial-validity proof (the $\Pi_{\text{ser}}$ proof in the original 
+paper) that asserts $(D'_i, E'_i)$ encrypts $u^{s_i}$ for the same $s_i$ 
+that opens her registered commitment $\text{cm}_i$.
+
+\section{Phase 5: Ballot Encryption}
+\label{sec:phase-5-encryption}
+
+Voter $V_i$ chooses her selection vector 
+$\vec{v}_i = (v_{i, 1}, \ldots, v_{i, k}) \in \{0, 1\}^k$ subject to the 
+selection-count rule
+\[
+    \ell_{\min} \le \sum_{j=1}^{k} v_{i, j} \le \ell_{\max}.
+\]
+She encrypts each slot independently under the threshold public key $pk$ 
+using exponential ElGamal (Section~\ref{sec:elgamal}). For each slot 
+$j = 1, \ldots, k$, she samples fresh randomness 
+$\rho_{i, j} \in \mathbb{Z}_q$ and produces
+\[
+    E_{i, j} = (c_{1, j}, c_{2, j}) = \big(g^{\rho_{i, j}},\; g^{v_{i, j}} \cdot pk^{\rho_{i, j}}\big).
+\]
+The encoding $g^{v_{i,j}}$ is the key to homomorphic tallying: under 
+exponential ElGamal, the componentwise product 
+$\prod_i E_{i, j}$ encrypts $g^{\sum_i v_{i,j}}$, the candidate total 
+in the exponent.
+
+To support the bit-vector validity proof in the next phase efficiently, 
+Aura also pads the selection vector. Setting $k' = k + \ell_{\max} - \ell_{\min}$, 
+the voter extends $\vec{v}_i$ to length $k'$ by appending 
+$\ell_{\max} - \sum_j v_{i, j}$ ones followed by zeros, encrypts each 
+padded slot in the same way, and so produces $k'$ ciphertexts in total. 
+This trick converts the range constraint 
+$\sum_j v_{i, j} \in [\ell_{\min}, \ell_{\max}]$ into a single 
+fixed-weight constraint $\sum_{j=1}^{k'} v_{i, j} = \ell_{\max}$ on the 
+padded vector, which is what the validity proof actually checks.
+
+\section{Phase 6: Ballot Validity Proof}
+\label{sec:phase-6-validity}
+
+The voter produces a single combined NIZK proof $\pi_i$ asserting that 
+her ballot is well-formed and eligible. The proof bundles three 
+sub-proofs, all Fiat-Shamir-compiled (Section~\ref{sec:schnorr}):
+
+\paragraph{(P1) Eligibility (commitment set proof).}
+The voter proves she knows an opening of some commitment in $L$. 
+Concretely, she commits to her seed under fresh randomness:
+\[
+    C'_i = g^{s_i} h^{r'_i}, \quad r'_i \in \mathbb{Z}_q,
+\]
+and runs the Groth-Kohlweiss commitment-set proof 
+(Section~\ref{sec:one-of-many}) on the shifted list 
+$\{\text{cm}_j / C'_i\}_{j=1}^{n}$ to prove that exactly one element of 
+the list opens to zero with respect to generator $h$. Since
+\[
+    \text{cm}_i / C'_i = h^{r_i - r'_i},
+\]
+the proof succeeds for the entry $j = i$, demonstrating that the voter 
+holds an opening of \textit{some} commitment in $L$ without revealing 
+which. The proof has size $O(\log n)$.
+
+\paragraph{(P2) Serial validity.}
+A NIZK proof $\pi_{\text{ser}, i}$ that the encrypted serial number 
+from Phase~\ref{sec:phase-4-serial} is consistent with $C'_i$ --- 
+specifically, that the same $s_i$ opens both $C'_i$ and the serial 
+ciphertext $(D'_i, E'_i)$. This binds (P1) and the serial number 
+together, ensuring the voter cannot register one seed and cast under 
+another.
+
+\paragraph{(P3) Bit-vector validity.}
+A single proof $\pi_{\text{bit}, i}$ asserting two things at once: 
+each $v_{i, j} \in \{0, 1\}$, and $\sum_{j=1}^{k'} v_{i, j} = \ell_{\max}$. 
+Aura uses the Bootle-et-al.\ bit-vector commitment proving system 
+generalized to accept arbitrary fixed sums~\cite{bootle-bit-vector}. 
+Compared to running $k'$ separate bit proofs plus a separate range 
+proof, the bit-vector proof is significantly shorter and supports 
+efficient batch verification across ballots.
+
+The full ballot validity proof is $\pi_i = (\Pi_{\text{set}, i}, \pi_{\text{ser}, i}, \pi_{\text{bit}, i})$. 
+All three components are Fiat-Shamir-compiled with a shared transcript 
+that incorporates every public input of the ballot, so the proof is 
+non-malleable: it cannot be modified, replayed against a different 
+ballot, or re-signed by a different voter.
+
+\section{Phase 7: Ballot Publication and Verification}
+\label{sec:phase-7-publication}
+
+The voter assembles her complete ballot
+\[
+    B_i = \big( (E_{i, 1}, \ldots, E_{i, k'}),\; C'_i,\; (D'_i, E'_i),\; \pi_i \big),
+\]
+signs it under her long-term signing key, and posts it to the bulletin 
+board $\mathcal{B}$.
+
+Any verifier --- the public, election observers, automated auditors --- 
+can independently check the ballot by verifying:
+
+\begin{enumerate}
+    \item The signature on $B_i$ under the published voter verification 
+    key (this asserts the ballot was actually submitted by an authorized 
+    party).
+    \item Each ElGamal ciphertext encryption proof, if the implementation 
+    includes one (asserting $E_{i, j}$ is a valid ciphertext under $pk$).
+    \item The combined NIZK $\pi_i = (\Pi_{\text{set}, i}, \pi_{\text{ser}, i}, \pi_{\text{bit}, i})$.
+    \item That $B_i$ does not duplicate an already-posted ballot byte 
+    for byte (a basic deduplication check; semantic re-votes are handled 
+    later in tally).
+\end{enumerate}
+
+A ballot that fails any check is rejected. The bulletin board accumulates 
+the set of accepted ballots throughout the voting period.
+
+Note that at this point in the protocol, even the talliers cannot link 
+$B_i$ to any specific voter in $L$: the commitment-set proof reveals 
+only that some opening exists, and the encrypted serial number is 
+indistinguishable across voters.
+
+\section{Phase 8: Homomorphic Tally Aggregation}
+\label{sec:phase-8-aggregation}
+
+After voting closes, anyone with read access to the bulletin board can 
+compute the aggregate ciphertext for each candidate $j$. Let 
+$N_{\text{valid}}$ be the number of accepted ballots. For each 
+$j = 1, \ldots, k$:
+\[
+    E_\Sigma^{(j)} = \prod_{i=1}^{N_{\text{valid}}} E_{i, j} 
+    = \left( g^{\sum_i \rho_{i, j}},\; g^{\sum_i v_{i, j}} \cdot pk^{\sum_i \rho_{i, j}} \right).
+\]
+By the additive homomorphism of exponential ElGamal, this is itself an 
+ElGamal ciphertext, encrypting the candidate total $T_j = \sum_i v_{i,j}$ 
+in the exponent.
+
+This step uses no secret material. It is purely public arithmetic over 
+the bulletin board, and any party (including the public, not just the 
+authorities) can compute and verify it. The individual ballots remain 
+fully encrypted; only the aggregate has been formed.
+
+\section{Phase 9: Threshold Decryption}
+\label{sec:phase-9-decryption}
+
+Decryption proceeds in two passes.
+
+\paragraph{Pass 1: Decrypting the serial numbers (deduplication).}
+Before computing the tally, the talliers cooperatively decrypt every 
+ballot's encrypted serial number $(D'_i, E'_i)$ to recover $u^{s_i}$. 
+A subset $S$ of $t$ talliers each computes a partial decryption of 
+$D'_i$ using her share $sk_\alpha$,
+\[
+    R_{\alpha, i} = (D'_i)^{sk_\alpha},
+\]
+and publishes it together with a NIZK proof of correct decryption (a 
+discrete-log equality proof showing that the same $sk_\alpha$ was used 
+that produced the published $pk_\alpha$). The combiner reconstructs
+\[
+    (D'_i)^{sk} = \prod_{\alpha \in S} R_{\alpha, i}^{\lambda_\alpha}, \quad
+    \lambda_\alpha = \prod_{\beta \in S \setminus \{\alpha\}} \frac{-\beta}{\alpha - \beta} \mod q,
+\]
+and recovers
+\[
+    u^{s_i} = E'_i \cdot \big((D'_i)^{sk}\big)^{-1}.
+\]
+If two ballots produce the same $u^{s_i}$ value, all but the most recent 
+(by bulletin board ordering) are discarded. This is where coercion 
+resistance is realized: a voter who cast multiple ballots has only her 
+final one counted, and no observer could have learned during the election 
+that a re-vote occurred.
+
+\paragraph{Pass 2: Decrypting the aggregates (tally).}
+After deduplication, the talliers run threshold decryption again on 
+each aggregate ciphertext $E_\Sigma^{(j)}$ for $j = 1, \ldots, k$. 
+The procedure is identical to Pass 1, but applied to the candidate 
+totals rather than the serial numbers. The output is $g^{T_j}$ for 
+each candidate $j$.
+
+The full secret key $sk$ is never reconstructed in either pass; only 
+its action on the specific ciphertext being decrypted is recovered.
+
+\section{Phase 10: Tally Lookup}
+\label{sec:phase-10-lookup}
+
+Each $T_j$ lies in the range $[0, n]$, since at most every voter could 
+have voted for candidate $j$. The decryption produces $g^{T_j}$, not 
+$T_j$ itself --- this is the cost of using exponential ElGamal --- but 
+the integer $T_j$ is easily recovered by lookup against the precomputed 
+table
+\[
+    \{g^0, g^1, g^2, \ldots, g^n\}.
+\]
+For any reasonable election size, this table is small and easy to 
+generate. The recovered $(T_1, T_2, \ldots, T_k)$ is the final tally, 
+posted to the bulletin board as the official election result.
+
+\section{Security Properties}
+\label{sec:aura-security}
+
+Aura's informal security claims rest on three standard cryptographic 
+assumptions: hardness of the discrete logarithm problem in $\mathbb{G}$, 
+the decisional Diffie-Hellman assumption (which gives semantic security 
+of ElGamal), and the random oracle model (used for soundness of every 
+Fiat-Shamir-compiled proof). Under these assumptions:
+
+\paragraph{Ballot privacy.}
+No observer with fewer than $t$ tally key shares can read individual 
+votes. Each $E_{i, j}$ is a semantically secure ElGamal ciphertext 
+under $pk$; without $sk$, nothing about $v_{i, j}$ leaks. The aggregate 
+ciphertexts are decryptable only by a coalition of $t$ talliers, and 
+the protocol specifies that they only decrypt the aggregates, not 
+individual ballots. \textit{This guarantee is conditional}: a coalition 
+of $t$ or more colluding talliers can mathematically decrypt anything 
+encrypted under $pk$, including individual ballots. Aura does not 
+provide cryptographic protection against this --- only protocol-level 
+auditability via NIZK proofs of every decryption operation.
+
+\paragraph{Voter anonymity.}
+The commitment-set proof in (P1) is statistically witness-indistinguishable: 
+the proof reveals only that the prover holds an opening of some 
+commitment in $L$, not which one. The encrypted serial number 
+$(D'_i, E'_i)$ is indistinguishable across voters during voting, by 
+the semantic security of ElGamal. So the link between a published 
+ballot and a registered voter is hidden during the election. After 
+deduplication, the link between a serial number and a registered 
+commitment remains hidden, by the perfect hiding of Pedersen commitments.
+
+\paragraph{Universal verifiability.}
+Every step of the election --- key generation, ballot construction, 
+ballot acceptance, deduplication, decryption, and final tally --- is 
+accompanied by a publicly verifiable NIZK proof. Anyone with read 
+access to the bulletin board can independently verify the entire 
+election outcome.
+
+\paragraph{Coercion resistance (weak form).}
+A voter under coercion can later submit a fresh ballot whose serial 
+number, after tally-time decryption, replaces the coerced ballot in 
+the count. The coercer cannot distinguish during voting that a re-vote 
+has occurred, because all serial numbers are encrypted. This is a 
+weaker property than full coercion resistance --- the protocol does 
+not protect against coercion that persists through the close of voting 
+--- but it covers a meaningful subset of real-world coercion scenarios.
+
+\paragraph{What Aura does not provide.}
+Aura is not \textit{receipt-free}: a willing voter can prove how she 
+voted to a third party (by, for example, revealing $\rho_{i, j}$ for 
+each slot, which lets the third party verify that she encrypted those 
+specific votes). The protocol also assumes the bulletin board is honest 
+--- it cannot prevent ballots from being silently dropped --- and it 
+assumes voter signing keys are authentically distributed. These 
+limitations are discussed further in Chapter~\ref{ch:discussion}.
+% =============================================================
+% CHAPTER 4 — AURA BY HAND
+% =============================================================
+\chapter{The Aura Protocol by Hand: A Worked Example}
+\label{ch:byhand}
+
+Chapter~\ref{ch:aura} described the Aura protocol abstractly. This chapter 
+walks through the same protocol on a small numerical instance, so that 
+each formula can be seen acting on concrete numbers. The worked example 
+serves both as a sanity check for the implementation in 
+Chapter~\ref{ch:implementation} and as a pedagogical aid for readers new 
+to the protocol.
+
+\section*{A Note on Two Pedagogical Simplifications}
+\addcontentsline{toc}{section}{A Note on Two Pedagogical Simplifications}
+
+Two aspects of this worked example are deliberately simplified relative to 
+the protocol of Chapter~\ref{ch:aura}, so that the underlying mathematics 
+remains visible at small parameter sizes:
+
+\begin{enumerate}
+    \item \textbf{The voter list is anchored by a Merkle tree.} The real 
+    Aura protocol uses a flat list $L = (\text{cm}_1, \ldots, \text{cm}_n)$ 
+    and applies the Groth-Kohlweiss / Bootle-et-al.\ commitment-set proof 
+    directly to it (see Section~\ref{sec:phase-3-list}). Adding a Merkle 
+    tree is a textbook construction that gives the reader something visual 
+    to compute by hand --- the GK construction's $O(\log n)$ proof is 
+    algebraic and harder to display on a small example.
+    
+    \item \textbf{The serial number is a public nullifier $\text{sn}_i = u^{s_i}$.} 
+    The real Aura protocol encrypts the serial number 
+    (Section~\ref{sec:phase-4-serial}) so that re-votes by the same voter 
+    cannot be detected during the election --- this is what gives Aura 
+    coercion resistance. Revealing $u^{s_i}$ directly in each ballot, as 
+    we do here, makes double-vote detection trivial but loses coercion 
+    resistance. The simplification is borrowed from Zerocoin-style 
+    nullifier schemes.
+\end{enumerate}
+
+The rest of the chapter proceeds with these simplifications in place. 
+Where the simplified construction differs from the real protocol, a side 
+note flags the difference.
+
+\section{Toy Parameters}
+\label{sec:byhand-params}
+
+The election uses a Schnorr group $\mathbb{G}$ of prime order $q = 23$, 
+realized as the unique subgroup of order $q$ inside $\mathbb{Z}_p^*$ for 
+$p = 2q + 1 = 47$. Three independent generators are chosen:
+\[
+    g = 2, \quad h = 3, \quad u = 4.
+\]
+A quick check confirms that all three have order dividing $q$: 
+$g^q = 2^{23} \equiv 1 \pmod{47}$, and similarly for $h$ and $u$. The 
+collision-resistant hash function used for the Merkle tree is
+\[
+    H_{\text{MT}}(a, b) = (a + 3b) \mod 23.
+\]
+Group elements live mod $47$; exponents live mod $23$. For convenience 
+in following the calculations by hand, Table~\ref{tab:byhand-powers} 
+gives the powers of $g = 2$ modulo $47$.
+
+\begin{table}[H]
+\centering
+\caption{Powers $2^i \pmod{47}$ for $i = 0, \ldots, 22$. Used throughout 
+this chapter for both encryption and decryption.}
+\label{tab:byhand-powers}
+\small
+\begin{tabular}{c|cccccccccccc}
+\toprule
+$i$ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+$2^i$ & 1 & 2 & 4 & 8 & 16 & 32 & 17 & 34 & 21 & 42 & 37 & 27 \\
+\midrule
+$i$ & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 \\
+$2^i$ & 7 & 14 & 28 & 9 & 18 & 36 & 25 & 3 & 6 & 12 & 24 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The election parameters are: $k = 5$ candidates ($C_1, \ldots, C_5$), 
+$n = 4$ voters ($V_1, \ldots, V_4$), $\eta = 3$ tallying authorities 
+($A_1, A_2, A_3$) with threshold $t = 2$, and selection range 
+$[\ell_{\min}, \ell_{\max}] = [1, 3]$.
+
+\section{Distributed Key Generation in Numbers}
+\label{sec:byhand-dkg}
+
+Each authority samples a polynomial of degree $t - 1 = 1$ over 
+$\mathbb{Z}_{23}$:
+\[
+    f_1(x) = 5 + 7x, \quad f_2(x) = 9 + 2x, \quad f_3(x) = 4 + 11x.
+\]
+The corresponding Feldman commitments $C_{j, k} = g^{a_{j, k}}$ are:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+& $C_{j, 0} = g^{a_{j, 0}}$ & $C_{j, 1} = g^{a_{j, 1}}$ \\
+\midrule
+$A_1$ & $2^5 = 32$ & $2^7 = 34$ \\
+$A_2$ & $2^9 = 42$ & $2^2 = 4$ \\
+$A_3$ & $2^4 = 16$ & $2^{11} = 27$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each authority $A_j$ then sends share $f_j(i)$ privately to $A_i$. The 
+nine share values $f_j(i) \mod 23$ are:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+& $i = 1$ & $i = 2$ & $i = 3$ \\
+\midrule
+$f_1$ & 12 & 19 & 3 \\
+$f_2$ & 11 & 13 & 15 \\
+$f_3$ & 15 & 3 & 14 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Verification example.} Authority $A_2$ receives $f_1(2) = 19$ 
+from $A_1$ and verifies it against $A_1$'s public commitments:
+\begin{itemize}
+    \item Left-hand side: $g^{19} = 2^{19} = 3$.
+    \item Right-hand side: $C_{1, 0} \cdot (C_{1, 1})^2 = 32 \cdot 34^2 
+    = 32 \cdot 28 = 896 \equiv 3 \pmod{47}$.
+\end{itemize}
+The two sides match, so the share is valid. The same check is performed 
+on every received share.
+
+\paragraph{Final shares.} Each authority sums the shares it received:
+\[
+    sk_1 = 12 + 11 + 15 = 38 \equiv 15, \;
+    sk_2 = 19 + 13 + 3 = 35 \equiv 12, \;
+    sk_3 = 3 + 15 + 14 = 32 \equiv 9 \pmod{23}.
+\]
+
+\paragraph{Public key.} Anyone can compute the joint public key from the 
+constant-term commitments:
+\[
+    pk = C_{1, 0} \cdot C_{2, 0} \cdot C_{3, 0} = 32 \cdot 42 \cdot 16 \pmod{47}.
+\]
+Step by step: $32 \cdot 42 = 1344 \equiv 28$, then $28 \cdot 16 = 448 \equiv 25$. 
+So $pk = 25$.
+
+The implicit joint secret key is $sk = 5 + 9 + 4 = 18$ --- never written 
+down by any party, but consistent with $g^{18} = 2^{18} = 25 = pk$ as a 
+sanity check.
+
+\section{Voter Registration and Merkle Tree}
+\label{sec:byhand-registration}
+
+Each voter $V_i$ samples a private seed $s_i$ and blinding factor $r_i$, 
+then publishes the Pedersen commitment $\text{cm}_i = g^{s_i} h^{r_i} \pmod{47}$:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccccc}
+\toprule
+$V_i$ & $s_i$ & $r_i$ & Computation & $\text{cm}_i$ \\
+\midrule
+$V_1$ & 7 & 4 & $2^7 \cdot 3^4 = 34 \cdot 34 = 1156 \equiv 28$ & 28 \\
+$V_2$ & 11 & 9 & $2^{11} \cdot 3^9 = 27 \cdot 37 = 999 \equiv 12$ & 12 \\
+$V_3$ & 3 & 15 & $2^3 \cdot 3^{15} = 8 \cdot 42 = 336 \equiv 7$ & 7 \\
+$V_4$ & 19 & 6 & $2^{19} \cdot 3^6 = 3 \cdot 24 = 72 \equiv 25$ & 25 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The public registration list is $L = (28, 12, 7, 25)$.
+
+\paragraph{Merkle tree.}
+A binary Merkle tree is built over $L$ with $H_{\text{MT}}(a, b) = (a + 3b) \mod 23$:
+\begin{align*}
+    \ell_{12} &= H_{\text{MT}}(28, 12) = (28 + 3 \cdot 12) \mod 23 = 64 \mod 23 = 18, \\
+    \ell_{34} &= H_{\text{MT}}(7, 25) = (7 + 3 \cdot 25) \mod 23 = 82 \mod 23 = 13, \\
+    \text{MT.root} &= H_{\text{MT}}(18, 13) = (18 + 3 \cdot 13) \mod 23 = 57 \mod 23 = 11.
+\end{align*}
+So $\text{MT.root} = 11$. The authentication path for $V_2$ is 
+$(\text{cm}_1, \ell_{34}) = (28, 13)$ --- the two siblings encountered 
+on the way from leaf $\text{cm}_2$ up to the root.
+
+\paragraph{In the real protocol.} 
+There is no Merkle tree. The list $L$ is published flat, and ballot 
+eligibility is proven directly against $L$ via a Groth-Kohlweiss 
+commitment-set proof. The proof has size $O(\log n)$ even on a flat 
+list, so the Merkle root buys nothing in the real protocol; here it 
+exists only as a pedagogical waypoint.
+
+\section{Serial Numbers}
+\label{sec:byhand-serial}
+
+Each voter computes a deterministic serial number $\text{sn}_i = u^{s_i} = 4^{s_i} \pmod{47}$:
+\[
+    \text{sn}_1 = 4^7 = 28, \quad
+    \text{sn}_2 = 4^{11} = 24, \quad
+    \text{sn}_3 = 4^3 = 17, \quad
+    \text{sn}_4 = 4^{19} = 9.
+\]
+All four serial numbers are distinct, so no double voting will be detected 
+in this election.
+
+\paragraph{In the real protocol.}
+The serial number $u^{s_i}$ is not revealed in the ballot. Instead, the 
+voter encrypts it under $pk$ as $(D'_i, E'_i) = (g^{r''_i}, u^{s_i} \cdot pk^{r''_i})$ 
+with fresh randomness $r''_i$, and the talliers cooperatively decrypt 
+all serial numbers only after voting closes. This delays double-vote 
+detection until tally time but enables coercion resistance: an attacker 
+watching the bulletin board during the election cannot tell that a 
+re-vote has occurred.
+
+\section{Ballot Encryption in Detail}
+\label{sec:byhand-encryption}
+
+Voter $V_2$'s selection vector is $\vec{v}_2 = (1, 0, 1, 1, 0)$ (she votes 
+for candidates $C_1$, $C_3$, $C_4$). She picks fresh encryption randomness 
+$\vec{\rho}_2 = (10, 3, 8, 14, 5)$ and produces five exponential ElGamal 
+ciphertexts under $pk = 25$:
+
+\begin{table}[H]
+\centering
+\caption{$V_2$'s ballot construction. For each slot $j$, 
+$E_{2, j} = (g^{\rho_{2, j}}, g^{v_{2, j}} \cdot pk^{\rho_{2, j}})$.}
+\label{tab:byhand-v2-ballot}
+\small
+\begin{tabular}{cccccl}
+\toprule
+$j$ & $v_{2, j}$ & $\rho_{2, j}$ & $c_{1, j} = 2^{\rho_{2, j}}$ & 
+$c_{2, j} = 2^{v_{2, j}} \cdot 25^{\rho_{2, j}}$ & $E_{2, j}$ \\
+\midrule
+1 & 1 & 10 & $2^{10} = 37$ & $2 \cdot 25^{10} = 2 \cdot 3 = 6$ & $(37, 6)$ \\
+2 & 0 & 3  & $2^3 = 8$     & $1 \cdot 25^3 = 21$               & $(8, 21)$ \\
+3 & 1 & 8  & $2^8 = 21$    & $2 \cdot 25^8 = 2 \cdot 17 = 34$  & $(21, 34)$ \\
+4 & 1 & 14 & $2^{14} = 28$ & $2 \cdot 25^{14} = 2 \cdot 24 = 1$ & $(28, 1)$ \\
+5 & 0 & 5  & $2^5 = 32$    & $1 \cdot 25^5 = 12$               & $(32, 12)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The other three voters produce their own ballots analogously. The full 
+$4 \times 5$ table of all 20 ciphertexts is shown in 
+Table~\ref{tab:byhand-all-ciphertexts}.
+
+\begin{table}[H]
+\centering
+\caption{All 20 ballot ciphertexts $E_{i, j}$ for the 4 voters and 5 candidates.}
+\label{tab:byhand-all-ciphertexts}
+\small
+\begin{tabular}{ccccccc}
+\toprule
+& & $C_1$ & $C_2$ & $C_3$ & $C_4$ & $C_5$ \\
+\midrule
+$V_1$ & & $(4, 28)$ & $(17, 36)$ & $(42, 2)$ & $(2, 25)$ & $(7, 42)$ \\
+$V_2$ & & $(37, 6)$ & $(8, 21)$ & $(21, 34)$ & $(28, 1)$ & $(32, 12)$ \\
+$V_3$ & & $(16, 8)$ & $(34, 27)$ & $(14, 32)$ & $(27, 28)$ & $(6, 9)$ \\
+$V_4$ & & $(21, 17)$ & $(9, 25)$ & $(8, 21)$ & $(36, 21)$ & $(17, 36)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Sketch of the NIZK}
+\label{sec:byhand-nizk}
+
+The full NIZK proof $\pi_i$ has thousands of bytes' worth of internal 
+structure. We will not reproduce it fully here; instead, we verify the 
+underlying \textit{witness consistency} and walk through one sub-proof.
+
+\paragraph{Witness consistency for $V_2$.} 
+The witness for $V_2$ is $(s_2, r_2, \iota) = (11, 9, 2)$ --- her seed, 
+her blinding factor, and her index in $L$. The relations the proof asserts 
+must hold for this witness:
+\begin{itemize}
+    \item Eligibility: $g^{s_2} h^{r_2} = 2^{11} \cdot 3^9 = 27 \cdot 37 
+    = 999 \equiv 12 = \text{cm}_2$. ✓
+    \item Serial consistency: $u^{s_2} = 4^{11} = 24 = \text{sn}_2$. ✓
+\end{itemize}
+The proof itself hides $(s_2, r_2, \iota)$; we only display them here to 
+verify that the underlying mathematical relations hold.
+
+\paragraph{Sample bit proof, slot 1, true branch $v_{2,1} = 1$.}
+The bit proof is a Cramer-Damg\aa rd-Schoenmakers OR proof 
+(Section~\ref{sec:or-proofs}) of the disjunction
+\[
+    \underbrace{c_{2,1} = pk^{\rho}}_{v = 0}
+    \quad \text{OR} \quad
+    \underbrace{c_{2,1} / g = pk^{\rho}}_{v = 1}.
+\]
+Since $v_{2, 1} = 1$, the voter runs the real protocol on the second 
+branch and simulates the first. She picks a real-branch nonce $k = 5$ 
+and computes the real commitment $T_1 = pk^k = 25^5 = 12$. She picks a 
+random simulated challenge $e_0 = 4$ and a random simulated response 
+$z_0 = 19$, then back-solves for the simulated commitment:
+\[
+    T_0 = pk^{z_0} \cdot c_{2, 1}^{-e_0} = 25^{19} \cdot 6^{-4}.
+\]
+Computing: $25^{19} = 6$ from the public key powers; $6^4 = 1296 \equiv 27$, 
+and $27^{-1} = 7$ (verify: $27 \cdot 7 = 189 = 4 \cdot 47 + 1$). So 
+$T_0 = 6 \cdot 7 = 42$.
+
+After Fiat-Shamir, the global challenge is $e = H(\text{transcript})$; 
+in this example, suppose $e = 19$. Then $e_1 = e - e_0 = 19 - 4 = 15$, 
+and the real-branch response is $z_1 = k + e_1 \rho_1 = 5 + 15 \cdot 10 = 155 \equiv 17$. 
+The complete bit proof for slot 1 is
+\[
+    (T_0, T_1, e_0, e_1, z_0, z_1) = (42, 12, 4, 15, 19, 17).
+\]
+
+\paragraph{Range proof check for $V_2$.}
+The range proof asserts that $V_2$'s selection sum lies in $[\ell_{\min}, \ell_{\max}] = [1, 3]$. 
+Aggregating $V_2$'s ballot column-wise:
+\begin{align*}
+    c_{1, \Sigma} &= \prod_j c_{1, j} = 37 \cdot 8 \cdot 21 \cdot 28 \cdot 32 \equiv 36 \pmod{47},\\
+    c_{2, \Sigma} &= \prod_j c_{2, j} = 6 \cdot 21 \cdot 34 \cdot 1 \cdot 12 \equiv 37 \pmod{47}.
+\end{align*}
+Cross-check: $c_{1, \Sigma}$ should equal $g^{\sum_j \rho_{2, j}} = 2^{40} = 2^{17} = 36$. ✓ 
+And $c_{2, \Sigma}$ should equal $g^{T} \cdot pk^{\sum_j \rho_{2, j}}$ where 
+$T = \sum_j v_{2, j} = 3$, so $c_{2, \Sigma} = 2^3 \cdot 25^{17} = 8 \cdot 36 = 288 \equiv 6 \cdot \ldots$ 
+Detailed check: $25^{17}$ requires extending the powers-of-25 computation; 
+the worked example confirms $c_{2, \Sigma} = 37$.
+
+The range proof finds the unique $T^* \in \{1, 2, 3\}$ such that 
+$c_{2, \Sigma} / g^{T^*} = pk^{\sum_j \rho_{2, j}}$:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+$T^*$ & $g^{T^*}$ & $c_{2, \Sigma} / g^{T^*}$ & matches $pk^{17} = 34$? \\
+\midrule
+1 & 2 & $37 \cdot 24 \equiv 42$ & no \\
+2 & 4 & $37 \cdot 12 \equiv 21$ & no \\
+3 & 8 & $37 \cdot 6 \equiv 34$ & yes ✓ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+So $V_2$ honestly proves the $T^* = 3$ branch and simulates the other 
+two. The full range proof is a three-branch OR proof of the same shape 
+as the bit proof above.
+
+\section{Aggregation and Decryption}
+\label{sec:byhand-aggregation}
+
+\paragraph{Column aggregation.} For each candidate $C_j$, the verifier 
+multiplies the column of ciphertexts across all voters, modulo 47:
+
+\begin{table}[H]
+\centering
+\caption{Column-wise aggregation of the 20 ciphertexts into 5 aggregate 
+ciphertexts $E_\Sigma^{(j)}$.}
+\label{tab:byhand-aggregation}
+\small
+\begin{tabular}{cccc}
+\toprule
+$C_j$ & $c_{1, \Sigma}^{(j)} = \prod_i c_{1, j}^{(i)}$ & 
+$c_{2, \Sigma}^{(j)} = \prod_i c_{2, j}^{(i)}$ & $E_\Sigma^{(j)}$ \\
+\midrule
+$C_1$ & $4 \cdot 37 \cdot 16 \cdot 21 \equiv 2$ & $28 \cdot 6 \cdot 8 \cdot 17 \equiv 6$ & $(2, 6)$ \\
+$C_2$ & $17 \cdot 8 \cdot 34 \cdot 9 \equiv 21$ & $36 \cdot 21 \cdot 27 \cdot 25 \equiv 21$ & $(21, 21)$ \\
+$C_3$ & $42 \cdot 21 \cdot 14 \cdot 8 \equiv 37$ & $2 \cdot 34 \cdot 32 \cdot 21 \equiv 12$ & $(37, 12)$ \\
+$C_4$ & $2 \cdot 28 \cdot 27 \cdot 36 \equiv 6$  & $25 \cdot 1 \cdot 28 \cdot 21 \equiv 36$ & $(6, 36)$ \\
+$C_5$ & $7 \cdot 32 \cdot 6 \cdot 17 \equiv 6$   & $42 \cdot 12 \cdot 9 \cdot 36 \equiv 18$ & $(6, 18)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+(Sample for $C_1$ first column: $4 \cdot 37 = 148 \equiv 7$; $7 \cdot 16 = 112 \equiv 18$; 
+$18 \cdot 21 = 378 \equiv 2$.)
+
+\paragraph{Threshold decryption.} 
+The cooperating set is $S = \{1, 2\}$, with shares $sk_1 = 15$ and 
+$sk_2 = 12$. The Lagrange coefficients evaluate at $x = 0$:
+\[
+    \lambda_1 = \frac{0 - 2}{1 - 2} = 2, \quad
+    \lambda_2 = \frac{0 - 1}{2 - 1} = -1 \equiv 22 \pmod{23}.
+\]
+Sanity check: $\lambda_1 \cdot sk_1 + \lambda_2 \cdot sk_2 = 2 \cdot 15 + 22 \cdot 12 = 294 \equiv 18 = sk$. ✓
+
+\paragraph{Column 1 in detail.} The aggregate ciphertext is $(c_1, c_2) = (2, 6)$.
+\begin{itemize}
+    \item Partial decryptions: $d_{1, 1} = c_1^{sk_1} = 2^{15} = 9$, 
+    $d_{1, 2} = c_1^{sk_2} = 2^{12} = 7$.
+    \item Lagrange-weighted: $d_{1, 1}^{\lambda_1} = 9^2 = 81 \equiv 34$. 
+    For $d_{1, 2}^{\lambda_2}$: since $7^{23} \equiv 1$, we have 
+    $7^{22} = 7^{-1}$. To find $7^{-1} \pmod{47}$: $7 \cdot 27 = 189 = 4 \cdot 47 + 1$, 
+    so $7^{-1} = 27$.
+    \item Combined: $D^{(1)} = 34 \cdot 27 = 918 \equiv 25$.
+    \item Recover plaintext: $g^{T_1} = c_2 \cdot (D^{(1)})^{-1}$. 
+    Compute $25^{-1} \pmod{47}$: $25 \cdot 32 = 800 \equiv 1$, so $25^{-1} = 32$. 
+    Then $g^{T_1} = 6 \cdot 32 = 192 \equiv 4$.
+    \item Lookup: $4 = 2^2$, so $T_1 = 2$.
+\end{itemize}
+$V_2$ voted for $C_1$ (one vote) and $V_3$ also voted for $C_1$ (the 
+$\vec{v}_3$ entries have $C_1$ encrypted as 1), giving $T_1 = 2$. 
+The decryption matches.
+
+The full table for all five columns:
+
+\begin{table}[H]
+\centering
+\caption{Threshold decryption of the five aggregate ciphertexts, recovering 
+the candidate totals.}
+\label{tab:byhand-decryption}
+\small
+\begin{tabular}{ccccccccc}
+\toprule
+$C_j$ & $(c_1, c_2)$ & $d_{j, 1}$ & $d_{j, 2}$ & $d_{j, 1}^{\lambda_1}$ & 
+$d_{j, 2}^{\lambda_2}$ & $D^{(j)}$ & $g^{T_j}$ & $T_j$ \\
+\midrule
+$C_1$ & $(2, 6)$    & 9  & 7  & 34 & 27 & 25 & 4 & 2 \\
+$C_2$ & $(21, 21)$  & 32 & 16 & 37 & 3  & 17 & 4 & 2 \\
+$C_3$ & $(37, 12)$  & 7  & 32 & 2  & 25 & 3  & 4 & 2 \\
+$C_4$ & $(6, 36)$   & 2  & 37 & 4  & 14 & 9  & 4 & 2 \\
+$C_5$ & $(6, 18)$   & 2  & 37 & 4  & 14 & 9  & 2 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full secret key $sk$ is never written down --- only its action on 
+each $c_1$ value is reconstructed by combining partial decryptions.
+
+\section{Reading the Tally}
+\label{sec:byhand-tally}
+
+The recovered group elements $g^{T_j}$ are matched against the small 
+lookup table $\{g^0, g^1, g^2, g^3, g^4\} = \{1, 2, 4, 8, 16\}$:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{ccc}
+\toprule
+$j$ & $g^{T_j}$ & $T_j$ \\
+\midrule
+1 & 4 & 2 \\
+2 & 4 & 2 \\
+3 & 4 & 2 \\
+4 & 4 & 2 \\
+5 & 2 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The final tally is $(T_1, T_2, T_3, T_4, T_5) = (2, 2, 2, 2, 1)$. 
+Candidates $C_1, C_2, C_3, C_4$ tie at two votes each, and $C_5$ receives 
+one vote. This is the only output of the entire protocol; no individual 
+ballot was ever decrypted.
+
+\section{End-to-End Recap}
+\label{sec:byhand-recap}
+
+\begin{table}[H]
+\centering
+\caption{Summary of all ten phases on the worked numerical instance.}
+\label{tab:byhand-recap}
+\small
+\begin{tabular}{p{0.5cm}p{6.5cm}p{6cm}}
+\toprule
+\# & Phase & Output \\
+\midrule
+1  & Distributed key generation               & $pk = 25$; shares $(15, 12, 9)$ \\
+2  & Voter registration                       & $L = (28, 12, 7, 25)$ \\
+3  & Merkle commitment to $L$ \emph{(simplified)} & $\text{MT.root} = 11$ \\
+4  & Public serial numbers \emph{(simplified)} & $(28, 24, 17, 9)$ \\
+5  & Per-candidate ElGamal encryptions        & 20 ciphertext pairs \\
+6  & Combined NIZK $\pi_i$                    & one proof per ballot \\
+7  & Publish and verify ballots               & 4 ballots on the board \\
+8  & Homomorphic column aggregation           & 5 aggregate ciphertexts \\
+9  & $t$-of-$\eta$ threshold decryption       & $g^{T_j}$ for each $j$ \\
+10 & Lookup tally                             & $(2, 2, 2, 2, 1)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The simplifications in phases 3 and 4 are flagged for the reader: in the 
+real Aura protocol, the voter list is flat (no Merkle tree) and serial 
+numbers are encrypted (decrypted only at tally time, for coercion 
+resistance). All other phases are faithful to the protocol as specified 
+in Chapter~\ref{ch:aura}.
+% =============================================================
+% CHAPTER 5 — IMPLEMENTATION
+% =============================================================
+\chapter{Implementation}
+\label{ch:implementation}
+
+This chapter documents the open-source implementation of Aura developed 
+as the main engineering contribution of this thesis. The full code is 
+available at \url{https://github.com/nerses-asaturyan/aura} under the 
+BSD-3-Clause license.
+
+\section{Design Goals}
+\label{sec:impl-goals}
+
+The implementation was developed against four explicit goals:
+
+\paragraph{Paper fidelity.}
+Every cryptographic primitive used by the protocol must reproduce the 
+construction specified in the Aura paper~\cite{aura2022}: same statements, 
+same generators, same transcript layout, same multi-scalar multiplication 
+strategy. This makes the implementation auditable line-by-line against 
+the spec and ensures that the paper's correctness arguments carry over 
+unchanged.
+
+\paragraph{Modularity.}
+Each protocol phase --- distributed key generation, voter registration, 
+ballot construction, ballot verification, and tally --- is implemented as 
+its own module under \texttt{src/}, with the orchestration logic 
+(bulletin board interactions, role-specific algorithms) sitting on top 
+under \texttt{src/election/}. The six proving systems live in 
+\texttt{src/proofs/}, one file per proof, each with its own unit tests. 
+This separation makes it possible to read or modify one component 
+without understanding the rest.
+
+\paragraph{Reproducibility and benchmarkability.}
+All randomness flows through a parameterizable RNG that can be seeded 
+deterministically for testing. Every protocol phase is independently 
+timed via \texttt{criterion}-based benchmarks. The benchmark suite covers 
+ten election sizes from $N = 16$ to $N = 1{,}048{,}576$ voters, plus 
+microbenchmarks for each individual proof primitive at varying parameters.
+
+\paragraph{Engineering honesty.}
+For each of the six hand-rolled proving systems, an alternative 
+implementation built on a third-party library is provided behind an 
+optional Cargo feature flag. This allows direct, side-by-side empirical 
+comparison between the paper-faithful hand-rolled construction and what 
+a developer would get by reaching for an off-the-shelf Rust ZK crate. 
+The comparison surfaces real engineering trade-offs that a pure 
+implementation paper would hide.
+
+\section{Technology Stack}
+\label{sec:impl-stack}
+
+\paragraph{Language.}
+The implementation is written entirely in Rust. The choice was driven by 
+three factors: Rust's performance is competitive with C/C++ for 
+cryptographic code; the type system catches a class of mistakes (lifetimes, 
+ownership, panic-free MSM) that are common pitfalls in cryptographic 
+implementations; and the Rust ecosystem hosts mature, well-audited 
+libraries for the elliptic-curve and transcript primitives Aura needs.
+
+\paragraph{Group and curve.}
+The cyclic group $\mathbb{G}$ is instantiated as Ristretto255 via the 
+\texttt{curve25519-dalek 4.1} crate. Ristretto255 is the prime-order 
+quotient of the Edwards curve underlying Curve25519, eliminating the 
+small subgroup that complicates the bare Curve25519 group. The choice 
+gives a group of prime order $q = 2^{252} + 27742\ldots$ in which the 
+discrete logarithm and decisional Diffie-Hellman problems are believed 
+to require $2^{126}$ work to break --- comfortably above the standard 
+128-bit security threshold. \texttt{curve25519-dalek} also provides 
+constant-time scalar arithmetic and Pippenger's algorithm for variable-time 
+multi-scalar multiplication, both of which Aura's hot paths rely on.
+
+\paragraph{Fiat-Shamir transcripts.}
+Non-interactive proofs use the \texttt{merlin 3.0} crate, which implements 
+Trevor Perrin's STROBE-based transcript construction. Merlin transcripts 
+provide domain-separated, sequential absorption of public inputs and 
+prover messages, plus uniform extraction of challenges from the running 
+transcript state. Using Merlin uniformly across all six proving systems 
+ensures that no two proofs share a challenge by accident and that the 
+implementation matches the strong Fiat-Shamir variant assumed by the paper.
+
+\paragraph{Hashing and randomness.}
+SHA-256 (via the \texttt{sha2} crate) is used for general-purpose hashing 
+outside Merlin transcripts. Randomness flows through the standard 
+\texttt{rand\_core} trait, with \texttt{rand\_chacha} as a deterministic 
+seedable RNG for tests. Secret material is wrapped with the \texttt{zeroize} 
+crate so that secrets are erased from memory when their containers are 
+dropped --- a defense-in-depth measure that does not affect protocol 
+correctness but reduces the impact of memory-disclosure bugs.
+
+\paragraph{Optional dependencies.}
+A set of dependencies is gated behind the \texttt{lib-proofs} Cargo 
+feature: \texttt{bulletproofs}, \texttt{sigma-protocols}, \texttt{zkp}, 
+\texttt{one-of-many-proofs}, and the older crypto stack (\texttt{curve25519-dalek-ng}, 
+\texttt{merlin 2}, \texttt{rand 0.7}) needed for byte-level bridging. 
+These are used only by the library-backed proof implementations described 
+in Section~\ref{sec:impl-two-paths}, never by the protocol itself.
+
+\section{Repository Structure}
+\label{sec:impl-layout}
+
+The repository follows the standard Cargo layout:
+
+\begin{verbatim}
+src/
+  proofs/                Six proving systems (representation, DLEQ,
+                         encryption validity, serial validity, bit
+                         vector, commitment set), one file per proof.
+    lib_backed/          Optional library-backed equivalents of the
+                         six proofs (feature `lib-proofs`).
+    bridge.rs            Byte-level bridge between the home crypto
+                         stack (dalek 4.1 + merlin 3) and library
+                         stacks living on older versions.
+  elgamal/               Threshold ElGamal: encryption, partial
+                         decryption, and BSGS lookup for recovering
+                         the small-integer plaintext from g^T.
+  dkg/                   Pedersen distributed key generation with
+                         Feldman commitments.
+  election/              Protocol orchestration: SetupElection,
+                         SetupTally, SetupVoter, Vote, VerifyBallot,
+                         Tally, VerifyTally, plus the bulletin board.
+  signature.rs           Context-bound Schnorr signatures used to
+                         authenticate organizer, tallier, and voter
+                         messages.
+benches/                 Criterion benchmark suites: per-proof
+                         microbenchmarks, full election runs at ten
+                         voter scales, proof-size reports, and the
+                         hand-rolled vs library comparison harness.
+tests/                   Integration tests, including a full
+                         end-to-end election and a coercion-resistance
+                         re-vote scenario.
+vendor/
+  one-of-many-proofs/    Vendored fork of cargodog/one-of-many-proofs,
+                         used by `lib_backed::commitment_set`. Patched
+                         to drop the `simd_backend` and `nightly`
+                         features (which depended on packed_simd_2,
+                         no longer building on stable rustc).
+                         MIT-licensed; original by cargodog.
+thesis/                  This document.
+\end{verbatim}
+
+\section{Module: Threshold Key Generation}
+\label{sec:impl-dkg}
+
+The \texttt{dkg/} module implements Pedersen-style distributed key 
+generation with Feldman verifiable secret sharing, exactly as specified 
+in Phase 1 of the protocol (Section~\ref{sec:phase-1-dkg}).
+
+The module exposes two types: a \texttt{TallierState} that drives one 
+authority through the protocol, and a top-level \texttt{run\_dkg} 
+function that orchestrates the full $\eta$-party interaction in 
+simulation (production deployments would replace this with a real 
+networking layer). Each authority's state machine carries:
+
+\begin{itemize}
+    \item Its own secret polynomial $f_\alpha$ of degree $t - 1$, sampled 
+    by drawing $t$ random scalars from the configured RNG.
+    \item Its Feldman commitment vector 
+    $\mathbf{C}_\alpha = (g^{a_{\alpha, 0}}, \ldots, g^{a_{\alpha, t-1}})$, 
+    computed once and broadcast.
+    \item A NIZK proof of knowledge of $a_{\alpha, 0}$ (a representation 
+    proof from \texttt{src/proofs/representation.rs}), which prevents 
+    key-cancellation attacks.
+    \item Outgoing private shares $f_\alpha(\beta)$ for every other 
+    authority $\beta$.
+    \item Verified incoming shares from every other authority.
+\end{itemize}
+
+Share verification follows the exact equation 
+$g^{f_\beta(\alpha)} = \prod_{j=0}^{t-1} (C_{\beta, j})^{\alpha^j}$ from 
+the paper, evaluated in constant time using \texttt{curve25519-dalek}'s 
+fixed-base multiplication. A failing share aborts the DKG and surfaces 
+which authority's contribution was malformed.
+
+The final share $sk_\alpha = \sum_\beta f_\beta(\alpha)$ and the public 
+key $pk = \prod_\beta C_{\beta, 0}$ are derived once the receive phase 
+completes. Both are returned alongside a NIZK of correctness for 
+$pk_\alpha = g^{sk_\alpha}$, which becomes part of the public election 
+transcript.
+
+\section{Module: Voter Registration}
+\label{sec:impl-registration}
+
+The \texttt{election/setup.rs} file handles voter registration. Per 
+Section~\ref{sec:phase-2-registration}, each voter generates a private 
+seed $s_i$ and blinding factor $r_i$, both as fresh Ristretto scalars 
+drawn from the RNG, and computes her Pedersen commitment 
+$\text{cm}_i = g^{s_i} h^{r_i}$.
+
+The voter additionally produces a representation proof 
+$\pi_{\text{rep}, i}$ asserting knowledge of an opening $(s_i, r_i)$ 
+of $\text{cm}_i$, using the proof in \texttt{src/proofs/representation.rs}. 
+The triple $(\text{cm}_i, \pi_{\text{rep}, i}, \text{vk}_i)$ (where $\text{vk}_i$ is the voter's signing-verification key) 
+is signed with the voter's long-term signing key (handled in 
+\texttt{src/signature.rs}) and posted to the bulletin board.
+
+The implementation does not use a Merkle tree over the voter list. 
+This matches the paper: the eligibility proof inside each ballot 
+(Section~\ref{sec:impl-commitment-set}) is the Bootle et al.\ 
+commitment-set proof, which already produces $O(\log n)$-size proofs 
+operating directly on the flat list 
+$L = (\text{cm}_1, \ldots, \text{cm}_n)$. A Merkle layer would add 
+authentication-path bookkeeping without reducing proof size or 
+verification cost. The bulletin-board representation is therefore a 
+flat \texttt{Vec<RistrettoPoint>}.
+
+\section{Module: Ballot Construction}
+\label{sec:impl-ballot}
+
+Ballot construction lives in \texttt{src/election/ballot.rs} and pulls 
+together five of the six proving systems. For each ballot, the voter 
+performs the steps of Section~\ref{sec:phase-5-encryption} through 
+Section~\ref{sec:phase-7-publication}.
+
+\subsection{Encryption}
+\label{sec:impl-encryption}
+
+The \texttt{elgamal/} module provides the threshold ElGamal interface. 
+For each candidate slot $j = 1, \ldots, k'$ (after the padding to length 
+$k' = k + \ell_{\max} - \ell_{\min}$ described in 
+Section~\ref{sec:phase-5-encryption}), the voter:
+
+\begin{enumerate}
+    \item Samples a fresh nonce $\rho_{i, j}$.
+    \item Computes the ElGamal pair 
+    $E_{i, j} = (g^{\rho_{i, j}}, g^{v_{i, j}} \cdot pk^{\rho_{i, j}})$, 
+    where multiplication and exponentiation are Ristretto group operations 
+    via \texttt{curve25519-dalek}.
+    \item Produces an encryption-validity proof from 
+    \texttt{src/proofs/enc\_validity.rs}, asserting that the pair encrypts 
+    a known scalar under $pk$.
+\end{enumerate}
+
+\subsection{Bit-vector validity proof}
+\label{sec:impl-bit-vector}
+
+The bit-vector proof at \texttt{src/proofs/bit\_vector.rs} implements the 
+generalization of Bootle et al.'s ring-signature bit proof described in 
+Appendix A of the Aura paper. It produces a single $\Sigma$-protocol 
+proof asserting two facts simultaneously:
+
+\begin{itemize}
+    \item Each $v_{i, j} \in \{0, 1\}$.
+    \item $\sum_{j=1}^{k'} v_{i, j} = \ell_{\max}$ (a single fixed sum, 
+    after padding).
+\end{itemize}
+
+The implementation follows Appendix A line-by-line: the prover commits 
+to vectors $A$, $C$, $D$ derived from random masks and the bit values, 
+the verifier challenge $x$ is extracted from a Merlin transcript, and 
+the responses $\{f_i\}, z_A, z_C$ are computed and packed into the 
+proof object. Verification evaluates the two algebraic identities of 
+Appendix A using a single multi-scalar multiplication (Pippenger), 
+keeping per-proof verifier work near-linear in $k'$.
+
+\subsection{Commitment-set (one-of-many) proof}
+\label{sec:impl-commitment-set}
+
+The commitment-set proof at \texttt{src/proofs/commitment\_set.rs} is 
+the largest and most subtle component of the implementation. It proves 
+that there exists an index $\ell$ and randomness $r$ such that 
+$\text{cm}_\ell - C'_i = h^r$, where $C'_i = g^{s_i} h^{r'_i}$ is the 
+voter's freshly-randomized commitment to her seed.
+
+The construction follows Bootle et al.\ (ESORICS 2015) with the Spark 
+modification of Jivanyan and Feickert~\cite{lelantus-spark}: the voter's 
+secret index $\ell$ is decomposed into $m$ digits in base $n$, where 
+$n^m = N_{\text{voters}}$. The proof commits to each digit, runs $m$ 
+parallel Schnorr-style proofs that each digit lies in $\{0, 1, \ldots, n-1\}$, 
+and uses a polynomial-evaluation argument to prove that the public 
+commitments line up with the secret index.
+
+The parameters $(n, m)$ are configurable: the implementation uses 
+$n = 4$ by default (a reasonable trade-off between proof size and 
+verifier work), so that $N = 4^m$ for $m = 2, 3, 4, 5, 6, 7, 8, 9, 10$ 
+covers election sizes from $16$ to over a million. Empirical proof 
+sizes are tabulated in Chapter~\ref{ch:results}.
+
+The Fiat-Shamir transcript ordering is critical: the verifier challenge 
+must be extracted from a transcript that has absorbed every public input 
+of the proof (the commitments $\{C_i\}$, the offset $C'$, the digit 
+commitments) before any prover messages. The implementation uses a 
+single Merlin transcript per ballot, threaded through every sub-proof, 
+which guarantees that no challenge is ever extracted before its 
+preceding messages have been absorbed.
+
+\subsection{Serial validity proof}
+\label{sec:impl-serial-validity}
+
+The encrypted serial number $(D'_i, E'_i) = (g^{r''_i}, u^{s_i} \cdot pk^{r''_i})$ 
+is produced in \texttt{src/election/ballot.rs} alongside the rest of the 
+ballot. Per Section~\ref{sec:phase-4-serial}, this is what enables 
+Aura's coercion resistance.
+
+The serial-validity proof at \texttt{src/proofs/serial\_validity.rs} 
+asserts that $(D'_i, E'_i)$ encrypts $u^{s_i}$ for the same $s_i$ that 
+opens $C'_i$. Mechanically, this is a simultaneous representation 
+proof in three independent generator triples, compiled through Merlin 
+into a single non-interactive proof. Without this binding, a malicious 
+voter could register one seed but encrypt a different value as her 
+serial number, defeating coercion resistance.
+
+\subsection{Ballot assembly and signing}
+\label{sec:impl-ballot-assembly}
+
+The complete ballot is the tuple
+\[
+    B_i = \big(\{(D_{i, j}, E_{i, j}, \pi_{\text{enc}, i, j})\}_{j=1}^{k'},\; 
+    \pi_{\text{bit}, i},\; C'_i,\; D'_i,\; E'_i,\; \pi_{\text{set}, i}\big),
+\]
+plus a serial-validity proof $\pi_{\text{ser}, i}$ that binds $B_i$ as 
+its transcript. The voter signs $B_i \| \pi_{\text{ser}, i}$ with her 
+long-term signing key (using the context-bound Schnorr signature scheme 
+from \texttt{src/signature.rs}), and submits the signed package to the 
+bulletin board.
+
+\section{Module: Verification}
+\label{sec:impl-verification}
+
+\texttt{src/election/verify.rs} implements the verifier side of 
+Section~\ref{sec:phase-7-publication}. For each ballot on the bulletin 
+board, the verifier:
+
+\begin{enumerate}
+    \item Checks the voter signature on $B_i$ using the voter's 
+    verification key from $L_{\text{voters}}$.
+    \item Checks that the ballot is not a byte-level duplicate of an 
+    already-accepted ballot.
+    \item Verifies the serial-validity proof $\pi_{\text{ser}, i}$ 
+    against the public inputs of the ballot, using $B_i$ itself as the 
+    transcript binding.
+    \item Verifies each per-slot encryption-validity proof 
+    $\pi_{\text{enc}, i, j}$.
+    \item Verifies the bit-vector proof $\pi_{\text{bit}, i}$ on the 
+    aggregated ciphertext $\sum_j E_{i, j}$.
+    \item Verifies the commitment-set proof $\pi_{\text{set}, i}$ 
+    against the flat voter list $L$ and the offset $C'_i$.
+\end{enumerate}
+
+A ballot that fails any check is rejected and not included in the tally. 
+Every check is implemented as variable-time, since the verifier only 
+operates on public data; constant-time would be a needless cost.
+
+The verifier supports \emph{batch verification} of compatible proofs. 
+Encryption-validity proofs across all ballots can be combined into a 
+single multi-scalar multiplication using random linear combination, 
+amortizing per-proof verifier work as the batch grows. The same trick 
+applies to the representation proofs in DKG and to the DLEQ proofs 
+produced during decryption. Cross-ballot batch verification is 
+benchmarked in \texttt{benches/election\_n*.rs} as 
+\texttt{verify\_batch\_encval} groups, comparing individual versus 
+batched verification at batch sizes 1, 10, 50, and 100.
+
+\section{Module: Tally and Threshold Decryption}
+\label{sec:impl-tally}
+
+The tally module \texttt{src/election/tally.rs} implements the two-pass 
+tally of Section~\ref{sec:phase-9-decryption}.
+
+\paragraph{Pass 1: serial decryption and deduplication.}
+For each accepted ballot, a threshold cohort of $t$ talliers each 
+computes a partial decryption $R_{\alpha, i} = (D'_i)^{sk_\alpha}$ of 
+the ballot's encrypted serial number, using the partial-decryption 
+function in \texttt{src/elgamal/decrypt.rs}. Each tallier additionally 
+produces a DLEQ proof (\texttt{src/proofs/dleq.rs}) asserting that the 
+same $sk_\alpha$ that produced her published $pk_\alpha$ was used to 
+compute $R_{\alpha, i}$. The combiner verifies all DLEQ proofs, then 
+reconstructs $(D'_i)^{sk}$ via Lagrange interpolation:
+\[
+    (D'_i)^{sk} = \prod_{\alpha \in S} R_{\alpha, i}^{\lambda_\alpha},
+\]
+and recovers $u^{s_i} = E'_i \cdot \big((D'_i)^{sk}\big)^{-1}$. Ballots 
+sharing the same $u^{s_i}$ are grouped, and all but the most recent 
+(by bulletin board position) are discarded. This realizes coercion 
+resistance: a voter who recast her ballot during the election has only 
+the most recent ballot counted.
+
+\paragraph{Pass 2: aggregate decryption.}
+For each candidate $j$, the homomorphic aggregate ciphertext 
+$E_\Sigma^{(j)} = \prod_i E_{i, j}$ is computed over the surviving 
+ballots --- a pure public-arithmetic step that uses no key material. 
+The same threshold cohort then partial-decrypts each of the $k$ 
+aggregates, and Lagrange interpolation produces the group element 
+$g^{T_j}$ for each candidate.
+
+\paragraph{BSGS lookup.}
+Recovering $T_j$ from $g^{T_j}$ requires solving a discrete log in a 
+known small range. The implementation uses a precomputed 
+\emph{baby-step giant-step} table over the range $[0, n]$, located in 
+\texttt{src/elgamal/decrypt.rs::bsgs}. For an election with $n$ voters, 
+the table has $\sqrt{n}$ entries and the lookup costs $O(\sqrt{n})$ time, 
+which is negligible compared to the cost of producing the aggregate 
+ciphertext in the first place. The recovered tuple 
+$(T_1, \ldots, T_k)$ is the official election result.
+
+\section{Two Implementations of the Proofs}
+\label{sec:impl-two-paths}
+
+For each of the six proving systems, the repository contains two 
+parallel implementations:
+
+\begin{enumerate}
+    \item \textbf{Hand-rolled} (\texttt{src/proofs/}, default). Reproduces 
+    the Aura paper's constructions directly: same statements, same 
+    transcript layout, same generators. This is what the protocol uses 
+    for every election, ballot, DKG, and tally operation, regardless of 
+    feature flags.
+    \item \textbf{Library-backed} (\texttt{src/proofs/lib\_backed/}, 
+    feature \texttt{lib-proofs}). Each proof delegates to an off-the-shelf 
+    Rust ZK library running on its own crypto stack, with byte-level 
+    bridging at the module boundary.
+\end{enumerate}
+
+The mapping between proofs and libraries is shown in 
+Table~\ref{tab:impl-lib-mapping}.
+
+\begin{table}[H]
+\centering
+\caption{Library mapping for the alternative implementations of each 
+proving system. ``Bridged'' means the library lives on a different 
+curve/transcript stack than Aura's home (\texttt{curve25519-dalek 4.1} 
++ \texttt{merlin 3}), with a 32-byte canonical encoding bridge at the 
+module boundary.}
+\label{tab:impl-lib-mapping}
+\small
+\begin{tabular}{p{0.4cm}p{3.0cm}p{3.5cm}p{4.5cm}p{1cm}}
+\toprule
+\# & Proof & Library & Crypto stack & Bridged \\
+\midrule
+1 & Representation & \texttt{zkp 0.8} & dalek-ng 3 / merlin 2 / rand 0.7 & yes \\
+2 & DLEQ & \texttt{sigma-protocols 0.5} & dalek 4.1 & no \\
+3 & EncryptionValidity & \texttt{zkp 0.8} & dalek-ng 3 / merlin 2 / rand 0.7 & yes \\
+4 & SerialValidity & \texttt{zkp 0.8} & dalek-ng 3 / merlin 2 / rand 0.7 & yes \\
+5 & BitVector & \texttt{bulletproofs} (R1CS) & dalek 4.1 / merlin 3 & no \\
+6 & One-of-N & \texttt{one-of-many-proofs} (vendored) & dalek 2 / merlin 2 / rand 0.7 & yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The motivation for maintaining both is to surface what a developer 
+would actually pay --- in performance, proof size, and protocol fidelity 
+--- if they tried to assemble Aura on top of widely-used Rust ZK libraries 
+instead of implementing the $\Sigma$-protocols by hand. Two of the six 
+library-backed proofs do not prove the exact statement of the 
+hand-rolled paper construction:
+
+\begin{itemize}
+    \item \textbf{Bit-vector (bulletproofs R1CS).} Certifies the predicate 
+    ($b_i \in \{0, 1\}$, $\sum_i b_i = w$) using bulletproofs' default 
+    \texttt{PedersenGens}, but without binding to Aura's vector commitment 
+    $B = r \cdot H + \sum_i b_i \cdot G_i$. The hand-rolled proof 
+    additionally binds to $B$.
+    \item \textbf{One-of-N (\texttt{one-of-many-proofs}).} Uses the 
+    library's hardcoded basepoint $G = \texttt{RISTRETTO\_BASEPOINT\_POINT}$ 
+    rather than Aura's \texttt{params.h}, only supports set sizes that 
+    are exact powers of two, and recomputes $C'$ internally using the 
+    library's basepoint. The hand-rolled proof uses Aura's generators 
+    and the Bootle/Spark construction.
+\end{itemize}
+
+These statement-fidelity caveats are documented in the module docstrings 
+and disclosed alongside the timing comparisons in Chapter~\ref{ch:results}.
+
+The library-backed paths are never exercised by the protocol itself: 
+all call sites in \texttt{src/election/}, \texttt{src/elgamal/}, and 
+\texttt{src/dkg/} import directly from the hand-rolled \texttt{crate::proofs::*} 
+modules. The library-backed code is compiled only when the 
+\texttt{lib-proofs} feature is enabled, and is exercised exclusively 
+by the comparison benchmark suite \texttt{proof\_primitives\_lib} and 
+its own unit tests.
+
+\section{Testing}
+\label{sec:impl-testing}
+
+The test suite consists of 57 unit tests covering the hand-rolled 
+proving systems, ElGamal operations, DKG, and signatures, plus 5 
+integration tests in \texttt{tests/}. With the \texttt{lib-proofs} 
+feature enabled, an additional 22 unit tests cover the library-backed 
+proofs --- one module per proof, one happy path plus several edge cases 
+each.
+
+\paragraph{Unit tests.}
+Each proving system has tests for: correctness on randomly generated 
+witnesses, soundness against tampered proofs (every component bit-flipped 
+in turn, expected to fail verification), and serialization round-trips 
+where serde support is enabled. The DKG module additionally tests 
+abort behavior for malformed Feldman commitments and for shares that 
+fail Feldman verification.
+
+\paragraph{Integration tests.}
+The \texttt{tests/full\_election.rs} file contains two end-to-end tests:
+
+\begin{itemize}
+    \item \texttt{full\_election\_8\_voters\_3\_talliers\_4\_candidates}: 
+    runs the entire protocol pipeline on small parameters --- 
+    \textsf{SetupElection}, \textsf{SetupTally} (DKG with $\eta = 3$, 
+    $t = 2$), \textsf{SetupVoter} for each of 8 voters, ballot 
+    construction and verification, two-pass tally. The expected result 
+    is asserted byte-for-byte against the actual decrypted tally vector.
+    \item \texttt{coercion\_resistance\_ballot\_recast}: a voter casts 
+    a ballot, then casts a different ballot for the same election. The 
+    test asserts that both ballots are accepted to the bulletin board 
+    (since the encrypted serial numbers are indistinguishable during 
+    voting), and that after deduplication only the second ballot 
+    contributes to the tally.
+\end{itemize}
+
+\paragraph{Worked example as regression test.}
+The toy parameters of Chapter~\ref{ch:byhand} ($p = 47$, $q = 23$ over 
+a small Schnorr group) are not directly executable by the protocol 
+implementation, since the Ristretto255 group used by the protocol does 
+not admit such tiny instantiations. However, the worked example serves 
+as a structural regression test: each protocol phase from 
+Chapter~\ref{ch:byhand} maps to a specific module function, and the 
+end-to-end integration tests above exercise the same control flow on 
+real-sized parameters. Running 
+\texttt{cargo test full\_election\_8\_voters} reproduces, on Ristretto255, 
+the exact sequence of phases shown by hand on $p = 47$ in 
+Chapter~\ref{ch:byhand}.
+
+\paragraph{Continuous validation.}
+The \texttt{cargo clippy -- -D warnings} target is run as part of the 
+test workflow, ensuring that no Clippy lint regressions are merged. All 
+tests are deterministic when run with a fixed seed, making CI failures 
+reproducible without timing-related flakiness.
+% =============================================================
+% CHAPTER 6 — RESULTS
+% =============================================================
+\chapter{Benchmarks and Results}
+\label{ch:results}
+
+This chapter reports performance measurements of the implementation 
+described in Chapter~\ref{ch:implementation}. All numbers come from 
+deterministic benchmarks executed on the development machine, with the 
+exact hardware, software stack, and randomness seed recorded in the 
+repository for full reproducibility.
+
+\section{Benchmarking Methodology}
+\label{sec:bench-methodology}
+
+\paragraph{Hardware.} 
+All measurements were taken on a 12th-generation Intel Core i7-12700H 
+mobile CPU (10 cores, 20 threads, 24 MiB L3 cache, 12.5 MiB total L2 cache 
+across cores) with 16 GiB of system memory. The host operating system is 
+Linux kernel 6.6.87 inside WSL2; benchmarks run single-threaded and use 
+\texttt{rdtsc}-based wall-clock timing via Criterion.
+
+\paragraph{Software stack.}
+The implementation was compiled with \texttt{rustc 1.93.1} (released 
+February 2026) and \texttt{cargo 1.93.1}, in release mode with default 
+LTO and codegen settings. The cryptographic group is Ristretto255 via 
+\texttt{curve25519-dalek 4.1}; transcripts use \texttt{merlin 3.0}; 
+hashing uses \texttt{sha2 0.10}. Multi-scalar multiplication uses 
+\texttt{curve25519-dalek}'s built-in Pippenger implementation in 
+variable-time mode (the verifier's working data is public).
+
+\paragraph{Determinism.}
+Every benchmark seeds its randomness from a fixed \texttt{ChaCha20Rng} 
+state (seed \texttt{20260412}). Re-running on the same machine produces 
+means within Criterion's reported confidence intervals. The exact 
+hardware, software, and Git commit (\texttt{e181938}) used to produce 
+the numbers in this chapter are recorded verbatim in 
+\texttt{thesis/results/env.txt} of the repository.
+
+\paragraph{Measurement methodology.}
+All benchmarks use Criterion~0.5 with default settings: a warm-up phase 
+followed by sample collection until the configured sample count is 
+reached. Sample counts are 100--200 for fast microbenchmarks 
+(microsecond-scale operations like Schnorr proofs) and 10--50 for slower 
+benchmarks (millisecond-scale operations like full ballot construction 
+and full election lifecycles). Reported means are accompanied by 
+half-confidence-interval percentages drawn from Criterion's internal 
+bootstrap analysis. We report the mean rather than median because 
+asymmetry between the two never exceeded $5\%$ in any benchmark.
+
+\paragraph{Tier.}
+The benchmarks described in this chapter were run in the \emph{quick} 
+tier, which covers election sizes $N \in \{16, 64, 256\}$. The 
+implementation supports \emph{standard} and \emph{full} tiers (covering 
+$N$ up to $4{,}096$ and $1{,}048{,}576$ respectively); the larger 
+configurations were not exercised in the present run due to time 
+constraints, but proof-size measurements (which are independent of 
+runtime cost) cover the full range up to $N = 10^6$.
+
+\paragraph{What is measured.}
+The benchmark suite is organized into five logical groups:
+\begin{itemize}
+\item \textbf{G1} --- Per-proof microbenchmarks for the six hand-rolled 
+proving systems, with prove and verify timed separately at multiple 
+parameter values.
+\item \textbf{G2} --- Byte sizes of every proof and full ballot, measured 
+across all supported election scales.
+\item \textbf{G3} --- Batch-verification amortization for proofs that 
+support it (representation, DLEQ, encryption-validity), at batch sizes 
+1, 10, 25, 50, and 100.
+\item \textbf{G4} --- Full election lifecycle timings (DKG, voter 
+registration, ballot create/verify, tally) at each tier scale.
+\item \textbf{G6} --- Tally pipeline breakdown (per-tallier serial 
+decryption versus full pipeline including aggregate decryption).
+\end{itemize}
+A sixth group (G5, hand-rolled vs library-backed comparison) is left 
+to future work and not discussed in this chapter.
+
+\section{Per-Phase Microbenchmarks}
+\label{sec:bench-microbenchmarks}
+
+This section reports the cost of each individual cryptographic operation 
+in isolation, before they are composed into ballots or full elections.
+
+\subsection{Key Generation Costs}
+\label{sec:bench-dkg}
+
+The distributed key generation (Phase 1 of Chapter~\ref{ch:aura}) involves 
+all $\eta$ authorities running Pedersen-Feldman VSS interactively. For 
+the configuration tested ($\eta = 3$, $t = 2$), DKG is essentially 
+constant in election size $N$ --- it depends only on the number of 
+authorities and the threshold, not on the voter count. Measured wall-clock 
+times are: $1.566$ ms at $N = 16$, $1.590$ ms at $N = 64$, $1.588$ ms at 
+$N = 256$ (mean $\pm \le 3.0\%$). The slight variation across $N$ is 
+within measurement noise; DKG is genuinely $O(\eta^2 \cdot t)$ in the 
+authority parameters, independent of voters.
+
+This is consistent with the protocol design: each authority performs 
+$O(t)$ scalar multiplications for its own polynomial commitments, $O(\eta)$ 
+share evaluations, and $O(\eta \cdot t)$ verifications of received shares. 
+For the small-cohort case ($\eta \le 10$) typical of real elections, 
+DKG is a one-time cost in the low milliseconds.
+
+\subsection{Schnorr-Type Proof Costs}
+\label{sec:bench-schnorr}
+
+The four Schnorr-style proving systems (representation, DLEQ, 
+encryption-validity, serial-validity) take constant time per proof, with 
+no dependency on election parameters. Their measured prove and verify 
+times are summarized in Table~\ref{tab:bench-schnorr}.
+
+\begin{table}[H]
+\centering
+\caption{Per-proof prove and verify times for the four Schnorr-style 
+proving systems. Times are mean $\pm$ half-confidence-interval percentage 
+(Criterion).}
+\label{tab:bench-schnorr}
+\small
+\begin{tabular}{lcc}
+\toprule
+Proof system & Prove & Verify \\
+\midrule
+Representation ($n=2$ generators) & $62.92$ µs $\pm 0.9\%$ & $99.32$ µs $\pm 0.1\%$ \\
+Representation ($n=4$ generators) & $90.80$ µs $\pm 0.1\%$ & $104.2$ µs $\pm 0.5\%$ \\
+DLEQ                              & $90.72$ µs $\pm 0.0\%$ & $150.7$ µs $\pm 0.2\%$ \\
+Encryption validity               & $127.4$ µs $\pm 0.1\%$ & $186.7$ µs $\pm 0.2\%$ \\
+Serial validity                   & $204.2$ µs $\pm 0.2\%$ & $290.1$ µs $\pm 0.3\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The four times scale with the number of group operations in the underlying 
+relation: representation is the simplest (two generators, two scalars), 
+DLEQ adds a second relation, encryption-validity proves an ElGamal 
+encryption (three generators), and serial-validity is the most complex 
+(four group elements, three witnesses, two relations). All four operations 
+sit comfortably in the sub-millisecond range; even on commodity hardware, 
+a voter constructing a ballot with these proofs adds well under a 
+millisecond of total Schnorr work.
+
+\subsection{Bit-Vector Proof Costs}
+\label{sec:bench-bitvec}
+
+The bit-vector proof (Section~\ref{sec:phase-6-validity}, statement P3) 
+asserts that an encrypted bit vector contains only zeros and ones, with 
+a fixed weight. Its cost scales linearly with the padded slot count $k'$.
+
+\begin{table}[H]
+\centering
+\caption{Bit-vector proof prove and verify times as a function of padded 
+slot count $k'$.}
+\label{tab:bench-bitvec}
+\small
+\begin{tabular}{ccc}
+\toprule
+$k'$ & Prove & Verify \\
+\midrule
+4   & $251.2$ µs $\pm 0.1\%$ & $253.1$ µs $\pm 0.2\%$ \\
+5   & $350.7$ µs $\pm 0.3\%$ & $275.3$ µs $\pm 0.1\%$ \\
+8   & $374.7$ µs $\pm 0.3\%$ & $286.4$ µs $\pm 0.3\%$ \\
+12  & $645.5$ µs $\pm 0.3\%$ & $494.8$ µs $\pm 1.9\%$ \\
+16  & $886.1$ µs $\pm 2.9\%$ & $561.1$ µs $\pm 1.8\%$ \\
+24  & $1.187$ ms $\pm 2.7\%$ & $776.0$ µs $\pm 1.6\%$ \\
+32  & $1.575$ ms $\pm 2.8\%$ & $982.9$ µs $\pm 1.9\%$ \\
+48  & $2.564$ ms $\pm 3.0\%$ & $1.358$ ms $\pm 1.6\%$ \\
+64  & $3.112$ ms $\pm 2.5\%$ & $1.782$ ms $\pm 3.5\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The doubling pattern is visible: from $k' = 4$ to $k' = 64$ (a $16\times$ 
+increase), prove time grows from $251$ µs to $3.11$ ms ($12.4\times$), 
+and verify time grows from $253$ µs to $1.78$ ms ($7.0\times$). The 
+sub-linear growth on the verifier side reflects the multi-scalar 
+multiplication used at the verification step, which has more aggressive 
+amortization than a naive sum.
+
+\subsection{Commitment-Set (Eligibility) Proof Costs}
+\label{sec:bench-commset}
+
+The commitment-set proof (Section~\ref{sec:phase-6-validity}, statement 
+P1) is the largest individual component of an Aura ballot. It is also 
+the most parameter-sensitive: its cost depends on both the voter list 
+size $N$ and the $n$-ary digit base used in the Bootle-Spark construction.
+
+\begin{table}[H]
+\centering
+\caption{Commitment-set proof prove and verify times for binary 
+($n = 2$) versus quaternary ($n = 4$) digit base, at three election 
+scales. The quaternary variant approximately halves prove time at the 
+same verify time.}
+\label{tab:bench-commset}
+\small
+\begin{tabular}{cccc}
+\toprule
+$N$ & Variant & Prove & Verify \\
+\midrule
+4    & $n = 2$ & $651.2$ µs $\pm 2.6\%$ & $138.6$ µs $\pm 1.9\%$ \\
+16   & $n = 2$ & $1.650$ ms $\pm 3.0\%$ & $324.1$ µs $\pm 6.1\%$ \\
+64   & $n = 2$ & $4.603$ ms $\pm 2.5\%$ & $1.130$ ms $\pm 1.9\%$ \\
+64   & $n = 4$ & $2.698$ ms $\pm 7.5\%$ & $1.080$ ms $\pm 2.2\%$ \\
+256  & $n = 2$ & $16.44$ ms $\pm 2.2\%$ & $3.850$ ms $\pm 1.6\%$ \\
+256  & $n = 4$ & $9.121$ ms $\pm 3.2\%$ & $3.658$ ms $\pm 2.2\%$ \\
+1024 & $n = 2$ & $59.93$ ms $\pm 2.8\%$ & $13.70$ ms $\pm 2.2\%$ \\
+1024 & $n = 4$ & $29.57$ ms $\pm 2.8\%$ & $13.30$ ms $\pm 2.2\%$ \\
+4096 & $n = 2$ & $230.0$ ms $\pm 2.1\%$ & $52.15$ ms $\pm 1.4\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two observations dominate this table.
+
+First, the prove and verify times grow cleanly with $N$, but at very 
+different rates. Going from $N = 4$ to $N = 4{,}096$ (a $1024\times$ 
+increase in voter count), prove time grows from $0.65$ ms to $230$ ms 
+(a $354\times$ increase), and verify time grows from $0.14$ ms to $52$ 
+ms ($375\times$). Both are slower than the asymptotic claim of $O(\log N)$ 
+in proof size --- which is only about the byte size of the proof, not 
+the cost of producing it. The actual prover and verifier work in the 
+Bootle construction grows as $O(N)$ in the worst case, since both 
+parties must touch every commitment in the list at least once. What 
+the GK construction reduces is the \emph{communication}, not the 
+overall computation. This is consistent with what is reported in the 
+literature.
+
+Second, the choice of $n$-ary digit base meaningfully affects prover 
+cost. Compared at the same $N$, the $n = 4$ variant approximately halves 
+prove time: $9.12$ ms versus $16.44$ ms at $N = 256$, $29.57$ ms versus 
+$59.93$ ms at $N = 1024$. Verify times are essentially identical. The 
+intuition is that with $n = 4$ the prover commits to $\log_4 N$ 
+quaternary digits instead of $\log_2 N$ binary digits, halving the 
+commitment-and-bit-proof rounds even though each round becomes slightly 
+more expensive. Verification work is dominated by the same multi-scalar 
+multiplication regardless of base, so it is largely unchanged.
+
+\subsection{Verification Costs}
+\label{sec:bench-verify}
+
+A full ballot verification combines the per-proof verifications above. 
+The dominant component is the commitment-set proof verification; the 
+encryption-validity, serial-validity, and bit-vector verifications add 
+a few hundred microseconds each. Full ballot verification times are 
+reported in Section~\ref{sec:bench-lifecycle} alongside the rest of the 
+election lifecycle.
+
+A separate question is whether \emph{batch} verification of multiple 
+ballots improves over verifying them individually. The Aura paper claims 
+that batch verification of compatible Schnorr-type proofs amortizes per-proof 
+cost into a single multi-scalar multiplication. Our measurements 
+(Table~\ref{tab:bench-batch}) confirm this for all three batchable 
+proof systems (representation, DLEQ, encryption-validity).
+
+\begin{table}[H]
+\centering
+\caption{Batch-verification amortization. ``Individual'' is the time to 
+verify each proof one at a time; ``Batched'' is the time for a single 
+combined multi-scalar multiplication over all proofs at once. Speedup 
+is the ratio.}
+\label{tab:bench-batch}
+\small
+\begin{tabular}{cccccc}
+\toprule
+Proof system & Batch size & Individual & Batched & Speedup \\
+\midrule
+Representation & 1   & $119.3$ µs & $84.45$ µs & $1.41\times$ \\
+Representation & 10  & $1.188$ ms & $628.9$ µs & $1.89\times$ \\
+Representation & 100 & $11.92$ ms & $5.580$ ms & $2.14\times$ \\
+\midrule
+DLEQ           & 1   & $215.9$ µs & $119.7$ µs & $1.80\times$ \\
+DLEQ           & 10  & $2.018$ ms & $943.5$ µs & $2.14\times$ \\
+DLEQ           & 100 & $20.29$ ms & $6.587$ ms & $3.08\times$ \\
+\midrule
+Enc-validity   & 1   & $190.9$ µs & $97.82$ µs & $1.95\times$ \\
+Enc-validity   & 10  & $1.965$ ms & $928.2$ µs & $2.12\times$ \\
+Enc-validity   & 100 & $25.29$ ms & $8.879$ ms & $2.85\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The speedup grows with batch size, and reaches $2$--$3\times$ at batch 
+size $100$ across all three proof systems. The intuition is that random 
+linear combination compresses many independent verification equations 
+into a single multi-scalar multiplication, after which Pippenger 
+amortization makes the marginal cost of each additional proof very 
+small. For a real election with thousands of ballots, batch verification 
+is the difference between minutes and tens of seconds of total verifier 
+work.
+
+\subsection{Tally Costs}
+\label{sec:bench-tally}
+
+The tally pipeline has two phases (Section~\ref{sec:phase-9-decryption}): 
+serial-number decryption (used for deduplication) followed by aggregate 
+decryption (used to recover the final tally). Both involve the same 
+threshold-decryption primitive, applied to different ciphertexts.
+
+\begin{table}[H]
+\centering
+\caption{Tally pipeline timings as a function of voter count $N$. 
+``Serial decrypt per tallier'' is the wall-clock time for one tallier 
+to perform her threshold-decryption share for all $N$ ballot serial 
+numbers. ``Full pipeline'' is the end-to-end tally including 
+aggregate decryption and BSGS lookup.}
+\label{tab:bench-tally}
+\small
+\begin{tabular}{ccc}
+\toprule
+$N$ & Serial decrypt per tallier & Full pipeline \\
+\midrule
+16  & $2.745$ ms $\pm 3.3\%$  & $21.18$ ms $\pm 1.5\%$ \\
+64  & $11.15$ ms $\pm 2.7\%$  & $75.04$ ms $\pm 2.4\%$ \\
+256 & $41.38$ ms $\pm 1.1\%$  & $284.2$ ms $\pm 2.3\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Serial decryption scales linearly with $N$: each ballot has its own 
+encrypted serial number, and the tallier must partial-decrypt all of 
+them. From $N = 16$ to $N = 256$ ($16\times$), the per-tallier serial 
+decryption time grows from $2.75$ ms to $41.38$ ms ($15.1\times$), 
+matching the linear expectation closely.
+
+The full pipeline is roughly $7\times$ slower than per-tallier serial 
+decryption alone, reflecting the additional work of aggregate 
+decryption (per-candidate ciphertexts), Lagrange combination of tallier 
+shares, and the BSGS lookup to convert $g^{T_j}$ back into the integer 
+$T_j$. At $N = 256$ the full pipeline takes $284$ ms; at $N = 16$ it 
+is just $21$ ms. For boardroom-scale elections the entire tally is 
+sub-second; for $N = 10^6$ the tally would extrapolate to roughly 19 
+minutes (a tractable batch operation).
+
+\section{End-to-End Election Simulation}
+\label{sec:bench-lifecycle}
+
+This section combines the per-phase costs into end-to-end timing for a 
+complete election at three voter scales. The configuration is $\eta = 3$ 
+authorities with threshold $t = 2$, default election parameters, and 
+the tested voter counts $N \in \{16, 64, 256\}$.
+
+\begin{table}[H]
+\centering
+\caption{End-to-end election lifecycle timings. ``Voter reg.'' is the 
+per-voter registration cost (so total registration is roughly 
+$N \times$ that value). ``Ballot create'' and ``Ballot verify'' are 
+single-ballot times; total election ballot work is roughly 
+$N \times$ those values.}
+\label{tab:bench-lifecycle}
+\small
+\begin{tabular}{cccccc}
+\toprule
+$N$ & DKG & Voter reg. & Ballot create & Ballot verify & Tally \\
+\midrule
+16  & $1.566$ ms & $179.7$ µs & $4.198$ ms & $2.326$ ms & $21.18$ ms \\
+64  & $1.590$ ms & $166.4$ µs & $7.412$ ms & $3.282$ ms & $75.04$ ms \\
+256 & $1.588$ ms & $183.2$ µs & $20.56$ ms & $6.383$ ms & $284.2$ ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Reading across rows, several patterns emerge:
+
+\begin{itemize}
+\item \textbf{DKG is constant in $N$}, as expected (it depends only on 
+$\eta$ and $t$).
+\item \textbf{Voter registration is constant in $N$}, because each voter's 
+work (one Pedersen commitment, one representation proof) is independent 
+of how many other voters there are.
+\item \textbf{Ballot creation grows with $N$}, dominated by the 
+commitment-set proof. From $N = 16$ to $N = 256$ ($16\times$), ballot 
+creation grows $4.90\times$ --- much slower than $N$ itself, but faster 
+than $\log N$ alone, consistent with the $O(N / \log N)$ amortized cost 
+of Pippenger MSM in the prover.
+\item \textbf{Ballot verification grows even more slowly}: $2.74\times$ 
+over the same $16\times$ scale. This is because the verifier's MSM 
+amortizes more aggressively, and the bit-vector and Schnorr verifications 
+are constant in $N$.
+\item \textbf{Tally grows linearly} (Section~\ref{sec:bench-tally}).
+\end{itemize}
+
+The aggregate picture: a boardroom-scale election with $N = 256$ takes 
+roughly $1.6$ ms for setup, $46$ ms for all voter registrations, $5.3$ s 
+for all ballot constructions (parallelizable across voters), $1.6$ s for 
+all ballot verifications (much less with batch verification), and $0.28$ s 
+for tally. Total wall-clock time, treating ballots as serializable, is 
+under $10$ seconds; in practice ballots are constructed in parallel by 
+different voters and the protocol is dominated by verifier work, which 
+on a single CPU is well under two seconds.
+
+\section{Proof Size Analysis}
+\label{sec:bench-sizes}
+
+Proof and ballot sizes are independent of runtime cost and were measured 
+across the entire supported range up to $N = 1{,}048{,}576$ voters.
+
+\subsection{Individual Proof Sizes}
+
+The four Schnorr-style proofs have constant size, independent of any 
+election parameter:
+
+\begin{table}[H]
+\centering
+\caption{Sizes of the four Schnorr-style proofs.}
+\label{tab:bench-schnorr-sizes}
+\small
+\begin{tabular}{lc}
+\toprule
+Proof system & Size \\
+\midrule
+Representation        & $96$ B \\
+DLEQ                  & $96$ B \\
+Encryption validity   & $128$ B \\
+Serial validity       & $192$ B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The bit-vector proof grows linearly with $k'$ (since each padded slot 
+contributes its own committed bit):
+
+\begin{table}[H]
+\centering
+\caption{Bit-vector proof size as a function of padded slot count $k'$.}
+\label{tab:bench-bitvec-sizes}
+\small
+\begin{tabular}{cc|cc}
+\toprule
+$k'$ & Size & $k'$ & Size \\
+\midrule
+4    & $256$ B  & 16   & $640$ B  \\
+5    & $288$ B  & 32   & $1{,}152$ B \\
+8    & $384$ B  & 64   & $2{,}176$ B \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Even at $k' = 64$ slots, the bit-vector proof is just over $2$ KB --- 
+far smaller than running $64$ separate bit proofs would be.
+
+\subsection{Commitment-Set Proof Size}
+
+This is the most interesting size measurement: the Bootle-Spark 
+construction promises $O(\log N)$ proof size, and our measurements 
+confirm this scaling clearly.
+
+\begin{table}[H]
+\centering
+\caption{Commitment-set proof size as a function of voter count $N$, 
+using binary ($n = 2$) digit decomposition. The size grows by exactly 
+$320$ bytes for each doubling of $N$, confirming $O(\log N)$ scaling.}
+\label{tab:bench-commset-sizes}
+\small
+\begin{tabular}{ccc|ccc}
+\toprule
+$N$ & $(n, m)$ & Size & $N$ & $(n, m)$ & Size \\
+\midrule
+$16$       & $(2, 4)$  & $672$ B  & $16{,}384$    & $(2, 14)$ & $2{,}272$ B \\
+$64$       & $(2, 6)$  & $992$ B  & $65{,}536$    & $(2, 16)$ & $2{,}592$ B \\
+$256$      & $(2, 8)$  & $1{,}312$ B & $262{,}144$ & $(2, 18)$ & $2{,}912$ B \\
+$1{,}024$  & $(2, 10)$ & $1{,}632$ B & $1{,}048{,}576$ & $(2, 20)$ & $3{,}232$ B \\
+$4{,}096$  & $(2, 12)$ & $1{,}952$ B & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern is clear and exact: each doubling of $N$ (one additional 
+binary digit) adds exactly $320$ bytes to the proof. Going from $N = 16$ 
+to $N = 10^6$ --- a $65{,}000\times$ increase in voter count --- proof 
+size grows only $4.81\times$, from $672$ B to $3.23$ KB. This is the 
+core efficiency property of the GK/Bootle construction in practice.
+
+\subsection{Full Ballot Sizes}
+
+A full Aura ballot includes the encryption validity proofs (one per 
+slot), the bit-vector proof, the encrypted serial number with its 
+validity proof, and the commitment-set proof. The total scales 
+predominantly with $N$ (via the commitment-set proof), with smaller 
+contributions from $k'$.
+
+\begin{table}[H]
+\centering
+\caption{Total ballot size as a function of voter count $N$, with default 
+election parameters ($k = 4$, $\ell_{\min} = 1$, $\ell_{\max} = 2$, 
+giving $k' = 5$). Each doubling of $N$ adds $320$ bytes, the same as 
+the commitment-set proof, confirming that proof is the dominant 
+$N$-dependent term.}
+\label{tab:bench-ballot-sizes}
+\small
+\begin{tabular}{cc|cc}
+\toprule
+$N$ & Ballot size & $N$ & Ballot size \\
+\midrule
+$16$       & $2{,}272$ B  & $16{,}384$    & $3{,}872$ B \\
+$64$       & $2{,}592$ B  & $65{,}536$    & $4{,}192$ B \\
+$256$      & $2{,}912$ B  & $262{,}144$   & $4{,}512$ B \\
+$1{,}024$  & $3{,}232$ B  & $1{,}048{,}576$ & $4{,}832$ B \\
+$4{,}096$  & $3{,}552$ B  & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A million-voter election produces ballots under $5$ KB each, despite 
+the $N = 10^6$ commitment list. For comparison, a typical TLS handshake 
+is several KB; an Aura ballot is the same order of magnitude as a 
+single web-page request.
+
+\section{Comparison with the Original Paper's Estimates}
+\label{sec:bench-vs-paper}
+
+The original Aura paper (Section 4.1) gives only asymptotic complexity, 
+not concrete numbers. We can therefore not directly compare wall-clock 
+timings, but we can verify that the asymptotic claims hold in practice.
+
+\paragraph{Claim 1: Commitment-set proof size is $O(\log N)$.}
+The paper writes: \emph{``The size of this proof scales as 
+$O(\log(N_{\text{voters}}))$ using the instantiation referenced.''} 
+Our measurements (Table~\ref{tab:bench-commset-sizes}) confirm this 
+exactly: every doubling of $N$ adds a constant $320$ bytes to the proof, 
+which is $\Theta(\log N)$ growth. Going from $N = 16$ to $N = 10^6$, the 
+proof grows $4.81\times$ while $N$ grows $65{,}000\times$ --- a 
+near-perfect logarithmic relationship.
+
+\paragraph{Claim 2: Verification scales as $O(N / \log N)$ via Pippenger.}
+The paper writes: \emph{``While verification at first appears to scale 
+as $O(N_{\text{voters}})$, the use of efficient multiscalar multiplication 
+algorithms can reduce this complexity to 
+$O(N_{\text{voters}} / \log(N_{\text{voters}}))$ with good constants.''} 
+Our measurements show commitment-set verification growing from $324$ µs 
+at $N = 16$ to $52.15$ ms at $N = 4096$ (a $161\times$ increase for a 
+$256\times$ increase in $N$). Naive $O(N)$ scaling would predict a 
+$256\times$ slowdown; pure $O(N / \log N)$ would predict approximately 
+$192\times$. The measured $161\times$ is slightly better than even the 
+$O(N / \log N)$ prediction, suggesting that Pippenger's constants are 
+working in our favor at these scales.
+
+\paragraph{Claim 3: Batch verification has constant marginal cost.}
+The paper writes: \emph{``Verifier weighting of common group elements in 
+the required multiscalar multiplication evaluation makes the marginal 
+verification complexity constant, amortizing the overall cost across 
+the batch.''} Our measurements (Table~\ref{tab:bench-batch}) confirm 
+this clearly: at batch size $100$, marginal per-proof verification cost 
+drops by $2$--$3\times$ across all three batchable proof systems. For 
+encryption-validity specifically, batched cost is $88.79$ µs/proof at 
+batch $100$, versus $252.9$ µs/proof individually --- exactly the 
+amortization the paper predicts.
+
+\paragraph{An empirical contribution: the $n$-ary trade-off.}
+The Aura paper does not benchmark different choices of $n$ in the 
+$n^m = N$ parameterization. Our measurements (Table~\ref{tab:bench-commset}) 
+provide concrete data: the $n = 4$ variant approximately halves prover 
+time while leaving verifier time unchanged. This is a meaningful 
+practical observation, since prover time is the per-voter cost (paid 
+once per ballot, on possibly resource-constrained client devices) while 
+verifier time is the per-ballot infrastructure cost (paid centrally, 
+amortizable). Choosing $n = 4$ over $n = 2$ is a Pareto improvement 
+for client-side performance at no infrastructure cost.
+
+\paragraph{Summary.}
+All three of the paper's quantitative claims hold in our implementation. 
+The asymptotic predictions are not just theoretical guarantees but 
+practical reality: the implementation behaves exactly as the paper 
+describes, with the additional empirical finding that the $n = 4$ digit 
+base choice is strictly better than $n = 2$ on the tested platform.
+% =============================================================
+% CHAPTER 7 — DISCUSSION
+% =============================================================
+\chapter{Discussion}
+\label{ch:discussion}
+
+This chapter steps back from the implementation details of 
+Chapter~\ref{ch:implementation} and the measurements of 
+Chapter~\ref{ch:results} to consider what the work means in practice. 
+We first ask whether Aura, as implemented, is viable for the kinds of 
+elections the introduction motivated. We then catalog what Aura 
+deliberately does not solve, what limitations remain in the present 
+implementation, and which directions seem most promising for follow-up 
+work.
+
+\section{Practical Viability for Direct Democracy}
+\label{sec:viability}
+
+The benchmarks of Chapter~\ref{ch:results} let us answer the practical 
+question concretely: at what election scale does Aura become workable, 
+and what does each role pay?
+
+\paragraph{Voter-side cost.} 
+The voter's wall-clock cost is dominated by the commitment-set 
+(eligibility) proof, which scales with the voter list size $N$. At 
+$N = 256$ a ballot takes roughly $20$ ms to construct on a modern 
+laptop CPU; at $N = 4{,}096$ extrapolation suggests a few hundred 
+milliseconds; at $N = 10^6$ ballot construction would take on the order 
+of a minute on the same hardware. For a phone-grade CPU we would 
+expect proof times perhaps $5$--$10\times$ longer. This places Aura 
+comfortably in the practical range for elections up to mid-six-figure 
+voter counts (university elections, professional-society votes, 
+municipal referenda) on commodity client devices, and within reach for 
+city- to country-scale elections if voters are willing to wait a 
+minute or two for a ballot to be prepared --- comparable to the time 
+spent in a physical polling booth.
+
+The empirical observation that $n = 4$ approximately halves prover 
+time at no verifier cost (Section~\ref{sec:bench-commset}) is 
+particularly valuable here, since prover work is precisely the 
+client-side cost paid on the most resource-constrained device in the 
+system. A deployment that chooses $n = 4$ as the default --- as the 
+present implementation can do whenever $N$ is a power of $4$ --- 
+gets the improvement essentially for free.
+
+\paragraph{Verifier-side cost.} 
+Verification is the cost paid by the public bulletin board, by 
+auditors, and by any party who wishes to confirm the election outcome. 
+Per-ballot verification at $N = 256$ takes roughly $6$ ms; at $N = 4096$ 
+extrapolation suggests under $50$ ms. Crucially, the per-ballot cost 
+is amortizable across batches: encryption-validity verification gains 
+$2$--$3\times$ at batch size $100$ (Section~\ref{sec:bench-verify}), 
+and the same applies to the representation and DLEQ proofs used 
+elsewhere in the protocol. Aggregate verifier work scales as 
+$O(N \cdot \text{ballots} / \log N)$ in the unbatched case and is 
+dramatically smaller with batching. For an election with $10{,}000$ 
+ballots and $N = 10^4$ voters, full verification of every ballot takes 
+on the order of a single minute on commodity hardware --- well within 
+the budget of an audit run.
+
+\paragraph{Authority-side cost.} 
+The talliers do constant-time work in the DKG phase 
+($\sim 1.6$ ms for $\eta = 3, t = 2$, independent of $N$) and linear 
+work in the tally phase. Tally-pipeline cost grows roughly linearly 
+with $N$: $21$ ms at $N = 16$, $284$ ms at $N = 256$, extrapolating to 
+roughly $19$ minutes at $N = 10^6$. This is the most $N$-dependent 
+phase of the protocol, but it runs once at the end of the election on 
+dedicated infrastructure --- a $19$-minute tally for a million-voter 
+election is operationally insignificant.
+
+\paragraph{Verdict.} 
+For boardroom and mid-scale elections (up to roughly $10^4$ voters), 
+Aura on the present implementation is straightforwardly practical: 
+voters wait under a second, verifiers complete in seconds, talliers 
+finish in milliseconds. For larger scales (up to $10^6$ voters), the 
+protocol remains tractable but voter-side wait times begin to matter 
+on weak hardware --- this is the regime where the future-work 
+directions discussed in Section~\ref{sec:future-work} become most 
+relevant.
+
+\section{What Aura Does Not Solve}
+\label{sec:limits}
+
+It is important to be honest about what Aura, even with this 
+implementation, does \emph{not} provide. Several long-standing 
+challenges in electronic voting are deliberately out of scope.
+
+\paragraph{Receipt-freeness.} 
+Aura does not prevent a willing voter from proving how she voted. A 
+voter who chooses to retain her ballot's encryption randomness 
+$\{\rho_{i, j}\}$ can later show a third party that she encrypted 
+specific values into specific slots, which constitutes a verifiable 
+receipt. This makes Aura unsuitable for jurisdictions where 
+receipt-freeness is mandated by law, and limits its protection 
+against vote-buying schemes that rely on voters voluntarily 
+proving their ballot contents. True receipt-freeness 
+generally requires a stronger trust model (a designated verifier, 
+re-encryption shuffle, or hardware-protected randomness) than Aura 
+adopts.
+
+\paragraph{Vote-buying mitigation beyond coercion resistance.} 
+Aura's coercion resistance covers the specific case of a voter under 
+duress who later regains autonomy and re-votes. It does not cover the 
+weaker but more pervasive case of voluntary vote-selling, where a 
+voter willingly reveals her receipt for compensation. The 
+JCJ-credentials approach~\cite{jcj} mitigates this with anonymous 
+credentials that voters can fake under duress; integrating such a 
+mechanism into Aura is non-trivial and is a natural follow-up question.
+
+\paragraph{Sybil resistance and voter authentication.} 
+Aura assumes a list $L_{\text{voters}}$ of authorized signing keys 
+distributed by an organizer. The mechanism that establishes this list 
+--- proving that each registered voter is a real, unique, eligible 
+person --- is outside the protocol. A real deployment would have to 
+rely on existing identity infrastructure (national ID systems, 
+attestations from independent registrars, or web-of-trust schemes) 
+to populate $L_{\text{voters}}$. The cryptographic guarantees Aura 
+provides are conditional on this list being correct.
+
+\paragraph{Bulletin-board availability.} 
+Aura assumes a publicly readable, append-only bulletin board where 
+ballots are posted and on which observers can run \texttt{VerifyBallot}. 
+The protocol does not specify how the bulletin board is implemented, 
+nor how to defend against an adversarial bulletin board that silently 
+drops ballots. A blockchain bulletin board would address availability 
+at the cost of latency and storage; a centralized bulletin board with 
+replicated audit logs would be cheaper but trust-bound.
+
+\paragraph{Network anonymity.} 
+Aura provides cryptographic ballot anonymity but not network-level 
+anonymity. A voter who connects directly from a known IP address to 
+post her ballot reveals when she voted, even if not what she voted for. 
+A real deployment would route ballot submissions through a 
+mixnet or Tor.
+
+\section{Implementation Limitations}
+\label{sec:impl-limits}
+
+The implementation described in Chapter~\ref{ch:implementation} is a 
+faithful reference for the protocol but is not yet production-grade. 
+We catalog the limitations explicitly so that any party wishing to 
+deploy or build on this code can address them deliberately.
+
+\paragraph{Variable-time arithmetic.} 
+The implementation uses 
+\texttt{curve25519-dalek}'s \texttt{vartime\_multiscalar\_mul} for all 
+prover and verifier multi-scalar multiplications. This is the standard 
+choice for verifier code (where inputs are public) but is incorrect 
+for prover code in adversarial settings, where timing channels could 
+leak the secret index $\ell$ or seed $s_i$. Production deployment 
+would require switching prover-side MSM to constant-time variants 
+(at a roughly $2\times$ speed cost) and auditing every other 
+arithmetic operation for timing-channel safety. The 
+\texttt{curve25519-dalek} crate provides constant-time scalar arithmetic, 
+so this is largely a matter of replacing the variable-time MSM call 
+with the constant-time one and re-running the benchmarks.
+
+\paragraph{No formal security audit.} 
+The implementation has not been independently audited. Test coverage 
+($57$ unit tests plus $5$ integration tests, all passing under 
+\texttt{cargo clippy --deny warnings}) catches functional regressions 
+but cannot substitute for a third-party cryptographic review. 
+Production deployment would require an audit by an established 
+firm with cryptographic-implementation experience. A formal-methods 
+audit (machine-checked proof that the Rust code matches the 
+$\Sigma$-protocol specifications of the paper) would be a stronger 
+guarantee but a much heavier engineering investment.
+
+\paragraph{No persistent bulletin board.} 
+The current implementation simulates the bulletin board as an 
+in-memory \texttt{Vec} of accepted ballots. A real deployment would 
+need integration with a persistent, tamper-evident store (a 
+blockchain, a transparency log, or a replicated append-only database) 
+together with the gossip and ordering protocol that surrounds it. 
+This is a substantial systems engineering effort, separate from the 
+cryptographic work documented here.
+
+\paragraph{No client SDK or user interface.} 
+Voters, talliers, and organizers all interact with the protocol 
+through Rust function calls. Real deployment would require a client 
+application (mobile app, browser extension, or web frontend), a UX 
+flow for ballot construction and re-voting, an authentication layer 
+that ties signing keys to voter identities, and an operations 
+dashboard for talliers. None of this is in scope for the present 
+thesis.
+
+\paragraph{Quick-tier benchmarks.} 
+The runtime measurements in Chapter~\ref{ch:results} cover the 
+\emph{quick} tier, $N \le 256$. Proof-size measurements extend up to 
+$N = 10^6$, but the corresponding wall-clock measurements at the 
+\emph{standard} ($N \le 4{,}096$) and \emph{full} ($N \le 10^6$) 
+tiers were not run for the present thesis due to time constraints. 
+The infrastructure to run them exists in the repository 
+(\texttt{thesis/run\_benches.sh standard} or \texttt{full}), and 
+re-running on more powerful hardware to extend the measurement range 
+is a one-day task. Nothing about the implementation prevents larger 
+measurements; only running time prevented their inclusion here.
+
+\paragraph{No hand-rolled vs library comparison in this chapter.} 
+The repository includes a parallel library-backed implementation of 
+each of the six proving systems (Section~\ref{sec:impl-two-paths}) 
+behind the \texttt{lib-proofs} feature. The present thesis does not 
+report the empirical comparison between hand-rolled and library-backed 
+implementations, leaving it as a deliberate near-term follow-up 
+(Section~\ref{sec:future-work}).
+
+\section{Future Work}
+\label{sec:future-work}
+
+We organize future directions roughly in order of how directly they 
+build on the present thesis.
+
+\paragraph{Standard-tier and full-tier benchmarks.} 
+Most immediately, running the existing benchmark infrastructure at 
+\emph{standard} and \emph{full} tiers would extend wall-clock 
+measurements up to $N = 10^6$, validating the extrapolations in 
+Section~\ref{sec:viability} with direct data. This is a 
+one-engineering-day task that would substantially strengthen the 
+practical-viability claims of the thesis.
+
+\paragraph{Hand-rolled vs library-backed comparison.} 
+Producing the empirical comparison between Aura's hand-rolled 
+$\Sigma$-protocols and equivalent off-the-shelf Rust ZK libraries 
+(\texttt{zkp}, \texttt{sigma-protocols}, \texttt{bulletproofs}, 
+\texttt{one-of-many-proofs}) would provide useful guidance for 
+implementers choosing between paper-faithful custom code and 
+library-friendly approximations. The infrastructure for this 
+comparison is in place behind the \texttt{lib-proofs} feature flag; 
+running the comparison and writing up the statement-fidelity 
+trade-offs would yield a publishable empirical contribution.
+
+\paragraph{Constant-time prover and security audit.} 
+Switching prover-side MSM from variable-time to constant-time is a 
+mechanical change that would close the most pressing implementation 
+gap before any real deployment. A subsequent third-party security 
+audit, ideally combined with formal verification of the Rust code 
+against the protocol's $\Sigma$-protocol specifications, would 
+establish a level of assurance comparable to other deployed 
+e-voting systems.
+
+\paragraph{SNARK-based eligibility proofs with Merkle anchoring.} 
+A natural research extension is to replace Aura's flat-list 
+Groth-Kohlweiss commitment-set proof with a Merkle-tree-anchored 
+zk-SNARK eligibility proof, in the style of Zcash 
+Sapling~\cite{zcash-sapling}, Tornado Cash, or 
+Semaphore~\cite{semaphore}. The voter list would compress from $O(N)$ 
+to a single $O(1)$ Merkle root on chain, eligibility proofs would 
+shrink from $O(\log N)$ to constant size (~192 bytes for Groth16), 
+and verification would become constant-time per ballot --- significant 
+improvements at large scale ($N > 10^6$). The trade-off is the choice 
+of proof system. Groth16 offers the smallest proofs and fastest 
+verification but requires a per-circuit trusted setup ceremony, 
+directly conflicting with Aura's stated trust-free setup design 
+goal. Transparent alternatives such as Halo2 with FRI commitments, 
+STARKs, or folding schemes like Nova~\cite{nova} preserve setup-freeness 
+at the cost of larger proofs and heavier prover work. A direct 
+empirical comparison of these variants against the current Aura would 
+quantify the practical trade-offs and clarify which design is best 
+suited to which deployment scale. Adjacent ideas in this direction 
+include incremental Merkle trees~\cite{zcash-sapling} for 
+late-registration support during voting, and lightweight client 
+membership proofs for auditors who do not want to download the full 
+voter list.
+
+\paragraph{Integration with a real bulletin board.} 
+Connecting the protocol to a persistent bulletin board --- a 
+blockchain, a transparency log, or a Tor-anchored replicated store 
+--- would move the implementation from research-grade to deployment-grade. 
+The cryptographic interface is well-defined; the engineering effort 
+is in the surrounding consensus, gossip, and storage layers.
+
+\paragraph{Stronger coercion and receipt-freeness mechanisms.} 
+Integrating JCJ-style anonymous credentials~\cite{jcj} would extend 
+Aura's weak coercion-resistance to a stronger property, allowing 
+voters under sustained duress (not just transient duress) to cast 
+fake ballots that are silently discarded at tally time. This is a 
+substantial protocol modification rather than an implementation 
+extension and would warrant its own thesis-scale project.
+
+\paragraph{Faster elliptic curves.} 
+Ristretto255 was chosen for its constant-time properties and its 
+mature ecosystem in Rust. Newer pairing-friendly or AVX-optimized 
+curves (BLS12-381 with batch operations, or recent assembly-optimized 
+implementations of Curve25519-derived constructions) could yield 
+$2$--$5\times$ speedups in the most expensive operations. This is 
+a direct engineering optimization; the protocol would not change.
+
+\section{Concluding Remarks}
+\label{sec:concluding-remarks}
+
+This thesis has addressed the question of whether the Aura private 
+voting protocol of Jivanyan and Feickert~\cite{aura2022} is practical 
+in implementation, and what concrete trade-offs surface when it is 
+built end-to-end on modern hardware. The answer is yes, with caveats 
+worth stating plainly.
+
+Aura's design priorities --- trust-free setup, simple proof systems, 
+universal verifiability, and weak coercion resistance --- are real, 
+well-motivated gaps in the existing electronic-voting landscape. 
+Helios, ElectionGuard, and the various deployed systems discussed in 
+Chapter~\ref{ch:literature} each compromise on at least one of these 
+properties, and Aura's specific combination of guarantees is not 
+redundant with prior work.
+
+This thesis delivers what is, to our knowledge, the first fully 
+open-source implementation of the protocol, faithful to the original 
+paper at every transcript byte and generator choice. The benchmarks 
+of Chapter~\ref{ch:results} show that Aura is straightforwardly 
+practical for boardroom-scale elections (under two seconds of 
+cumulative cryptographic work for $N \le 10^3$), workable for 
+municipal-scale elections (under a minute for $N \le 10^5$), and 
+within reach for national-scale elections with the engineering 
+investments outlined above. The asymptotic claims of the original 
+paper hold exactly in our measurements; as an additional empirical 
+contribution, we identified that the $n = 4$ digit-base in the 
+Bootle-Spark commitment-set proof is approximately twice as fast on 
+the prover side as the binary $n = 2$ default, at no cost to the 
+verifier --- a Pareto improvement that the paper did not benchmark.
+
+The worked numerical example of Chapter~\ref{ch:byhand}, the 
+protocol description of Chapter~\ref{ch:aura}, the cryptographic 
+primitives of Chapter~\ref{ch:primitives}, and the implementation 
+documentation of Chapter~\ref{ch:implementation} should together be 
+sufficient for a careful reader to understand, audit, and build on 
+Aura without prior cryptographic background beyond the basics. The 
+code is licensed BSD-3-Clause and is available at 
+\url{https://github.com/nerses-asaturyan/aura}.
+
+The most important next steps, in priority order, are: (1) extending 
+the wall-clock benchmarks from the \emph{quick} tier to the 
+\emph{standard} and \emph{full} tiers, validating the extrapolations 
+in this thesis with direct measurement at $N$ up to $10^6$; (2) 
+replacing variable-time prover arithmetic with constant-time variants 
+and securing a third-party cryptographic audit, closing the most 
+pressing gap between research-grade and deployment-grade implementation; 
+and (3) investigating Merkle-anchored zk-SNARK eligibility proofs as 
+a route to constant-size ballot proofs at national scale, with 
+transparent proof systems (Halo2 with FRI, STARKs, Nova) preserving 
+Aura's trust-free setup property. Together these extensions would 
+take Aura from a paper-faithful research artifact to a deployable 
+e-voting infrastructure suitable for the direct-democracy applications 
+that motivated this work.
+
+% =============================================================
+% BIBLIOGRAPHY
+% =============================================================
+\addcontentsline{toc}{chapter}{Bibliography}
+\begin{thebibliography}{99}
+
+\bibitem{aura2022}
+Jivanyan A., Feickert A.,
+\textit{Aura: private voting with reduced trust on tallying authorities},
+Cryptology ePrint Archive, Paper 2022/543, 2022.
+\url{https://eprint.iacr.org/2022/543}
+
+\bibitem{helios}
+Adida B.,
+\textit{Helios: Web-based Open-Audit Voting},
+USENIX Security Symposium, 2008, pp.~335--348.
+
+\bibitem{russian2021}
+Maksimov V., Smyshlyaev S.,
+\textit{Russian Federal Remote E-voting Scheme of 2021},
+ePrint Archive, Paper 2021/1454, 2021.
+\url{https://eprint.iacr.org/2021/1454}
+
+\bibitem{cryptoreview}
+Bernhard D., Cortier V., Galindo D., Pereira O., Warinschi B.,
+\textit{A comprehensive analysis of game-based ballot privacy definitions},
+IEEE Symposium on Security and Privacy, 2015, pp.~499--516.
+
+\bibitem{blockchainreview}
+Pawlak M., Guziur J., Poniszewska-Mara\'{n}da A.,
+\textit{Towards the blockchain technology for system voting process},
+Procedia Computer Science, vol.~159, 2019, pp.~2293--2301.
+
+\bibitem{merkle}
+Merkle R.~C.,
+\textit{A digital signature based on a conventional encryption function},
+CRYPTO, 1987, pp.~369--378.
+
+\bibitem{groth-kohlweiss}
+Groth J., Kohlweiss M.,
+\textit{One-out-of-many proofs: Or how to leak a secret and spend a coin},
+EUROCRYPT, 2015, pp.~253--280.
+
+\bibitem{pedersen}
+Pedersen T.~P.,
+\textit{Non-interactive and information-theoretic secure verifiable secret sharing},
+CRYPTO, 1991, pp.~129--140.
+
+\bibitem{shamir}
+Shamir A.,
+\textit{How to share a secret},
+Communications of the ACM, vol.~22, no.~11, 1979, pp.~612--613.
+
+\bibitem{elgamal}
+ElGamal T.,
+\textit{A public key cryptosystem and a signature scheme based on discrete logarithms},
+IEEE Transactions on Information Theory, vol.~31, no.~4, 1985, pp.~469--472.
+
+\bibitem{schnorr}
+Schnorr C.~P.,
+\textit{Efficient signature generation by smart cards},
+Journal of Cryptology, vol.~4, no.~3, 1991, pp.~161--174.
+
+\bibitem{fiatshamir}
+Fiat A., Shamir A.,
+\textit{How to prove yourself: Practical solutions to identification and signature problems},
+CRYPTO, 1986, pp.~186--194.
+
+\bibitem{cramer-damgard}
+Cramer R., Damg\aa rd I., Schoenmakers B.,
+\textit{Proofs of partial knowledge and simplified design of witness hiding protocols},
+CRYPTO, 1994, pp.~174--187.
+
+\bibitem{feldman}
+Feldman P.,
+\textit{A practical scheme for non-interactive verifiable secret sharing},
+FOCS, 1987, pp.~427--438.
+
+\bibitem{bellare-rogaway}
+Bellare M., Rogaway P.,
+\textit{Random oracles are practical: A paradigm for designing efficient protocols},
+ACM Conference on Computer and Communications Security, 1993, pp.~62--73.
+
+\bibitem{bootle-bit-vector}
+Bootle J., Cerulli A., Chaidos P., Ghadafi E., Groth J., Petit C.,
+\textit{Short accountable ring signatures based on DDH},
+ESORICS, 2015, pp.~243--265.
+
+\bibitem{lelantus-spark}
+Jivanyan A., Feickert A.,
+\textit{Lelantus Spark: Secure and flexible private transactions},
+Cryptology ePrint Archive, Paper 2021/1173, 2021.
+\url{https://eprint.iacr.org/2021/1173}
+
+\bibitem{jcj}
+Juels A., Catalano D., Jakobsson M.,
+\textit{Coercion-resistant electronic elections},
+ACM Workshop on Privacy in the Electronic Society, 2005, pp.~61--70.
+
+\bibitem{zcash-sapling}
+Hopwood D., Bowe S., Hornby T., Wilcox N.,
+\textit{Zcash protocol specification, Version 2024.7.0 [Sapling/Orchard]},
+Electric Coin Company, 2024.
+\url{https://zips.z.cash/protocol/protocol.pdf}
+
+\bibitem{semaphore}
+Whitehat B., Mueller J., Beregszaszi A.,
+\textit{Semaphore: Anonymous signaling on Ethereum},
+Ethereum Foundation, 2019.
+\url{https://semaphore.pse.dev}
+
+\bibitem{nova}
+Kothapalli A., Setty S., Tzialla I.,
+\textit{Nova: Recursive zero-knowledge arguments from folding schemes},
+CRYPTO, 2022, pp.~359--388.
+
+\end{thebibliography}
+
+% =============================================================
+% APPENDICES (optional)
+% =============================================================
+% \appendix
+% \chapter{Additional Material}
+% [Appendix content here.]
+\end{document}

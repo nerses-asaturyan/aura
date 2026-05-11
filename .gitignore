@@ -20,6 +20,20 @@ target
 # Claude Code local config
 .claude/
 
+# LaTeX build artifacts (thesis/build_paper.sh output dir + stragglers)
+thesis/build/
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
 # RustRover
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
