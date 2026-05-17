@@ -190,13 +190,21 @@ def g2_proof_sizes(sizes: list[dict]) -> None:
 def g3_batch_amortization(timings: list[dict]) -> None:
     groups = ("batch_verify_rep", "batch_verify_dleq", "batch_verify_encval")
     rows: list[list[str]] = []
-    # We expect (group, function ∈ {individual, batch}, value = batch size)
+    # We expect (group, function ∈ {individual, batch}, value = batch size).
     by_key: dict[tuple[str, str], dict[str, dict]] = {}
     for r in timings:
         if r["group"] in groups:
             key = (r["group"], r["value"])
             by_key.setdefault(key, {})[r["function"]] = r
-    for (group, scale), funcs in sorted(by_key.items()):
+    # Sort by (group, then batch size as integer).
+    def sort_key(item):
+        (group, scale), _ = item
+        try:
+            n = int(scale)
+        except (TypeError, ValueError):
+            n = 0
+        return (group, n)
+    for (group, scale), funcs in sorted(by_key.items(), key=sort_key):
         ind = funcs.get("individual")
         bat = funcs.get("batch")
         if ind and bat and bat["mean_ns"] > 0:
@@ -210,16 +218,56 @@ def g3_batch_amortization(timings: list[dict]) -> None:
                     f"{speedup:.2f}×",
                 ]
             )
-    # Cross-ballot batch verify from election benches.
-    for r in timings:
-        if r["group"].endswith("verify_batch_encval") or r["group"].endswith("verify_batch"):
-            rows.append([r["group"], r["value"] or "—", "—", fmt_time(r["mean_ns"]), "—"])
     write_pair(
         "g3_batch_amortization",
         ["Group", "Batch size", "Individual", "Batched", "Speedup"],
         rows,
-        "Batch-verification amortization across proof types and election scales.",
+        "Batch-verification amortization for the three batchable proof systems "
+        "(standalone benches, no election context).",
         "tab:g3_batch_amortization",
+    )
+
+
+def g3b_election_batch_verify(timings: list[dict]) -> None:
+    """Election-scale batch verification: full-ballot verify_batch at each N
+    across batch sizes. Shows how long it takes to verify K ballots at once
+    for a real-sized commitment list of N voters."""
+    by_n: dict[int, dict[int, dict[str, float]]] = {}
+    for r in timings:
+        m = N_FROM_GROUP.match(r["group"])
+        if not m:
+            continue
+        op = m.group(2)
+        # We want N{X}/verify_batch (the full-ballot batch verify), not
+        # N{X}/verify_batch_encval (the encryption-validity-only batch).
+        if op != "verify_batch":
+            continue
+        n = int(m.group(1))
+        try:
+            bs = int(r["value"])
+        except (TypeError, ValueError):
+            continue
+        by_n.setdefault(n, {})[bs] = r["mean_ns"]
+    if not by_n:
+        return
+    batch_sizes = sorted({bs for sizes in by_n.values() for bs in sizes})
+    headers = ["N"] + [f"batch={bs}" for bs in batch_sizes]
+    rows: list[list[str]] = []
+    for n in sorted(by_n):
+        row = [f"{n:,}"]
+        for bs in batch_sizes:
+            t = by_n[n].get(bs)
+            row.append(fmt_time(t) if t is not None else "—")
+        rows.append(row)
+    write_pair(
+        "g3b_election_batch_verify",
+        headers,
+        rows,
+        "Election-scale full-ballot batch verification: total wall-clock time "
+        "to batch-verify the given number of complete ballots for a voter list "
+        "of size $N$. Each row is one election scale; each column is one batch "
+        "size.",
+        "tab:g3b_election_batch_verify",
     )
 
 
@@ -329,6 +377,7 @@ def main() -> int:
     g1_proof_primitives(timings)
     g2_proof_sizes(sizes)
     g3_batch_amortization(timings)
+    g3b_election_batch_verify(timings)
     g4_election_lifecycle(timings)
     g5_handrolled_vs_lib(timings)
     g6_tally_breakdown(timings)

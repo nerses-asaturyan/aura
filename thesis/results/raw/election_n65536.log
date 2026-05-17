@@ -1,0 +1,3 @@
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 2.92s
+     Running benches/election_n65536.rs (target/release/deps/election_n65536-34658025444dc20a)

@@ -42,6 +42,11 @@ echo "[paper] engine: $ENGINE"
 
 mkdir -p "$BUILD"
 
+# Convert any selected Criterion SVGs that are newer than their PDFs.
+if [[ -x "$HERE/convert_criterion_svgs.sh" ]]; then
+  "$HERE/convert_criterion_svgs.sh"
+fi
+
 run_engine() {
   local label="$1"
   echo "[paper] $label pass"

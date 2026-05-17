@@ -1,107 +1,83 @@
-   Compiling aura v0.1.0 (/home/nerses/aura)
-    Finished `bench` profile [optimized] target(s) in 2.32s
-     Running benches/election_n16.rs (target/release/deps/election_n16-4e8af28abd7d9ca4)
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 4.09s
+     Running benches/election_n16.rs (target/release/deps/election_n16-fa0c000b1362ff24)
 Benchmarking N16/dkg/2of3
 Benchmarking N16/dkg/2of3: Warming up for 2.0000 s
-Benchmarking N16/dkg/2of3: Collecting 100 samples in estimated 14.850 s (10k iterations)
+Benchmarking N16/dkg/2of3: Collecting 100 samples in estimated 11.100 s (10k iterations)
 Benchmarking N16/dkg/2of3: Analyzing
-N16/dkg/2of3            time:   [1.4963 ms 1.5296 ms 1.5666 ms]
-                        change: [-17.218% -11.993% -6.4343%] (p = 0.00 < 0.01)
-                        Performance has improved.
+N16/dkg/2of3            time:   [1.1267 ms 1.1307 ms 1.1351 ms]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) low mild
 
 Benchmarking N16/voter/registration
 Benchmarking N16/voter/registration: Warming up for 2.0000 s
-Benchmarking N16/voter/registration: Collecting 200 samples in estimated 10.462 s (60k iterations)
+Benchmarking N16/voter/registration: Collecting 200 samples in estimated 11.770 s (100k iterations)
 Benchmarking N16/voter/registration: Analyzing
-N16/voter/registration  time:   [172.54 µs 175.59 µs 178.76 µs]
-                        change: [+6.4684% +12.250% +17.844%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+N16/voter/registration  time:   [119.13 µs 119.49 µs 119.85 µs]
 Found 5 outliers among 200 measurements (2.50%)
-  2 (1.00%) high mild
-  3 (1.50%) high severe
+  2 (1.00%) low mild
+  3 (1.50%) high mild
 
 Benchmarking N16/ballot/create
 Benchmarking N16/ballot/create: Warming up for 3.0000 s
-Benchmarking N16/ballot/create: Collecting 50 samples in estimated 24.132 s (5100 iterations)
+Benchmarking N16/ballot/create: Collecting 50 samples in estimated 23.664 s (7650 iterations)
 Benchmarking N16/ballot/create: Analyzing
-N16/ballot/create       time:   [4.0937 ms 4.2006 ms 4.3235 ms]
-                        change: [-0.2253% +2.4719% +5.2243%] (p = 0.09 > 0.01)
-                        No change in performance detected.
-Found 5 outliers among 50 measurements (10.00%)
-  3 (6.00%) high mild
-  2 (4.00%) high severe
+N16/ballot/create       time:   [2.9941 ms 3.0073 ms 3.0209 ms]
 Benchmarking N16/ballot/verify
 Benchmarking N16/ballot/verify: Warming up for 3.0000 s
-Benchmarking N16/ballot/verify: Collecting 50 samples in estimated 20.562 s (8925 iterations)
+Benchmarking N16/ballot/verify: Collecting 50 samples in estimated 20.977 s (13k iterations)
 Benchmarking N16/ballot/verify: Analyzing
-N16/ballot/verify       time:   [2.2364 ms 2.2608 ms 2.2907 ms]
-                        change: [-4.6316% -0.9872% +3.9561%] (p = 0.67 > 0.01)
-                        No change in performance detected.
-Found 6 outliers among 50 measurements (12.00%)
+N16/ballot/verify       time:   [1.6088 ms 1.6133 ms 1.6180 ms]
+Found 2 outliers among 50 measurements (4.00%)
   2 (4.00%) high mild
-  4 (8.00%) high severe
 
 Benchmarking N16/verify_batch/1
 Benchmarking N16/verify_batch/1: Warming up for 3.0000 s
-Benchmarking N16/verify_batch/1: Collecting 10 samples in estimated 30.012 s (13k iterations)
+Benchmarking N16/verify_batch/1: Collecting 10 samples in estimated 30.014 s (18k iterations)
 Benchmarking N16/verify_batch/1: Analyzing
-N16/verify_batch/1      time:   [2.3673 ms 2.4834 ms 2.5870 ms]
-                        change: [+6.7592% +12.541% +18.081%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+N16/verify_batch/1      time:   [1.6154 ms 1.6230 ms 1.6310 ms]
 Benchmarking N16/verify_batch/10
 Benchmarking N16/verify_batch/10: Warming up for 3.0000 s
-Benchmarking N16/verify_batch/10: Collecting 10 samples in estimated 30.068 s (1210 iterations)
+Benchmarking N16/verify_batch/10: Collecting 10 samples in estimated 30.066 s (1810 iterations)
 Benchmarking N16/verify_batch/10: Analyzing
-N16/verify_batch/10     time:   [24.482 ms 25.315 ms 26.043 ms]
-                        change: [+9.4573% +14.394% +18.845%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+N16/verify_batch/10     time:   [16.384 ms 16.430 ms 16.474 ms]
 
 Benchmarking N16/verify_batch_encval/individual/1
 Benchmarking N16/verify_batch_encval/individual/1: Warming up for 3.0000 s
-Benchmarking N16/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.005 s (24k iterations)
+Benchmarking N16/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.003 s (34k iterations)
 Benchmarking N16/verify_batch_encval/individual/1: Analyzing
 N16/verify_batch_encval/individual/1
-                        time:   [1.2347 ms 1.2588 ms 1.2812 ms]
-                        change: [-0.1923% +4.1681% +8.8442%] (p = 0.09 > 0.01)
-                        No change in performance detected.
+                        time:   [901.91 µs 906.59 µs 911.46 µs]
 Benchmarking N16/verify_batch_encval/batch/1
 Benchmarking N16/verify_batch_encval/batch/1: Warming up for 3.0000 s
-Benchmarking N16/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.001 s (56k iterations)
+Benchmarking N16/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.003 s (80k iterations)
 Benchmarking N16/verify_batch_encval/batch/1: Analyzing
 N16/verify_batch_encval/batch/1
-                        time:   [562.20 µs 577.38 µs 591.43 µs]
-                        change: [+11.452% +15.582% +19.419%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [374.34 µs 375.69 µs 377.14 µs]
 Benchmarking N16/verify_batch_encval/individual/10
 Benchmarking N16/verify_batch_encval/individual/10: Warming up for 3.0000 s
-Benchmarking N16/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.047 s (2340 iterations)
+Benchmarking N16/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.054 s (3340 iterations)
 Benchmarking N16/verify_batch_encval/individual/10: Analyzing
 N16/verify_batch_encval/individual/10
-                        time:   [12.618 ms 13.083 ms 13.541 ms]
-                        change: [+6.1022% +12.139% +17.929%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [8.9150 ms 8.9472 ms 8.9744 ms]
 Benchmarking N16/verify_batch_encval/batch/10
 Benchmarking N16/verify_batch_encval/batch/10: Warming up for 3.0000 s
-Benchmarking N16/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.008 s (6060 iterations)
+Benchmarking N16/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.012 s (9120 iterations)
 Benchmarking N16/verify_batch_encval/batch/10: Analyzing
 N16/verify_batch_encval/batch/10
-                        time:   [4.7467 ms 4.8658 ms 4.9802 ms]
-                        change: [+7.5743% +11.596% +15.604%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [3.4826 ms 3.4911 ms 3.5001 ms]
 
 Benchmarking N16/tally/serial_decrypt_per_tallier
 Benchmarking N16/tally/serial_decrypt_per_tallier: Warming up for 5.0000 s
-Benchmarking N16/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.008 s (21k iterations)
+Benchmarking N16/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.017 s (32k iterations)
 Benchmarking N16/tally/serial_decrypt_per_tallier: Analyzing
 N16/tally/serial_decrypt_per_tallier
-                        time:   [2.6661 ms 2.7452 ms 2.8363 ms]
-                        change: [+5.9083% +11.648% +17.521%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [1.8271 ms 1.8322 ms 1.8380 ms]
 Benchmarking N16/tally/full_pipeline
 Benchmarking N16/tally/full_pipeline: Warming up for 5.0000 s
-Benchmarking N16/tally/full_pipeline: Collecting 10 samples in estimated 60.113 s (2800 iterations)
+Benchmarking N16/tally/full_pipeline: Collecting 10 samples in estimated 60.035 s (4120 iterations)
 Benchmarking N16/tally/full_pipeline: Analyzing
-N16/tally/full_pipeline time:   [20.895 ms 21.180 ms 21.490 ms]
-                        change: [+2.2795% +6.3102% +9.9431%] (p = 0.01 < 0.01)
-                        Change within noise threshold.
+N16/tally/full_pipeline time:   [14.537 ms 14.570 ms 14.609 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 

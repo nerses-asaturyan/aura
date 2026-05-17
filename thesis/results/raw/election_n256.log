@@ -1,149 +1,162 @@
-   Compiling aura v0.1.0 (/home/nerses/aura)
-    Finished `bench` profile [optimized] target(s) in 2.18s
-     Running benches/election_n256.rs (target/release/deps/election_n256-24ff76d4c08021dd)
+    Finished `bench` profile [optimized] target(s) in 0.07s
+     Running benches/election_n256.rs (target/release/deps/election_n256-11ec031f7f5d3f6a)
 Benchmarking N256/dkg/2of3
 Benchmarking N256/dkg/2of3: Warming up for 2.0000 s
-Benchmarking N256/dkg/2of3: Collecting 100 samples in estimated 15.713 s (10k iterations)
+Benchmarking N256/dkg/2of3: Collecting 100 samples in estimated 10.653 s (10k iterations)
 Benchmarking N256/dkg/2of3: Analyzing
-N256/dkg/2of3           time:   [1.5607 ms 1.5992 ms 1.6369 ms]
-Found 1 outliers among 100 measurements (1.00%)
-  1 (1.00%) high severe
+N256/dkg/2of3           time:   [1.0601 ms 1.0638 ms 1.0675 ms]
+                        change: [-0.4894% -0.0032% +0.4587%] (p = 1.00 > 0.01)
+                        No change in performance detected.
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
 
 Benchmarking N256/voter/registration
 Benchmarking N256/voter/registration: Warming up for 2.0000 s
-Benchmarking N256/voter/registration: Collecting 200 samples in estimated 11.032 s (60k iterations)
+Benchmarking N256/voter/registration: Collecting 200 samples in estimated 11.834 s (100k iterations)
 Benchmarking N256/voter/registration: Analyzing
-N256/voter/registration time:   [180.30 µs 183.38 µs 186.38 µs]
-Found 3 outliers among 200 measurements (1.50%)
-  1 (0.50%) high mild
+N256/voter/registration time:   [115.69 µs 116.15 µs 116.61 µs]
+                        change: [-1.4847% -0.9769% -0.4237%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 8 outliers among 200 measurements (4.00%)
+  6 (3.00%) high mild
   2 (1.00%) high severe
 
 Benchmarking N256/ballot/create
 Benchmarking N256/ballot/create: Warming up for 3.0000 s
-
-Warning: Unable to complete 50 samples in 20.0s. You may wish to increase target time to 25.6s, enable flat sampling, or reduce sample count to 30.
-Benchmarking N256/ballot/create: Collecting 50 samples in estimated 25.598 s (1275 iterations)
+Benchmarking N256/ballot/create: Collecting 50 samples in estimated 33.410 s (2550 iterations)
 Benchmarking N256/ballot/create: Analyzing
-N256/ballot/create      time:   [19.672 ms 20.287 ms 20.907 ms]
+N256/ballot/create      time:   [13.166 ms 13.215 ms 13.264 ms]
+                        change: [+1.1272% +1.5234% +1.9369%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) low mild
 Benchmarking N256/ballot/verify
 Benchmarking N256/ballot/verify: Warming up for 3.0000 s
-Benchmarking N256/ballot/verify: Collecting 50 samples in estimated 24.604 s (3825 iterations)
+Benchmarking N256/ballot/verify: Collecting 50 samples in estimated 22.320 s (5100 iterations)
 Benchmarking N256/ballot/verify: Analyzing
-N256/ballot/verify      time:   [5.9236 ms 6.0018 ms 6.1028 ms]
+N256/ballot/verify      time:   [4.2458 ms 4.2565 ms 4.2672 ms]
+                        change: [+3.0865% +3.6017% +4.0639%] (p = 0.00 < 0.01)
+                        Performance has regressed.
 Found 2 outliers among 50 measurements (4.00%)
-  1 (2.00%) high mild
-  1 (2.00%) high severe
+  2 (4.00%) high mild
 
 Benchmarking N256/verify_batch/1
 Benchmarking N256/verify_batch/1: Warming up for 3.0000 s
-Benchmarking N256/verify_batch/1: Collecting 10 samples in estimated 30.006 s (5070 iterations)
+Benchmarking N256/verify_batch/1: Collecting 10 samples in estimated 30.036 s (7020 iterations)
 Benchmarking N256/verify_batch/1: Analyzing
-N256/verify_batch/1     time:   [5.9053 ms 5.9878 ms 6.0839 ms]
-Found 1 outliers among 10 measurements (10.00%)
-  1 (10.00%) high mild
+N256/verify_batch/1     time:   [4.3107 ms 4.3212 ms 4.3317 ms]
+                        change: [+2.6500% +3.0439% +3.4015%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
 Benchmarking N256/verify_batch/10
 Benchmarking N256/verify_batch/10: Warming up for 3.0000 s
-Benchmarking N256/verify_batch/10: Collecting 10 samples in estimated 30.441 s (510 iterations)
+Benchmarking N256/verify_batch/10: Collecting 10 samples in estimated 30.321 s (710 iterations)
 Benchmarking N256/verify_batch/10: Analyzing
-N256/verify_batch/10    time:   [58.227 ms 59.197 ms 60.359 ms]
-Found 2 outliers among 10 measurements (20.00%)
-  2 (20.00%) high mild
+N256/verify_batch/10    time:   [43.144 ms 43.283 ms 43.451 ms]
+                        change: [+2.2124% +2.6594% +3.1900%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 Benchmarking N256/verify_batch/50
 Benchmarking N256/verify_batch/50: Warming up for 3.0000 s
-Benchmarking N256/verify_batch/50: Collecting 10 samples in estimated 30.342 s (100 iterations)
+Benchmarking N256/verify_batch/50: Collecting 10 samples in estimated 30.000 s (140 iterations)
 Benchmarking N256/verify_batch/50: Analyzing
-N256/verify_batch/50    time:   [300.76 ms 310.07 ms 319.54 ms]
+N256/verify_batch/50    time:   [215.67 ms 216.09 ms 216.62 ms]
+                        change: [+2.0364% +2.3320% +2.6332%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 Benchmarking N256/verify_batch/100
 Benchmarking N256/verify_batch/100: Warming up for 3.0000 s
-Benchmarking N256/verify_batch/100: Collecting 10 samples in estimated 32.084 s (50 iterations)
+Benchmarking N256/verify_batch/100: Collecting 10 samples in estimated 30.225 s (70 iterations)
 Benchmarking N256/verify_batch/100: Analyzing
-N256/verify_batch/100   time:   [619.77 ms 633.05 ms 645.70 ms]
+N256/verify_batch/100   time:   [436.78 ms 439.38 ms 442.12 ms]
+                        change: [+3.8187% +4.4239% +5.1824%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
 
 Benchmarking N256/verify_batch_encval/individual/1
 Benchmarking N256/verify_batch_encval/individual/1: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.006 s (23k iterations)
+Benchmarking N256/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.002 s (33k iterations)
 Benchmarking N256/verify_batch_encval/individual/1: Analyzing
 N256/verify_batch_encval/individual/1
-                        time:   [1.2466 ms 1.2706 ms 1.2983 ms]
-                        change: [+0.9359% +3.1252% +5.8568%] (p = 0.02 > 0.01)
-                        No change in performance detected.
+                        time:   [929.52 µs 933.83 µs 938.39 µs]
+                        change: [+4.1234% +4.8814% +5.5445%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
 Benchmarking N256/verify_batch_encval/batch/1
 Benchmarking N256/verify_batch_encval/batch/1: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.004 s (51k iterations)
+Benchmarking N256/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.004 s (78k iterations)
 Benchmarking N256/verify_batch_encval/batch/1: Analyzing
 N256/verify_batch_encval/batch/1
-                        time:   [554.81 µs 568.80 µs 583.56 µs]
-                        change: [+0.4687% +3.2955% +6.5680%] (p = 0.06 > 0.01)
-                        No change in performance detected.
+                        time:   [381.20 µs 382.23 µs 383.36 µs]
+                        change: [-2.3483% -2.0208% -1.6968%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
 Benchmarking N256/verify_batch_encval/individual/10
 Benchmarking N256/verify_batch_encval/individual/10: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.067 s (2380 iterations)
+Benchmarking N256/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.042 s (3360 iterations)
 Benchmarking N256/verify_batch_encval/individual/10: Analyzing
 N256/verify_batch_encval/individual/10
-                        time:   [12.655 ms 12.999 ms 13.367 ms]
-                        change: [+5.1289% +8.4447% +11.926%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [9.1986 ms 9.2532 ms 9.3171 ms]
+                        change: [+3.6389% +4.3133% +5.0792%] (p = 0.00 < 0.01)
+                        Change within noise threshold.
 Benchmarking N256/verify_batch_encval/batch/10
 Benchmarking N256/verify_batch_encval/batch/10: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.044 s (5570 iterations)
+Benchmarking N256/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.022 s (9310 iterations)
 Benchmarking N256/verify_batch_encval/batch/10: Analyzing
 N256/verify_batch_encval/batch/10
-                        time:   [5.2001 ms 5.2346 ms 5.2811 ms]
-                        change: [+9.9910% +11.982% +14.187%] (p = 0.00 < 0.01)
-                        Performance has regressed.
-Found 1 outliers among 10 measurements (10.00%)
-  1 (10.00%) high severe
+                        time:   [3.2200 ms 3.2282 ms 3.2366 ms]
+                        change: [+0.1145% +0.4302% +0.7594%] (p = 0.03 > 0.01)
+                        No change in performance detected.
 Benchmarking N256/verify_batch_encval/individual/50
 Benchmarking N256/verify_batch_encval/individual/50: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.508 s (480 iterations)
+Benchmarking N256/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.311 s (680 iterations)
 Benchmarking N256/verify_batch_encval/individual/50: Analyzing
 N256/verify_batch_encval/individual/50
-                        time:   [63.271 ms 64.774 ms 66.436 ms]
-                        change: [+2.0779% +4.8433% +7.8837%] (p = 0.00 < 0.01)
+                        time:   [45.925 ms 46.110 ms 46.303 ms]
+                        change: [+3.3424% +3.9060% +4.4102%] (p = 0.00 < 0.01)
                         Change within noise threshold.
 Benchmarking N256/verify_batch_encval/batch/50
 Benchmarking N256/verify_batch_encval/batch/50: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.081 s (1330 iterations)
+Benchmarking N256/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.066 s (2180 iterations)
 Benchmarking N256/verify_batch_encval/batch/50: Analyzing
 N256/verify_batch_encval/batch/50
-                        time:   [22.319 ms 22.539 ms 22.869 ms]
-                        change: [+10.211% +12.402% +14.855%] (p = 0.00 < 0.01)
-                        Performance has regressed.
-Found 2 outliers among 10 measurements (20.00%)
-  1 (10.00%) low mild
-  1 (10.00%) high severe
+                        time:   [13.764 ms 13.799 ms 13.837 ms]
+                        change: [-0.3263% +0.0372% +0.4025%] (p = 0.85 > 0.01)
+                        No change in performance detected.
 Benchmarking N256/verify_batch_encval/individual/100
 Benchmarking N256/verify_batch_encval/individual/100: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/individual/100: Collecting 10 samples in estimated 31.221 s (250 iterations)
+Benchmarking N256/verify_batch_encval/individual/100: Collecting 10 samples in estimated 30.135 s (340 iterations)
 Benchmarking N256/verify_batch_encval/individual/100: Analyzing
 N256/verify_batch_encval/individual/100
-                        time:   [126.31 ms 130.37 ms 135.71 ms]
-                        change: [+2.9937% +7.9778% +13.334%] (p = 0.01 < 0.01)
+                        time:   [91.409 ms 91.737 ms 92.048 ms]
+                        change: [+3.0796% +3.5179% +4.0616%] (p = 0.00 < 0.01)
                         Change within noise threshold.
-Found 2 outliers among 10 measurements (20.00%)
+Found 3 outliers among 10 measurements (30.00%)
+  1 (10.00%) low severe
+  1 (10.00%) low mild
   1 (10.00%) high mild
-  1 (10.00%) high severe
 Benchmarking N256/verify_batch_encval/batch/100
 Benchmarking N256/verify_batch_encval/batch/100: Warming up for 3.0000 s
-Benchmarking N256/verify_batch_encval/batch/100: Collecting 10 samples in estimated 30.366 s (680 iterations)
+Benchmarking N256/verify_batch_encval/batch/100: Collecting 10 samples in estimated 30.260 s (1100 iterations)
 Benchmarking N256/verify_batch_encval/batch/100: Analyzing
 N256/verify_batch_encval/batch/100
-                        time:   [44.404 ms 45.075 ms 45.731 ms]
-                        change: [+6.7498% +9.7076% +12.719%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [27.370 ms 27.444 ms 27.516 ms]
+                        change: [+0.0096% +0.4081% +0.8445%] (p = 0.09 > 0.01)
+                        No change in performance detected.
 
 Benchmarking N256/tally/serial_decrypt_per_tallier
 Benchmarking N256/tally/serial_decrypt_per_tallier: Warming up for 5.0000 s
-Benchmarking N256/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.391 s (1440 iterations)
+Benchmarking N256/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.003 s (2040 iterations)
 Benchmarking N256/tally/serial_decrypt_per_tallier: Analyzing
 N256/tally/serial_decrypt_per_tallier
-                        time:   [40.907 ms 41.381 ms 41.772 ms]
-Found 2 outliers among 10 measurements (20.00%)
-  2 (20.00%) low mild
+                        time:   [29.232 ms 29.360 ms 29.481 ms]
+                        change: [-0.2837% +0.1508% +0.6094%] (p = 0.57 > 0.01)
+                        No change in performance detected.
 Benchmarking N256/tally/full_pipeline
 Benchmarking N256/tally/full_pipeline: Warming up for 5.0000 s
-Benchmarking N256/tally/full_pipeline: Collecting 10 samples in estimated 61.758 s (220 iterations)
+Benchmarking N256/tally/full_pipeline: Collecting 10 samples in estimated 61.631 s (310 iterations)
 Benchmarking N256/tally/full_pipeline: Analyzing
 N256/tally/full_pipeline
-                        time:   [278.33 ms 284.15 ms 290.82 ms]
+                        time:   [199.88 ms 200.30 ms 200.73 ms]
+                        change: [-0.5422% -0.1482% +0.2614%] (p = 0.50 > 0.01)
+                        No change in performance detected.
 

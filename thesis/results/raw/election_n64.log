@@ -1,112 +1,116 @@
-   Compiling aura v0.1.0 (/home/nerses/aura)
-    Finished `bench` profile [optimized] target(s) in 2.19s
-     Running benches/election_n64.rs (target/release/deps/election_n64-2ac15a686e6beb4b)
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 4.04s
+     Running benches/election_n64.rs (target/release/deps/election_n64-adfddcf13c5ab151)
 Benchmarking N64/dkg/2of3
 Benchmarking N64/dkg/2of3: Warming up for 2.0000 s
-Benchmarking N64/dkg/2of3: Collecting 100 samples in estimated 14.845 s (10k iterations)
+Benchmarking N64/dkg/2of3: Collecting 100 samples in estimated 10.776 s (10k iterations)
 Benchmarking N64/dkg/2of3: Analyzing
-N64/dkg/2of3            time:   [1.5657 ms 1.6081 ms 1.6503 ms]
-Found 1 outliers among 100 measurements (1.00%)
-  1 (1.00%) high mild
+N64/dkg/2of3            time:   [1.0625 ms 1.0657 ms 1.0691 ms]
+Found 4 outliers among 100 measurements (4.00%)
+  2 (2.00%) low mild
+  2 (2.00%) high mild
 
 Benchmarking N64/voter/registration
 Benchmarking N64/voter/registration: Warming up for 2.0000 s
-Benchmarking N64/voter/registration: Collecting 200 samples in estimated 12.926 s (80k iterations)
+Benchmarking N64/voter/registration: Collecting 200 samples in estimated 11.684 s (100k iterations)
 Benchmarking N64/voter/registration: Analyzing
-N64/voter/registration  time:   [168.74 µs 172.02 µs 175.39 µs]
+N64/voter/registration  time:   [116.45 µs 116.80 µs 117.17 µs]
+Found 2 outliers among 200 measurements (1.00%)
+  1 (0.50%) high mild
+  1 (0.50%) high severe
 
 Benchmarking N64/ballot/create
 Benchmarking N64/ballot/create: Warming up for 3.0000 s
-Benchmarking N64/ballot/create: Collecting 50 samples in estimated 27.288 s (3825 iterations)
+Benchmarking N64/ballot/create: Collecting 50 samples in estimated 20.293 s (3825 iterations)
 Benchmarking N64/ballot/create: Analyzing
-N64/ballot/create       time:   [7.1907 ms 7.3426 ms 7.5149 ms]
-                        change: [-1.8393% +0.6747% +3.4351%] (p = 0.62 > 0.01)
-                        No change in performance detected.
-Found 2 outliers among 50 measurements (4.00%)
-  2 (4.00%) high mild
+N64/ballot/create       time:   [5.0814 ms 5.0911 ms 5.1013 ms]
+Found 4 outliers among 50 measurements (8.00%)
+  1 (2.00%) low mild
+  3 (6.00%) high mild
 Benchmarking N64/ballot/verify
 Benchmarking N64/ballot/verify: Warming up for 3.0000 s
-Benchmarking N64/ballot/verify: Collecting 50 samples in estimated 21.764 s (6375 iterations)
+Benchmarking N64/ballot/verify: Collecting 50 samples in estimated 21.919 s (10k iterations)
 Benchmarking N64/ballot/verify: Analyzing
-N64/ballot/verify       time:   [3.1480 ms 3.2120 ms 3.2808 ms]
-                        change: [+2.0142% +4.7139% +7.4332%] (p = 0.00 < 0.01)
-                        Change within noise threshold.
+N64/ballot/verify       time:   [2.1462 ms 2.1528 ms 2.1593 ms]
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
 
 Benchmarking N64/verify_batch/1
 Benchmarking N64/verify_batch/1: Warming up for 3.0000 s
-Benchmarking N64/verify_batch/1: Collecting 10 samples in estimated 30.028 s (9210 iterations)
+Benchmarking N64/verify_batch/1: Collecting 10 samples in estimated 30.019 s (14k iterations)
 Benchmarking N64/verify_batch/1: Analyzing
-N64/verify_batch/1      time:   [2.7132 ms 2.9752 ms 3.2194 ms]
-                        change: [-5.8106% +3.4769% +13.055%] (p = 0.50 > 0.01)
-                        No change in performance detected.
+N64/verify_batch/1      time:   [2.1454 ms 2.1549 ms 2.1658 ms]
 Benchmarking N64/verify_batch/10
 Benchmarking N64/verify_batch/10: Warming up for 3.0000 s
-Benchmarking N64/verify_batch/10: Collecting 10 samples in estimated 30.196 s (890 iterations)
+Benchmarking N64/verify_batch/10: Collecting 10 samples in estimated 30.134 s (1360 iterations)
 Benchmarking N64/verify_batch/10: Analyzing
-N64/verify_batch/10     time:   [31.638 ms 32.320 ms 32.989 ms]
-                        change: [+4.6110% +9.3154% +13.738%] (p = 0.00 < 0.01)
-                        Change within noise threshold.
+N64/verify_batch/10     time:   [21.692 ms 21.768 ms 21.837 ms]
 Benchmarking N64/verify_batch/50
 Benchmarking N64/verify_batch/50: Warming up for 3.0000 s
-Benchmarking N64/verify_batch/50: Collecting 10 samples in estimated 30.385 s (190 iterations)
+Benchmarking N64/verify_batch/50: Collecting 10 samples in estimated 30.736 s (280 iterations)
 Benchmarking N64/verify_batch/50: Analyzing
-N64/verify_batch/50     time:   [159.44 ms 162.27 ms 165.31 ms]
-                        change: [+1.6869% +6.2511% +10.815%] (p = 0.02 > 0.01)
-                        No change in performance detected.
-Found 2 outliers among 10 measurements (20.00%)
-  1 (10.00%) low mild
+N64/verify_batch/50     time:   [108.99 ms 109.50 ms 110.10 ms]
+Found 1 outliers among 10 measurements (10.00%)
   1 (10.00%) high mild
 
 Benchmarking N64/verify_batch_encval/individual/1
 Benchmarking N64/verify_batch_encval/individual/1: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.009 s (26k iterations)
+Benchmarking N64/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.000 s (34k iterations)
 Benchmarking N64/verify_batch_encval/individual/1: Analyzing
 N64/verify_batch_encval/individual/1
-                        time:   [957.47 µs 959.10 µs 960.93 µs]
+                        time:   [885.38 µs 889.36 µs 893.80 µs]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 Benchmarking N64/verify_batch_encval/batch/1
 Benchmarking N64/verify_batch_encval/batch/1: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.001 s (71k iterations)
+Benchmarking N64/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.002 s (77k iterations)
 Benchmarking N64/verify_batch_encval/batch/1: Analyzing
 N64/verify_batch_encval/batch/1
-                        time:   [435.62 µs 470.36 µs 510.94 µs]
+                        time:   [406.70 µs 408.85 µs 411.16 µs]
 Benchmarking N64/verify_batch_encval/individual/10
 Benchmarking N64/verify_batch_encval/individual/10: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.023 s (2390 iterations)
+Benchmarking N64/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.007 s (3270 iterations)
 Benchmarking N64/verify_batch_encval/individual/10: Analyzing
 N64/verify_batch_encval/individual/10
-                        time:   [12.555 ms 12.873 ms 13.194 ms]
+                        time:   [8.8958 ms 8.9291 ms 8.9655 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 Benchmarking N64/verify_batch_encval/batch/10
 Benchmarking N64/verify_batch_encval/batch/10: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.017 s (6030 iterations)
+Benchmarking N64/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.024 s (9360 iterations)
 Benchmarking N64/verify_batch_encval/batch/10: Analyzing
 N64/verify_batch_encval/batch/10
-                        time:   [4.7700 ms 4.8399 ms 4.9159 ms]
+                        time:   [3.2001 ms 3.2158 ms 3.2355 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
 Benchmarking N64/verify_batch_encval/individual/50
 Benchmarking N64/verify_batch_encval/individual/50: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.410 s (470 iterations)
+Benchmarking N64/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.059 s (680 iterations)
 Benchmarking N64/verify_batch_encval/individual/50: Analyzing
 N64/verify_batch_encval/individual/50
-                        time:   [63.879 ms 66.573 ms 69.316 ms]
+                        time:   [44.499 ms 44.697 ms 44.944 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
 Benchmarking N64/verify_batch_encval/batch/50
 Benchmarking N64/verify_batch_encval/batch/50: Warming up for 3.0000 s
-Benchmarking N64/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.199 s (1330 iterations)
+Benchmarking N64/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.073 s (2190 iterations)
 Benchmarking N64/verify_batch_encval/batch/50: Analyzing
 N64/verify_batch_encval/batch/50
-                        time:   [21.016 ms 21.405 ms 21.863 ms]
+                        time:   [13.656 ms 13.680 ms 13.701 ms]
 
 Benchmarking N64/tally/serial_decrypt_per_tallier
 Benchmarking N64/tally/serial_decrypt_per_tallier: Warming up for 5.0000 s
-Benchmarking N64/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.017 s (5640 iterations)
+Benchmarking N64/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.007 s (8100 iterations)
 Benchmarking N64/tally/serial_decrypt_per_tallier: Analyzing
 N64/tally/serial_decrypt_per_tallier
-                        time:   [10.862 ms 11.148 ms 11.444 ms]
-                        change: [+13.513% +16.738% +20.078%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+                        time:   [7.3416 ms 7.3733 ms 7.4096 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
 Benchmarking N64/tally/full_pipeline
 Benchmarking N64/tally/full_pipeline: Warming up for 5.0000 s
-Benchmarking N64/tally/full_pipeline: Collecting 10 samples in estimated 60.304 s (830 iterations)
+Benchmarking N64/tally/full_pipeline: Collecting 10 samples in estimated 60.416 s (1190 iterations)
 Benchmarking N64/tally/full_pipeline: Analyzing
-N64/tally/full_pipeline time:   [73.279 ms 75.039 ms 76.805 ms]
-                        change: [+111.27% +116.64% +121.80%] (p = 0.00 < 0.01)
-                        Performance has regressed.
+N64/tally/full_pipeline time:   [50.783 ms 50.962 ms 51.194 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
 

@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Extract Criterion benchmark results into a tidy CSV.
 
-Walks `target/criterion/` and reads every `<group>/<benchmark_id>/new/estimates.json`,
-producing `thesis/results/timings.csv` with one row per (group, benchmark_id).
+Walks the checked-in `thesis/results/criterion/` tree (AWS run, source-of-truth
+for the body of the thesis) plus `thesis/results/criterion_g5_laptop/` (laptop
+run used only for the library-backed comparison in Appendix B), reading every
+`<group>/<benchmark_id>/new/estimates.json` and producing
+`thesis/results/timings.csv` with one row per (group, benchmark_id, source).
 
 Also parses `thesis/results/raw/proof_sizes.log` (output of `cargo bench --bench
 proof_sizes -- --quick`) into `thesis/results/sizes.csv`.
@@ -20,8 +23,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CRITERION_DIR = ROOT / "target" / "criterion"
 RESULTS = ROOT / "thesis" / "results"
+CRITERION_DIR = RESULTS / "criterion"
+LAPTOP_G5_DIR = RESULTS / "criterion_g5_laptop"
 RAW = RESULTS / "raw"
 
 
@@ -78,15 +82,16 @@ def parse_benchmark_meta(path: Path) -> dict[str, str | int]:
     }
 
 
-def relative_id(estimate_path: Path) -> str:
-    """Path relative to target/criterion/, dropping the trailing `/new/estimates.json`."""
-    rel = estimate_path.relative_to(CRITERION_DIR)
+def relative_id(estimate_path: Path, base: Path) -> str:
+    """Path relative to a given criterion base dir, dropping the trailing `/new/estimates.json`."""
+    rel = estimate_path.relative_to(base)
     return str(rel.parent.parent).replace("\\", "/")
 
 
 def write_timings_csv(rows: list[dict[str, str | int | float]]) -> Path:
     out = RESULTS / "timings.csv"
     fieldnames = [
+        "source",
         "group",
         "function",
         "value",
@@ -97,7 +102,7 @@ def write_timings_csv(rows: list[dict[str, str | int | float]]) -> Path:
         "ci_lo_ns",
         "ci_hi_ns",
     ]
-    rows_sorted = sorted(rows, key=lambda r: (r["group"], r["function"], r["value"], r["criterion_path"]))
+    rows_sorted = sorted(rows, key=lambda r: (r["source"], r["group"], r["function"], r["value"], r["criterion_path"]))
     with out.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader()
@@ -163,30 +168,46 @@ def write_sizes_csv(rows: list[dict[str, str | int | float]]) -> Path:
     return out
 
 
-def main() -> int:
-    RESULTS.mkdir(parents=True, exist_ok=True)
-
-    pairs = find_benchmark_files(CRITERION_DIR)
-    if not pairs:
-        print(f"No criterion outputs found under {CRITERION_DIR}", file=sys.stderr)
-
+def collect_rows(base: Path, source_tag: str) -> list[dict[str, str | int | float]]:
+    """Walk one Criterion base dir, returning timing rows tagged with `source_tag`."""
     rows: list[dict[str, str | int | float]] = []
+    pairs = find_benchmark_files(base)
+    if not pairs:
+        return rows
     for est_path, bench_path in pairs.items():
         est = parse_estimates(est_path)
         meta = parse_benchmark_meta(bench_path)
         rows.append(
             {
+                "source": source_tag,
                 "group": meta["group"],
                 "function": meta["function"],
                 "value": meta["value"],
                 "full_id": meta["full_id"],
-                "criterion_path": relative_id(est_path),
+                "criterion_path": relative_id(est_path, base),
                 "n_samples": meta["n_samples"],
                 "mean_ns": est["mean_ns"],
                 "ci_lo_ns": est["ci_lo_ns"],
                 "ci_hi_ns": est["ci_hi_ns"],
             }
         )
+    return rows
+
+
+def main() -> int:
+    RESULTS.mkdir(parents=True, exist_ok=True)
+
+    rows: list[dict[str, str | int | float]] = []
+    aws_rows = collect_rows(CRITERION_DIR, "aws")
+    if not aws_rows:
+        print(f"No criterion outputs found under {CRITERION_DIR}", file=sys.stderr)
+    rows.extend(aws_rows)
+
+    laptop_rows = collect_rows(LAPTOP_G5_DIR, "laptop")
+    if laptop_rows:
+        print(f"  (also picked up {len(laptop_rows)} rows from {LAPTOP_G5_DIR.name})")
+    rows.extend(laptop_rows)
+
     timings_path = write_timings_csv(rows)
     print(f"wrote {timings_path}  ({len(rows)} rows)")
 

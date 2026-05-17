@@ -1,5 +1,6 @@
-    Finished `bench` profile [optimized] target(s) in 0.07s
-     Running benches/proof_sizes.rs (target/release/deps/proof_sizes-4b94d748edae15da)
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 1.94s
+     Running benches/proof_sizes.rs (target/release/deps/proof_sizes-943669ae2cf8b9c0)
 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                  AURA PROOF SIZE REPORT                         ║
@@ -57,9 +58,7 @@
 
 Benchmarking _size_report_noop
 Benchmarking _size_report_noop: Analyzing
-_size_report_noop       time:   [158.39 ps 158.46 ps 158.76 ps]
-                        change: [-22.255% -21.008% -19.722%] (p = 0.05 > 0.05)
-                        No change in performance detected.
+_size_report_noop       time:   [137.79 ps 138.73 ps 138.97 ps]
 
 
 ── Actual vs computed size verification ──
@@ -69,7 +68,5 @@ _size_report_noop       time:   [158.39 ps 158.46 ps 158.76 ps]
 
 Benchmarking actual_proof_sizes/noop
 Benchmarking actual_proof_sizes/noop: Analyzing
-actual_proof_sizes/noop time:   [158.97 ps 159.38 ps 159.48 ps]
-                        change: [-12.594% -11.896% -11.189%] (p = 0.07 > 0.05)
-                        No change in performance detected.
+actual_proof_sizes/noop time:   [139.34 ps 139.50 ps 140.14 ps]
 

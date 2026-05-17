@@ -1,53 +1,26 @@
 \begin{table}[h]
   \centering
-  \caption{Batch-verification amortization across proof types and election scales.}
+  \caption{Batch-verification amortization for the three batchable proof systems (standalone benches, no election context).}
   \label{tab:g3_batch_amortization}
   \begin{tabular}{lrrrr}
     \toprule
     Group & Batch size & Individual & Batched & Speedup \\
     \midrule
-batch\_verify\_dleq & 1 & 215.9 $\mu$s & 119.7 $\mu$s & 1.80× \\
-batch\_verify\_dleq & 10 & 2.018 ms & 943.5 $\mu$s & 2.14× \\
-batch\_verify\_dleq & 100 & 20.29 ms & 6.587 ms & 3.08× \\
-batch\_verify\_dleq & 25 & 5.239 ms & 2.343 ms & 2.24× \\
-batch\_verify\_dleq & 50 & 10.13 ms & 4.234 ms & 2.39× \\
-batch\_verify\_encval & 1 & 190.9 $\mu$s & 97.82 $\mu$s & 1.95× \\
-batch\_verify\_encval & 10 & 1.965 ms & 928.2 $\mu$s & 2.12× \\
-batch\_verify\_encval & 100 & 25.29 ms & 8.879 ms & 2.85× \\
-batch\_verify\_encval & 25 & 6.565 ms & 2.747 ms & 2.39× \\
-batch\_verify\_encval & 50 & 12.58 ms & 4.936 ms & 2.55× \\
-batch\_verify\_rep & 1 & 119.3 $\mu$s & 84.45 $\mu$s & 1.41× \\
-batch\_verify\_rep & 10 & 1.188 ms & 628.9 $\mu$s & 1.89× \\
-batch\_verify\_rep & 100 & 11.92 ms & 5.580 ms & 2.14× \\
-batch\_verify\_rep & 25 & 2.909 ms & 1.601 ms & 1.82× \\
-batch\_verify\_rep & 50 & 5.834 ms & 2.918 ms & 2.00× \\
-N16/verify\_batch & 1 & — & 2.483 ms & — \\
-N16/verify\_batch & 10 & — & 25.32 ms & — \\
-N16/verify\_batch\_encval & 1 & — & 577.4 $\mu$s & — \\
-N16/verify\_batch\_encval & 10 & — & 4.866 ms & — \\
-N16/verify\_batch\_encval & 1 & — & 1.259 ms & — \\
-N16/verify\_batch\_encval & 10 & — & 13.08 ms & — \\
-N256/verify\_batch & 1 & — & 5.988 ms & — \\
-N256/verify\_batch & 10 & — & 59.20 ms & — \\
-N256/verify\_batch & 100 & — & 633.1 ms & — \\
-N256/verify\_batch & 50 & — & 310.1 ms & — \\
-N256/verify\_batch\_encval & 1 & — & 568.8 $\mu$s & — \\
-N256/verify\_batch\_encval & 10 & — & 5.235 ms & — \\
-N256/verify\_batch\_encval & 100 & — & 45.07 ms & — \\
-N256/verify\_batch\_encval & 50 & — & 22.54 ms & — \\
-N256/verify\_batch\_encval & 1 & — & 1.271 ms & — \\
-N256/verify\_batch\_encval & 10 & — & 13.00 ms & — \\
-N256/verify\_batch\_encval & 100 & — & 130.4 ms & — \\
-N256/verify\_batch\_encval & 50 & — & 64.77 ms & — \\
-N64/verify\_batch & 1 & — & 2.975 ms & — \\
-N64/verify\_batch & 10 & — & 32.32 ms & — \\
-N64/verify\_batch & 50 & — & 162.3 ms & — \\
-N64/verify\_batch\_encval & 1 & — & 470.4 $\mu$s & — \\
-N64/verify\_batch\_encval & 10 & — & 4.840 ms & — \\
-N64/verify\_batch\_encval & 50 & — & 21.40 ms & — \\
-N64/verify\_batch\_encval & 1 & — & 959.1 $\mu$s & — \\
-N64/verify\_batch\_encval & 10 & — & 12.87 ms & — \\
-N64/verify\_batch\_encval & 50 & — & 66.57 ms & — \\
+batch\_verify\_dleq & 1 & 145.2 $\mu$s & 80.54 $\mu$s & 1.80× \\
+batch\_verify\_dleq & 10 & 1.442 ms & 631.2 $\mu$s & 2.28× \\
+batch\_verify\_dleq & 25 & 3.585 ms & 1.550 ms & 2.31× \\
+batch\_verify\_dleq & 50 & 7.188 ms & 2.812 ms & 2.56× \\
+batch\_verify\_dleq & 100 & 14.38 ms & 5.249 ms & 2.74× \\
+batch\_verify\_encval & 1 & 178.8 $\mu$s & 94.22 $\mu$s & 1.90× \\
+batch\_verify\_encval & 10 & 1.772 ms & 757.3 $\mu$s & 2.34× \\
+batch\_verify\_encval & 25 & 4.446 ms & 1.840 ms & 2.42× \\
+batch\_verify\_encval & 50 & 8.936 ms & 3.268 ms & 2.73× \\
+batch\_verify\_encval & 100 & 17.92 ms & 6.029 ms & 2.97× \\
+batch\_verify\_rep & 1 & 80.83 $\mu$s & 58.06 $\mu$s & 1.39× \\
+batch\_verify\_rep & 10 & 797.2 $\mu$s & 430.7 $\mu$s & 1.85× \\
+batch\_verify\_rep & 25 & 2.027 ms & 1.044 ms & 1.94× \\
+batch\_verify\_rep & 50 & 4.041 ms & 2.012 ms & 2.01× \\
+batch\_verify\_rep & 100 & 8.166 ms & 3.700 ms & 2.21× \\
     \bottomrule
   \end{tabular}
 \end{table}

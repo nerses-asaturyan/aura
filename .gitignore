@@ -34,6 +34,11 @@ thesis/build/
 *.fdb_latexmk
 *.synctex.gz
 
+# Bench artifacts under thesis/results/ are source-of-truth and must be tracked
+# even though they share extensions with LaTeX byproducts.
+!thesis/results/**/*.log
+!thesis/results/**/*.out
+
 # RustRover
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

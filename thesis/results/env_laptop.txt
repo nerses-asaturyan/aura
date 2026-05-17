@@ -1,0 +1,28 @@
+=== Laptop reference environment (used only for Appendix B: library-backed proof comparison) ===
+
+CPU
+  Intel(R) Core(TM) i7-12700H (12th-gen, "Alder Lake"), 10 physical cores / 20 threads
+  Cache hierarchy: L1d/i 80 KiB per core, L2 1.25 MiB per P-core / 2 MiB per E-cluster, L3 24 MiB shared
+
+Memory
+  16 GiB DDR5
+
+OS
+  Linux 6.6.87.2-microsoft-standard-WSL2 (Ubuntu 22.04 / WSL2 host)
+
+Rust
+  rustc 1.93.1, cargo 1.93.1 (build profile: release, codegen-units=1, lto = "thin")
+
+Crates
+  curve25519-dalek 4.1 (Ristretto255 group)
+  Library-backed alternatives gated behind the `lib-proofs` Cargo feature, including
+  bulletproofs (git/main as of e181938), zkp 0.8, sigma-rs 0.1.
+
+Determinism
+  ChaCha20Rng seed = 20260412 (identical to AWS run).
+
+Notes
+  This environment hosted only the `proof_primitives_lib` bench used for the
+  hand-rolled vs library-backed comparison in Appendix B. All other benchmarks
+  in this thesis were measured on the AWS instance described in
+  thesis/results/env.txt.

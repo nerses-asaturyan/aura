@@ -1,0 +1,129 @@
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 3.57s
+     Running benches/election_n1024.rs (target/release/deps/election_n1024-64b3845ad5852807)
+Benchmarking N1024/dkg/2of3
+Benchmarking N1024/dkg/2of3: Warming up for 2.0000 s
+Benchmarking N1024/dkg/2of3: Collecting 100 samples in estimated 10.659 s (10k iterations)
+Benchmarking N1024/dkg/2of3: Analyzing
+N1024/dkg/2of3          time:   [1.0548 ms 1.0585 ms 1.0624 ms]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+
+Benchmarking N1024/voter/registration
+Benchmarking N1024/voter/registration: Warming up for 2.0000 s
+Benchmarking N1024/voter/registration: Collecting 200 samples in estimated 11.756 s (100k iterations)
+Benchmarking N1024/voter/registration: Analyzing
+N1024/voter/registration
+                        time:   [117.28 µs 117.69 µs 118.10 µs]
+Found 4 outliers among 200 measurements (2.00%)
+  2 (1.00%) low mild
+  1 (0.50%) high mild
+  1 (0.50%) high severe
+
+Benchmarking N1024/ballot/create
+Benchmarking N1024/ballot/create: Warming up for 3.0000 s
+Benchmarking N1024/ballot/create: Collecting 50 samples in estimated 21.392 s (500 iterations)
+Benchmarking N1024/ballot/create: Analyzing
+N1024/ballot/create     time:   [42.301 ms 42.434 ms 42.567 ms]
+Benchmarking N1024/ballot/verify
+Benchmarking N1024/ballot/verify: Warming up for 3.0000 s
+Benchmarking N1024/ballot/verify: Collecting 50 samples in estimated 27.140 s (2550 iterations)
+Benchmarking N1024/ballot/verify: Analyzing
+N1024/ballot/verify     time:   [10.611 ms 10.636 ms 10.664 ms]
+Found 4 outliers among 50 measurements (8.00%)
+  4 (8.00%) high mild
+
+Benchmarking N1024/verify_batch/1
+Benchmarking N1024/verify_batch/1: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch/1: Collecting 10 samples in estimated 30.045 s (2810 iterations)
+Benchmarking N1024/verify_batch/1: Analyzing
+N1024/verify_batch/1    time:   [10.599 ms 10.624 ms 10.650 ms]
+Benchmarking N1024/verify_batch/10
+Benchmarking N1024/verify_batch/10: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch/10: Collecting 10 samples in estimated 30.994 s (290 iterations)
+Benchmarking N1024/verify_batch/10: Analyzing
+N1024/verify_batch/10   time:   [106.78 ms 107.26 ms 107.74 ms]
+Benchmarking N1024/verify_batch/50
+Benchmarking N1024/verify_batch/50: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch/50: Collecting 10 samples in estimated 32.246 s (60 iterations)
+Benchmarking N1024/verify_batch/50: Analyzing
+N1024/verify_batch/50   time:   [536.16 ms 537.91 ms 539.62 ms]
+Benchmarking N1024/verify_batch/100
+Benchmarking N1024/verify_batch/100: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch/100: Collecting 10 samples in estimated 32.201 s (30 iterations)
+Benchmarking N1024/verify_batch/100: Analyzing
+N1024/verify_batch/100  time:   [1.0681 s 1.0729 s 1.0779 s]
+
+Benchmarking N1024/verify_batch_encval/individual/1
+Benchmarking N1024/verify_batch_encval/individual/1: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.006 s (33k iterations)
+Benchmarking N1024/verify_batch_encval/individual/1: Analyzing
+N1024/verify_batch_encval/individual/1
+                        time:   [892.50 µs 896.20 µs 900.55 µs]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+Benchmarking N1024/verify_batch_encval/batch/1
+Benchmarking N1024/verify_batch_encval/batch/1: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.003 s (79k iterations)
+Benchmarking N1024/verify_batch_encval/batch/1: Analyzing
+N1024/verify_batch_encval/batch/1
+                        time:   [376.02 µs 377.60 µs 379.38 µs]
+Benchmarking N1024/verify_batch_encval/individual/10
+Benchmarking N1024/verify_batch_encval/individual/10: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.079 s (3330 iterations)
+Benchmarking N1024/verify_batch_encval/individual/10: Analyzing
+N1024/verify_batch_encval/individual/10
+                        time:   [8.9703 ms 8.9983 ms 9.0299 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+Benchmarking N1024/verify_batch_encval/batch/10
+Benchmarking N1024/verify_batch_encval/batch/10: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.003 s (9230 iterations)
+Benchmarking N1024/verify_batch_encval/batch/10: Analyzing
+N1024/verify_batch_encval/batch/10
+                        time:   [3.2544 ms 3.2603 ms 3.2669 ms]
+Benchmarking N1024/verify_batch_encval/individual/50
+Benchmarking N1024/verify_batch_encval/individual/50: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.185 s (670 iterations)
+Benchmarking N1024/verify_batch_encval/individual/50: Analyzing
+N1024/verify_batch_encval/individual/50
+                        time:   [44.981 ms 45.183 ms 45.390 ms]
+Benchmarking N1024/verify_batch_encval/batch/50
+Benchmarking N1024/verify_batch_encval/batch/50: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.019 s (2160 iterations)
+Benchmarking N1024/verify_batch_encval/batch/50: Analyzing
+N1024/verify_batch_encval/batch/50
+                        time:   [13.893 ms 13.952 ms 14.020 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high mild
+Benchmarking N1024/verify_batch_encval/individual/100
+Benchmarking N1024/verify_batch_encval/individual/100: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/individual/100: Collecting 10 samples in estimated 30.867 s (340 iterations)
+Benchmarking N1024/verify_batch_encval/individual/100: Analyzing
+N1024/verify_batch_encval/individual/100
+                        time:   [90.239 ms 90.643 ms 91.092 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  2 (20.00%) high mild
+Benchmarking N1024/verify_batch_encval/batch/100
+Benchmarking N1024/verify_batch_encval/batch/100: Warming up for 3.0000 s
+Benchmarking N1024/verify_batch_encval/batch/100: Collecting 10 samples in estimated 30.163 s (1100 iterations)
+Benchmarking N1024/verify_batch_encval/batch/100: Analyzing
+N1024/verify_batch_encval/batch/100
+                        time:   [27.488 ms 27.561 ms 27.635 ms]
+
+Benchmarking N1024/tally/serial_decrypt_per_tallier
+Benchmarking N1024/tally/serial_decrypt_per_tallier: Warming up for 5.0000 s
+Benchmarking N1024/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 60.155 s (510 iterations)
+Benchmarking N1024/tally/serial_decrypt_per_tallier: Analyzing
+N1024/tally/serial_decrypt_per_tallier
+                        time:   [117.77 ms 118.22 ms 118.68 ms]
+Benchmarking N1024/tally/full_pipeline
+Benchmarking N1024/tally/full_pipeline: Warming up for 5.0000 s
+Benchmarking N1024/tally/full_pipeline: Collecting 10 samples in estimated 63.541 s (70 iterations)
+Benchmarking N1024/tally/full_pipeline: Analyzing
+N1024/tally/full_pipeline
+                        time:   [883.99 ms 888.00 ms 892.80 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+

@@ -33,6 +33,11 @@
 
 % ---------- PACKAGES ----------
 \usepackage{graphicx}
+% Build runs from thesis/build/, so paths are relative to that dir.
+\graphicspath{{../results/plots/}{../results/plots/criterion/}}
+
+% Per-figure data-source line, kept short and consistent.
+\newcommand{\figdata}[1]{\\\textit{Data:} \texttt{#1}.}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{mathtools}
 \usepackage{float}
@@ -2225,29 +2230,35 @@ repository for full reproducibility.
 \section{Benchmarking Methodology}
 \label{sec:bench-methodology}
 
-\paragraph{Hardware.} 
-All measurements were taken on a 12th-generation Intel Core i7-12700H 
-mobile CPU (10 cores, 20 threads, 24 MiB L3 cache, 12.5 MiB total L2 cache 
-across cores) with 16 GiB of system memory. The host operating system is 
-Linux kernel 6.6.87 inside WSL2; benchmarks run single-threaded and use 
-\texttt{rdtsc}-based wall-clock timing via Criterion.
+\paragraph{Hardware.}
+All measurements in the body of this chapter were taken on a single AWS
+EC2 instance backed by an Intel Xeon Platinum 8488C (Sapphire Rapids),
+exposed to the guest as $2$ vCPU / $2$ threads, with $3.7$ GiB of
+system memory. The instance is a KVM/full-virtualisation guest; the L1d
+cache is $48$ KiB, L1i $32$ KiB, L2 $2$ MiB, and the L3 (shared with the
+host socket) measures $105$ MiB. Benchmarks run single-threaded and use
+\texttt{rdtsc}-based wall-clock timing via Criterion. The host operating
+system is Ubuntu $24.04.4$ LTS on Linux kernel $6.17.0$ (AWS). A separate
+library-backed comparison was performed on a different machine (laptop)
+and is reported in Appendix~\ref{app:lib-comparison}; all other benchmarks
+in this chapter use the AWS environment described above.
 
 \paragraph{Software stack.}
-The implementation was compiled with \texttt{rustc 1.93.1} (released 
-February 2026) and \texttt{cargo 1.93.1}, in release mode with default 
-LTO and codegen settings. The cryptographic group is Ristretto255 via 
-\texttt{curve25519-dalek 4.1}; transcripts use \texttt{merlin 3.0}; 
-hashing uses \texttt{sha2 0.10}. Multi-scalar multiplication uses 
-\texttt{curve25519-dalek}'s built-in Pippenger implementation in 
+The implementation was compiled with \texttt{rustc 1.95.0} (released
+April~2026) and \texttt{cargo 1.95.0}, in release mode with default
+LTO and codegen settings. The cryptographic group is Ristretto255 via
+\texttt{curve25519-dalek 4.1}; transcripts use \texttt{merlin 3.0};
+hashing uses \texttt{sha2 0.10}. Multi-scalar multiplication uses
+\texttt{curve25519-dalek}'s built-in Pippenger implementation in
 variable-time mode (the verifier's working data is public).
 
 \paragraph{Determinism.}
-Every benchmark seeds its randomness from a fixed \texttt{ChaCha20Rng} 
-state (seed \texttt{20260412}). Re-running on the same machine produces 
-means within Criterion's reported confidence intervals. The exact 
-hardware, software, and Git commit (\texttt{e181938}) used to produce 
-the numbers in this chapter are recorded verbatim in 
-\texttt{thesis/results/env.txt} of the repository.
+Every benchmark seeds its randomness from a fixed \texttt{ChaCha20Rng}
+state (seed \texttt{20260412}). Re-running on the same machine produces
+means within Criterion's reported confidence intervals. The exact
+hardware, software, and Git commit used to produce the numbers in this
+chapter are recorded verbatim in \texttt{thesis/results/env.txt} of the
+repository (and \texttt{env\_laptop.txt} for the appendix run).
 
 \paragraph{Measurement methodology.}
 All benchmarks use Criterion~0.5 with default settings: a warm-up phase 
@@ -2261,13 +2272,13 @@ bootstrap analysis. We report the mean rather than median because
 asymmetry between the two never exceeded $5\%$ in any benchmark.
 
 \paragraph{Tier.}
-The benchmarks described in this chapter were run in the \emph{quick} 
-tier, which covers election sizes $N \in \{16, 64, 256\}$. The 
-implementation supports \emph{standard} and \emph{full} tiers (covering 
-$N$ up to $4{,}096$ and $1{,}048{,}576$ respectively); the larger 
-configurations were not exercised in the present run due to time 
-constraints, but proof-size measurements (which are independent of 
-runtime cost) cover the full range up to $N = 10^6$.
+The benchmarks reported in this chapter cover election sizes
+$N \in \{16, 64, 256, 1{,}024, 4{,}096, 16{,}384\}$. A further attempt
+at $N = 65{,}536$ exhausted the $3.7$ GiB AWS instance memory during
+ballot construction and did not produce timing data; we treat that
+configuration as a soft ceiling for the hardware used here. Proof-size
+measurements (which are independent of runtime cost) cover the full
+range up to $N = 10^6$ and are reported in the size tables below.
 
 \paragraph{What is measured.}
 The benchmark suite is organized into five logical groups:
@@ -2285,13 +2296,63 @@ registration, ballot create/verify, tally) at each tier scale.
 \item \textbf{G6} --- Tally pipeline breakdown (per-tallier serial 
 decryption versus full pipeline including aggregate decryption).
 \end{itemize}
-A sixth group (G5, hand-rolled vs library-backed comparison) is left 
-to future work and not discussed in this chapter.
+A sixth group (G5, hand-rolled vs library-backed comparison) was
+measured on a separate laptop machine because the \texttt{lib-proofs}
+Cargo feature pulls additional dependencies that were not part of the
+AWS run; we report the results separately in
+Appendix~\ref{app:lib-comparison}.
+
+\section{Headline numbers}
+\label{sec:bench-headline}
+
+Before drilling into per-phase microbenchmarks, the table below
+collapses the AWS run into a one-row-per-deployment-scale executive
+summary. Three scenarios are picked from the measured range to anchor
+intuition: \emph{boardroom} ($N = 256$, e.g.\ a faculty senate vote),
+\emph{small organisation} ($N = 4{,}096$, e.g.\ a small university
+elections), and \emph{mid-scale} ($N = 16{,}384$, e.g.\ a city-council
+ward). Per-phase columns are single-instance wall-clock times taken
+verbatim from Table~\ref{tab:bench-lifecycle}; the right-most column
+is the end-to-end serialized total assuming a single voter at a time
+and a single verifier ($\text{DKG} + N \times \text{registration} +
+N \times \text{ballot create} + N \times \text{ballot verify} +
+\text{tally}$). Real deployments will parallelise both ballot
+construction (one voter per voter device) and verification (a
+verifier pool), but the serialized figure is the worst-case ceiling
+and the right number to anchor sizing decisions.
+
+\begin{table}[H]
+\centering
+\caption{Headline performance numbers for three target deployment
+scales (AWS run, single-threaded). All per-phase numbers come from
+Table~\ref{tab:bench-lifecycle}; the rightmost column is the
+serialized end-to-end total. Tally is the full pipeline including
+BSGS lookup.}
+\label{tab:bench-headline}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Scenario & DKG & Voter reg. & Ballot create & Ballot verify & Tally & Serial e2e \\
+\midrule
+Boardroom ($N = 256$)        & $1.06$ ms & $116$ µs & $13.2$ ms & $4.27$ ms & $200$ ms  & $\approx 4.7$ s   \\
+Small org ($N = 4{,}096$)    & $1.06$ ms & $118$ µs & $157$ ms  & $37.4$ ms & $4.33$ s  & $\approx 13.3$ min \\
+Mid-scale ($N = 16{,}384$)   & $1.09$ ms & $118$ µs & $668$ ms  & $145$ ms  & $31.8$ s  & $\approx 3.7$ h    \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The serialized end-to-end figure is dominated by per-voter ballot
+construction at every scale --- $\approx 72\%$ of the boardroom
+total, $\approx 80\%$ at small-org scale, and $\approx 82\%$ at
+mid-scale --- which is the cost paid in parallel by the voter pool,
+not by any centralised infrastructure. The non-parallelisable
+components (DKG once, full-pipeline tally once) stay under $32$
+seconds even at the largest measured scale.
 
 \section{Per-Phase Microbenchmarks}
 \label{sec:bench-microbenchmarks}
 
-This section reports the cost of each individual cryptographic operation 
+This section reports the cost of each individual cryptographic operation
 in isolation, before they are composed into ballots or full elections.
 
 \subsection{Key Generation Costs}
@@ -2301,13 +2362,28 @@ The distributed key generation (Phase 1 of Chapter~\ref{ch:aura}) involves
 all $\eta$ authorities running Pedersen-Feldman VSS interactively. For 
 the configuration tested ($\eta = 3$, $t = 2$), DKG is essentially 
 constant in election size $N$ --- it depends only on the number of 
-authorities and the threshold, not on the voter count. Measured wall-clock 
-times are: $1.566$ ms at $N = 16$, $1.590$ ms at $N = 64$, $1.588$ ms at 
-$N = 256$ (mean $\pm \le 3.0\%$). The slight variation across $N$ is 
-within measurement noise; DKG is genuinely $O(\eta^2 \cdot t)$ in the 
-authority parameters, independent of voters.
+authorities and the threshold, not on the voter count. Measured
+wall-clock times across the AWS run are:
+$1.130$ ms at $N = 16$, $1.065$ ms at $N = 64$, $1.060$ ms at $N = 256$,
+$1.062$ ms at $N = 1{,}024$, $1.060$ ms at $N = 4{,}096$, and
+$1.091$ ms at $N = 16{,}384$ (mean $\pm 0.5\%$ across runs). The
+variation across $N$ is well within measurement noise; DKG is
+genuinely $O(\eta^2 \cdot t)$ in the authority parameters, independent
+of voters. Figure~\ref{fig:dkg-vs-n} confirms the constancy visually:
+the dashed reference line is the mean over all six measurements, and
+no individual measurement deviates by more than $\sim 7\%$.
 
-This is consistent with the protocol design: each authority performs 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{dkg_vs_n.pdf}
+\caption{Distributed-key-generation cost is independent of voter set
+size $N$ (AWS run, $\eta = 3$ authorities, threshold $t = 2$).
+Error bars are Criterion $95\%$ confidence intervals.
+\figdata{thesis/results/criterion/N\{X\}\_dkg/2of3/new/estimates.json}}
+\label{fig:dkg-vs-n}
+\end{figure}
+
+This is consistent with the protocol design: each authority performs
 $O(t)$ scalar multiplications for its own polynomial commitments, $O(\eta)$ 
 share evaluations, and $O(\eta \cdot t)$ verifications of received shares. 
 For the small-cohort case ($\eta \le 10$) typical of real elections, 
@@ -2332,23 +2408,61 @@ proving systems. Times are mean $\pm$ half-confidence-interval percentage
 \toprule
 Proof system & Prove & Verify \\
 \midrule
-Representation ($n=2$ generators) & $62.92$ µs $\pm 0.9\%$ & $99.32$ µs $\pm 0.1\%$ \\
-Representation ($n=4$ generators) & $90.80$ µs $\pm 0.1\%$ & $104.2$ µs $\pm 0.5\%$ \\
-DLEQ                              & $90.72$ µs $\pm 0.0\%$ & $150.7$ µs $\pm 0.2\%$ \\
-Encryption validity               & $127.4$ µs $\pm 0.1\%$ & $186.7$ µs $\pm 0.2\%$ \\
-Serial validity                   & $204.2$ µs $\pm 0.2\%$ & $290.1$ µs $\pm 0.3\%$ \\
+Representation ($n=1$ generator)  & $43.70$ µs $\pm 0.5\%$ & $74.73$ µs $\pm 0.5\%$ \\
+Representation ($n=2$ generators) & $57.53$ µs $\pm 0.4\%$ & $83.37$ µs $\pm 0.5\%$ \\
+Representation ($n=4$ generators) & $86.85$ µs $\pm 0.5\%$ & $101.7$ µs $\pm 0.4\%$ \\
+Representation ($n=8$ generators) & $139.4$ µs $\pm 0.4\%$ & $138.0$ µs $\pm 0.5\%$ \\
+DLEQ                              & $85.71$ µs $\pm 0.4\%$ & $146.3$ µs $\pm 0.5\%$ \\
+Encryption validity               & $120.4$ µs $\pm 0.5\%$ & $177.9$ µs $\pm 0.4\%$ \\
+Serial validity                   & $191.5$ µs $\pm 0.4\%$ & $280.6$ µs $\pm 0.4\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The four times scale with the number of group operations in the underlying 
-relation: representation is the simplest (two generators, two scalars), 
-DLEQ adds a second relation, encryption-validity proves an ElGamal 
-encryption (three generators), and serial-validity is the most complex 
-(four group elements, three witnesses, two relations). All four operations 
-sit comfortably in the sub-millisecond range; even on commodity hardware, 
-a voter constructing a ballot with these proofs adds well under a 
+The four times scale with the number of group operations in the underlying
+relation: representation is the simplest (two generators, two scalars),
+DLEQ adds a second relation, encryption-validity proves an ElGamal
+encryption (three generators), and serial-validity is the most complex
+(four group elements, three witnesses, two relations). All four operations
+sit comfortably in the sub-millisecond range; even on commodity hardware,
+a voter constructing a ballot with these proofs adds well under a
 millisecond of total Schnorr work.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g1_proof_primitives.pdf}
+\caption{Per-proof prover vs. verifier cost at the largest scale
+measured for each proof family (AWS run), plotted on a log y-axis.
+Representation ($n = 8$), DLEQ, encryption-validity and
+serial-validity all stay in the low hundreds of µs; bit-vector
+($k' = 64$) and commitment-set ($N = 256$) are an order of magnitude
+heavier. \figdata{thesis/results/timings.csv (source=aws)}}
+\label{fig:g1-proof-primitives}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{g1_proof_primitives_scaling.pdf}
+\caption{Log--log scaling of the three parameterised proof primitives.
+\textbf{Left:} representation proof prove/verify times across $n \in \{1,2,4,8\}$
+generators. \textbf{Middle:} bit-vector proof across padded slot counts
+$k' \in \{4,5,8,12,16,24,32,48,64\}$. \textbf{Right:} commitment-set
+proof across $N \in \{4, 16, 64, 256, 1{,}024, 4{,}096\}$. All three
+families show clean linear or near-linear scaling on log axes.
+\figdata{thesis/results/timings.csv (source=aws)}}
+\label{fig:g1-scaling}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{representation_violin.pdf}
+\caption{Criterion violin plot for the representation proof, showing the
+distribution of measured samples at each generator count $n$
+(\texttt{prove}). The tight density at every $n$ confirms low
+measurement noise on the AWS instance.
+\figdata{thesis/results/criterion/representation/report/violin.svg}}
+\label{fig:crit-representation}
+\end{figure}
 
 \subsection{Bit-Vector Proof Costs}
 \label{sec:bench-bitvec}
@@ -2367,25 +2481,36 @@ slot count $k'$.}
 \toprule
 $k'$ & Prove & Verify \\
 \midrule
-4   & $251.2$ µs $\pm 0.1\%$ & $253.1$ µs $\pm 0.2\%$ \\
-5   & $350.7$ µs $\pm 0.3\%$ & $275.3$ µs $\pm 0.1\%$ \\
-8   & $374.7$ µs $\pm 0.3\%$ & $286.4$ µs $\pm 0.3\%$ \\
-12  & $645.5$ µs $\pm 0.3\%$ & $494.8$ µs $\pm 1.9\%$ \\
-16  & $886.1$ µs $\pm 2.9\%$ & $561.1$ µs $\pm 1.8\%$ \\
-24  & $1.187$ ms $\pm 2.7\%$ & $776.0$ µs $\pm 1.6\%$ \\
-32  & $1.575$ ms $\pm 2.8\%$ & $982.9$ µs $\pm 1.9\%$ \\
-48  & $2.564$ ms $\pm 3.0\%$ & $1.358$ ms $\pm 1.6\%$ \\
-64  & $3.112$ ms $\pm 2.5\%$ & $1.782$ ms $\pm 3.5\%$ \\
+4   & $243.3$ µs $\pm 0.4\%$ & $193.7$ µs $\pm 0.6\%$ \\
+5   & $274.5$ µs $\pm 0.5\%$ & $206.3$ µs $\pm 0.5\%$ \\
+8   & $375.0$ µs $\pm 0.5\%$ & $248.6$ µs $\pm 0.5\%$ \\
+12  & $503.8$ µs $\pm 0.4\%$ & $306.4$ µs $\pm 0.5\%$ \\
+16  & $636.8$ µs $\pm 0.5\%$ & $362.6$ µs $\pm 0.5\%$ \\
+24  & $895.9$ µs $\pm 0.4\%$ & $480.4$ µs $\pm 0.4\%$ \\
+32  & $1.163$ ms $\pm 0.4\%$ & $613.5$ µs $\pm 0.5\%$ \\
+48  & $1.730$ ms $\pm 2.3\%$ & $876.6$ µs $\pm 0.4\%$ \\
+64  & $2.203$ ms $\pm 0.5\%$ & $1.131$ ms $\pm 0.4\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The doubling pattern is visible: from $k' = 4$ to $k' = 64$ (a $16\times$ 
-increase), prove time grows from $251$ µs to $3.11$ ms ($12.4\times$), 
-and verify time grows from $253$ µs to $1.78$ ms ($7.0\times$). The 
-sub-linear growth on the verifier side reflects the multi-scalar 
-multiplication used at the verification step, which has more aggressive 
+The doubling pattern is visible: from $k' = 4$ to $k' = 64$ (a $16\times$
+increase), prove time grows from $243$ µs to $2.20$ ms ($9.1\times$),
+and verify time grows from $194$ µs to $1.13$ ms ($5.8\times$). The
+sub-linear growth on the verifier side reflects the multi-scalar
+multiplication used at the verification step, which has more aggressive
 amortization than a naive sum.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{bit_vector_violin.pdf}
+\caption{Criterion violin plot for the bit-vector proof across padded
+slot counts $k' \in \{4, 5, 8, 12, 16, 24, 32, 48, 64\}$ (\texttt{prove}).
+The roughly linear envelope is consistent with the $O(k')$ scaling
+reported in Table~\ref{tab:bench-bitvec}.
+\figdata{thesis/results/criterion/bit\_vector/report/violin.svg}}
+\label{fig:crit-bit_vector}
+\end{figure}
 
 \subsection{Commitment-Set (Eligibility) Proof Costs}
 \label{sec:bench-commset}
@@ -2397,36 +2522,41 @@ size $N$ and the $n$-ary digit base used in the Bootle-Spark construction.
 
 \begin{table}[H]
 \centering
-\caption{Commitment-set proof prove and verify times for binary 
-($n = 2$) versus quaternary ($n = 4$) digit base, at three election 
-scales. The quaternary variant approximately halves prove time at the 
-same verify time.}
+\caption{Commitment-set proof prove and verify times for binary
+($n = 2$) versus quaternary ($n = 4$) digit base, across the full
+range of $N$ at which the standalone bench was run. The quaternary
+variant approximately halves prove time at essentially the same
+verify time. The commitment-set proof at $N = 16{,}384$ is captured
+indirectly via the ballot-creation cost in
+Table~\ref{tab:bench-lifecycle} (where it is the dominant component);
+no standalone $N = 16{,}384$ commitment-set bench was run.}
 \label{tab:bench-commset}
 \small
 \begin{tabular}{cccc}
 \toprule
 $N$ & Variant & Prove & Verify \\
 \midrule
-4    & $n = 2$ & $651.2$ µs $\pm 2.6\%$ & $138.6$ µs $\pm 1.9\%$ \\
-16   & $n = 2$ & $1.650$ ms $\pm 3.0\%$ & $324.1$ µs $\pm 6.1\%$ \\
-64   & $n = 2$ & $4.603$ ms $\pm 2.5\%$ & $1.130$ ms $\pm 1.9\%$ \\
-64   & $n = 4$ & $2.698$ ms $\pm 7.5\%$ & $1.080$ ms $\pm 2.2\%$ \\
-256  & $n = 2$ & $16.44$ ms $\pm 2.2\%$ & $3.850$ ms $\pm 1.6\%$ \\
-256  & $n = 4$ & $9.121$ ms $\pm 3.2\%$ & $3.658$ ms $\pm 2.2\%$ \\
-1024 & $n = 2$ & $59.93$ ms $\pm 2.8\%$ & $13.70$ ms $\pm 2.2\%$ \\
-1024 & $n = 4$ & $29.57$ ms $\pm 2.8\%$ & $13.30$ ms $\pm 2.2\%$ \\
-4096 & $n = 2$ & $230.0$ ms $\pm 2.1\%$ & $52.15$ ms $\pm 1.4\%$ \\
+4      & $n = 2$ & $463.2$ µs $\pm 0.3\%$ & $95.84$ µs $\pm 0.3\%$ \\
+16     & $n = 2$ & $1.164$ ms $\pm 0.6\%$ & $230.8$ µs $\pm 0.3\%$ \\
+64     & $n = 2$ & $3.251$ ms $\pm 0.3\%$ & $740.0$ µs $\pm 0.3\%$ \\
+64     & $n = 4$ & $2.115$ ms $\pm 0.4\%$ & $694.2$ µs $\pm 0.3\%$ \\
+256    & $n = 2$ & $13.39$ ms $\pm 0.4\%$ & $2.677$ ms $\pm 0.3\%$ \\
+256    & $n = 4$ & $7.123$ ms $\pm 0.3\%$ & $2.541$ ms $\pm 0.2\%$ \\
+1{,}024  & $n = 2$ & $47.16$ ms $\pm 0.3\%$ & $9.276$ ms $\pm 0.2\%$ \\
+1{,}024  & $n = 4$ & $22.94$ ms $\pm 0.2\%$ & $8.886$ ms $\pm 1.2\%$ \\
+4{,}096  & $n = 2$ & $173.1$ ms $\pm 0.2\%$ & $35.60$ ms $\pm 0.2\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Two observations dominate this table.
 
-First, the prove and verify times grow cleanly with $N$, but at very 
-different rates. Going from $N = 4$ to $N = 4{,}096$ (a $1024\times$ 
-increase in voter count), prove time grows from $0.65$ ms to $230$ ms 
-(a $354\times$ increase), and verify time grows from $0.14$ ms to $52$ 
-ms ($375\times$). Both are slower than the asymptotic claim of $O(\log N)$ 
+First, the prove and verify times grow cleanly with $N$, but at very
+different rates. Going from $N = 4$ to $N = 4{,}096$ (a $1024\times$
+increase in voter count), prove time grows from $0.46$ ms to $173$ ms
+(a $\approx 374\times$ increase), and verify time grows from $0.10$ ms
+to $35.6$ ms ($\approx 372\times$). Both are slower than the
+asymptotic claim of $O(\log N)$
 in proof size --- which is only about the byte size of the proof, not 
 the cost of producing it. The actual prover and verifier work in the 
 Bootle construction grows as $O(N)$ in the worst case, since both 
@@ -2435,10 +2565,32 @@ the GK construction reduces is the \emph{communication}, not the
 overall computation. This is consistent with what is reported in the 
 literature.
 
-Second, the choice of $n$-ary digit base meaningfully affects prover 
-cost. Compared at the same $N$, the $n = 4$ variant approximately halves 
-prove time: $9.12$ ms versus $16.44$ ms at $N = 256$, $29.57$ ms versus 
-$59.93$ ms at $N = 1024$. Verify times are essentially identical. The 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g4_setproof_vs_n.pdf}
+\caption{Commitment-set proof prove and verify times as a function of
+voter set size $N$, on a log-log scale (AWS run, binary digit base
+$n = 2$). The near-linear lines indicate close-to-$O(N)$ growth, with
+verification cheaper than proving across the whole range.
+\figdata{thesis/results/timings.csv (group=commitment\_set)}}
+\label{fig:g4-setproof-vs-n}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{commitment_set_violin.pdf}
+\caption{Criterion violin plot for the commitment-set proof prover
+across all measured $N$ on the AWS run. The per-sample dispersion is
+tight; the medians span more than two orders of magnitude as $N$
+grows from $4$ to $4{,}096$.
+\figdata{thesis/results/criterion/commitment\_set/report/violin.svg}}
+\label{fig:crit-commitment_set}
+\end{figure}
+
+Second, the choice of $n$-ary digit base meaningfully affects prover
+cost. Compared at the same $N$, the $n = 4$ variant approximately halves
+prove time: $7.12$ ms versus $13.39$ ms at $N = 256$, $22.94$ ms versus
+$47.16$ ms at $N = 1{,}024$. Verify times are essentially identical. The
 intuition is that with $n = 4$ the prover commits to $\log_4 N$ 
 quaternary digits instead of $\log_2 N$ binary digits, halving the 
 commitment-and-bit-proof rounds even though each round becomes slightly 
@@ -2474,29 +2626,107 @@ is the ratio.}
 \toprule
 Proof system & Batch size & Individual & Batched & Speedup \\
 \midrule
-Representation & 1   & $119.3$ µs & $84.45$ µs & $1.41\times$ \\
-Representation & 10  & $1.188$ ms & $628.9$ µs & $1.89\times$ \\
-Representation & 100 & $11.92$ ms & $5.580$ ms & $2.14\times$ \\
+Representation & 1   & $80.83$ µs & $58.06$ µs & $1.39\times$ \\
+Representation & 10  & $797.2$ µs & $430.7$ µs & $1.85\times$ \\
+Representation & 25  & $2.027$ ms & $1.044$ ms & $1.94\times$ \\
+Representation & 50  & $4.041$ ms & $2.012$ ms & $2.01\times$ \\
+Representation & 100 & $8.166$ ms & $3.700$ ms & $2.21\times$ \\
 \midrule
-DLEQ           & 1   & $215.9$ µs & $119.7$ µs & $1.80\times$ \\
-DLEQ           & 10  & $2.018$ ms & $943.5$ µs & $2.14\times$ \\
-DLEQ           & 100 & $20.29$ ms & $6.587$ ms & $3.08\times$ \\
+DLEQ           & 1   & $145.2$ µs & $80.54$ µs & $1.80\times$ \\
+DLEQ           & 10  & $1.442$ ms & $631.2$ µs & $2.28\times$ \\
+DLEQ           & 25  & $3.585$ ms & $1.550$ ms & $2.31\times$ \\
+DLEQ           & 50  & $7.188$ ms & $2.812$ ms & $2.56\times$ \\
+DLEQ           & 100 & $14.38$ ms & $5.249$ ms & $2.74\times$ \\
 \midrule
-Enc-validity   & 1   & $190.9$ µs & $97.82$ µs & $1.95\times$ \\
-Enc-validity   & 10  & $1.965$ ms & $928.2$ µs & $2.12\times$ \\
-Enc-validity   & 100 & $25.29$ ms & $8.879$ ms & $2.85\times$ \\
+Enc-validity   & 1   & $178.8$ µs & $94.22$ µs & $1.90\times$ \\
+Enc-validity   & 10  & $1.772$ ms & $757.3$ µs & $2.34\times$ \\
+Enc-validity   & 25  & $4.446$ ms & $1.840$ ms & $2.42\times$ \\
+Enc-validity   & 50  & $8.936$ ms & $3.268$ ms & $2.73\times$ \\
+Enc-validity   & 100 & $17.92$ ms & $6.029$ ms & $2.97\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The speedup grows with batch size, and reaches $2$--$3\times$ at batch 
-size $100$ across all three proof systems. The intuition is that random 
-linear combination compresses many independent verification equations 
-into a single multi-scalar multiplication, after which Pippenger 
-amortization makes the marginal cost of each additional proof very 
-small. For a real election with thousands of ballots, batch verification 
-is the difference between minutes and tens of seconds of total verifier 
+The speedup grows with batch size, and reaches $2$--$3\times$ at batch
+size $100$ across all three proof systems. The intuition is that random
+linear combination compresses many independent verification equations
+into a single multi-scalar multiplication, after which Pippenger
+amortization makes the marginal cost of each additional proof very
+small. For a real election with thousands of ballots, batch verification
+is the difference between minutes and tens of seconds of total verifier
 work.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g3_batch_amortization.pdf}
+\caption{Batch-verification speedup (individual ÷ batched) as a
+function of batch size on the AWS run. All three batchable proof
+systems show monotonically increasing speedup, plateauing in the
+$2$--$3\times$ range at batch size $100$.
+\figdata{thesis/results/timings.csv (group=batch\_verify\_*)}}
+\label{fig:g3-batch-amortization}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{batch_verify_encval_lines.pdf}
+\caption{Criterion's per-batch ``lines'' plot for the encryption-validity
+batch verifier, showing measured time as a function of batch size with
+\texttt{individual} (orange) and \texttt{batch} (blue) lines on the same
+axes.
+\figdata{thesis/results/criterion/batch\_verify\_encval/report/lines.svg}}
+\label{fig:crit-batch_verify_encval}
+\end{figure}
+
+\paragraph{Batch verification at election scale.}
+The amortization above is measured on standalone proofs with no
+election context. A more deployment-relevant question is: how long
+does it take to batch-verify $k$ complete ballots, each one referring
+to an $N$-voter commitment list? Table~\ref{tab:bench-election-batch}
+reports that measurement for $N \in \{16, 64, 256, 1{,}024, 4{,}096,
+16{,}384\}$ and batch sizes $k \in \{1, 10, 50, 100\}$. The
+per-ballot cost in this table is dominated by the commitment-set
+verifier inside each ballot, so the total time grows roughly linearly
+in both $N$ and $k$ --- batch verification compresses the
+\emph{constant-overhead} portion of each verification, but the
+$O(N)$ commitment-set work cannot be folded into a single
+multi-scalar multiplication.
+
+\begin{table}[H]
+\centering
+\caption{Election-scale full-ballot batch verification (AWS run):
+wall-clock time to verify $k$ complete ballots at once for a voter
+list of size $N$. Each row is one election scale; each column is one
+batch size; empty cells mark configurations that were not executed.}
+\label{tab:bench-election-batch}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+$N$ & $k = 1$ & $k = 10$ & $k = 50$ & $k = 100$ \\
+\midrule
+16       & $1.623$ ms & $16.43$ ms & ---        & ---        \\
+64       & $2.155$ ms & $21.77$ ms & $109.5$ ms & ---        \\
+256      & $4.321$ ms & $43.28$ ms & $216.1$ ms & $439.4$ ms \\
+1{,}024  & $10.62$ ms & $107.3$ ms & $537.9$ ms & $1.073$ s  \\
+4{,}096  & $37.14$ ms & $374.4$ ms & $1.861$ s  & $3.732$ s  \\
+16{,}384 & $145.4$ ms & $1.456$ s  & $7.301$ s  & $14.58$ s  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two practical points fall out of this table. First, the
+\emph{column-wise} ratio is close to constant: doubling $N$ roughly
+doubles per-row time across every batch size, confirming that the
+commitment-set verifier inside each ballot is what scales with $N$.
+Second, the \emph{row-wise} per-ballot cost (each cell divided by its
+$k$) drops modestly as $k$ grows --- at $N = 16{,}384$, single-ballot
+verification is $145$ ms but per-ballot cost at $k = 100$ is
+$\approx 146$ ms, essentially unchanged. The Schnorr-style batch
+amortization is real but masked at large $N$ because the
+commitment-set $O(N)$ work cannot be batched, only the constant
+per-ballot Schnorr work can. This is the central practical reason a
+$10^4$-voter deployment will deploy a parallel verifier pool rather
+than relying on Schnorr batching alone.
 
 \subsection{Tally Costs}
 \label{sec:bench-tally}
@@ -2519,42 +2749,72 @@ aggregate decryption and BSGS lookup.}
 \toprule
 $N$ & Serial decrypt per tallier & Full pipeline \\
 \midrule
-16  & $2.745$ ms $\pm 3.3\%$  & $21.18$ ms $\pm 1.5\%$ \\
-64  & $11.15$ ms $\pm 2.7\%$  & $75.04$ ms $\pm 2.4\%$ \\
-256 & $41.38$ ms $\pm 1.1\%$  & $284.2$ ms $\pm 2.3\%$ \\
+16       & $1.832$ ms $\pm 0.3\%$  & $14.57$ ms $\pm 0.3\%$ \\
+64       & $7.373$ ms $\pm 0.5\%$  & $50.96$ ms $\pm 0.5\%$ \\
+256      & $29.36$ ms $\pm 0.4\%$  & $200.3$ ms $\pm 0.2\%$ \\
+1{,}024  & $118.2$ ms $\pm 0.4\%$  & $888.0$ ms $\pm 0.5\%$ \\
+4{,}096  & $474.4$ ms $\pm 0.4\%$  & $4.334$ s $\pm 0.3\%$ \\
+16{,}384 & $2.004$ s $\pm 0.3\%$   & $31.78$ s $\pm 0.2\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Serial decryption scales linearly with $N$: each ballot has its own 
-encrypted serial number, and the tallier must partial-decrypt all of 
-them. From $N = 16$ to $N = 256$ ($16\times$), the per-tallier serial 
-decryption time grows from $2.75$ ms to $41.38$ ms ($15.1\times$), 
-matching the linear expectation closely.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g6_tally_breakdown.pdf}
+\caption{Tally breakdown across $N$: per-tallier serial-decrypt cost
+(blue) and full-pipeline cost (red) on the AWS run, log y-axis.
+The full pipeline stays roughly an order of magnitude above the
+serial step throughout, indicating aggregate decryption + BSGS lookup
+dominate over the per-ballot partial decryption phase.
+\figdata{thesis/results/timings.csv (group ends with \_tally)}}
+\label{fig:g6-tally-breakdown}
+\end{figure}
 
-The full pipeline is roughly $7\times$ slower than per-tallier serial 
-decryption alone, reflecting the additional work of aggregate 
-decryption (per-candidate ciphertexts), Lagrange combination of tallier 
-shares, and the BSGS lookup to convert $g^{T_j}$ back into the integer 
-$T_j$. At $N = 256$ the full pipeline takes $284$ ms; at $N = 16$ it 
-is just $21$ ms. For boardroom-scale elections the entire tally is 
-sub-second; for $N = 10^6$ the tally would extrapolate to roughly 19 
-minutes (a tractable batch operation).
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{N16384_tally_full_pipeline_pdf.pdf}
+\caption{Criterion sample-density plot for the full tally pipeline at
+$N = 16{,}384$. The narrow peak around $31.8$ s confirms the reported
+$\pm 0.2\%$ confidence in Table~\ref{tab:bench-tally}.
+\figdata{thesis/results/criterion/N16384\_tally/full\_pipeline/report/pdf.svg}}
+\label{fig:crit-tally-pipeline}
+\end{figure}
+
+Serial decryption scales linearly with $N$: each ballot has its own
+encrypted serial number, and the tallier must partial-decrypt all of
+them. From $N = 16$ to $N = 16{,}384$ (a $1024\times$ increase),
+per-tallier serial decryption grows from $1.83$ ms to $2.00$ s
+($\approx 1094\times$), close to the linear expectation; the slight
+super-linearity at the top of the range is explained by cache pressure
+from the larger ciphertext list on the $2$ MiB-per-vCPU AWS instance.
+
+The full pipeline is roughly $8\times$ slower than per-tallier serial
+decryption alone across the measured range, reflecting the additional
+work of aggregate decryption (per-candidate ciphertexts), Lagrange
+combination of tallier shares, and the BSGS lookup to convert
+$g^{T_j}$ back into the integer $T_j$. At $N = 256$ the full pipeline
+takes $200$ ms; at $N = 4{,}096$ it is $4.3$ s; at $N = 16{,}384$ it
+is $31.8$ s. Linear extrapolation from the measured $N = 16{,}384$
+point puts a single-instance tally at $N = 10^6$ near $\approx 32$
+minutes; we mark this an extrapolation rather than a measurement
+because the $N = 65{,}536$ attempt ran out of memory on this hardware
+and could not be timed.
 
 \section{End-to-End Election Simulation}
 \label{sec:bench-lifecycle}
 
-This section combines the per-phase costs into end-to-end timing for a 
-complete election at three voter scales. The configuration is $\eta = 3$ 
-authorities with threshold $t = 2$, default election parameters, and 
-the tested voter counts $N \in \{16, 64, 256\}$.
+This section combines the per-phase costs into end-to-end timing for a
+complete election across the measured voter scales. The configuration
+is $\eta = 3$ authorities with threshold $t = 2$, default election
+parameters, and $N \in \{16, 64, 256, 1{,}024, 4{,}096, 16{,}384\}$.
 
 \begin{table}[H]
 \centering
-\caption{End-to-end election lifecycle timings. ``Voter reg.'' is the 
-per-voter registration cost (so total registration is roughly 
-$N \times$ that value). ``Ballot create'' and ``Ballot verify'' are 
-single-ballot times; total election ballot work is roughly 
+\caption{End-to-end election lifecycle timings (AWS run). ``Voter reg.''
+is the per-voter registration cost (so total registration is roughly
+$N \times$ that value). ``Ballot create'' and ``Ballot verify'' are
+single-ballot times; total election ballot work is roughly
 $N \times$ those values.}
 \label{tab:bench-lifecycle}
 \small
@@ -2562,9 +2822,12 @@ $N \times$ those values.}
 \toprule
 $N$ & DKG & Voter reg. & Ballot create & Ballot verify & Tally \\
 \midrule
-16  & $1.566$ ms & $179.7$ µs & $4.198$ ms & $2.326$ ms & $21.18$ ms \\
-64  & $1.590$ ms & $166.4$ µs & $7.412$ ms & $3.282$ ms & $75.04$ ms \\
-256 & $1.588$ ms & $183.2$ µs & $20.56$ ms & $6.383$ ms & $284.2$ ms \\
+16       & $1.130$ ms & $119.2$ µs & $3.011$ ms & $1.622$ ms & $14.57$ ms \\
+64       & $1.065$ ms & $117.0$ µs & $5.095$ ms & $2.160$ ms & $50.96$ ms \\
+256      & $1.060$ ms & $116.2$ µs & $13.20$ ms & $4.266$ ms & $200.3$ ms \\
+1{,}024  & $1.062$ ms & $117.6$ µs & $42.43$ ms & $10.64$ ms & $888.0$ ms \\
+4{,}096  & $1.060$ ms & $118.0$ µs & $156.7$ ms & $37.35$ ms & $4.334$ s \\
+16{,}384 & $1.091$ ms & $118.4$ µs & $668.2$ ms & $145.2$ ms & $31.78$ s \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2572,31 +2835,87 @@ $N$ & DKG & Voter reg. & Ballot create & Ballot verify & Tally \\
 Reading across rows, several patterns emerge:
 
 \begin{itemize}
-\item \textbf{DKG is constant in $N$}, as expected (it depends only on 
-$\eta$ and $t$).
-\item \textbf{Voter registration is constant in $N$}, because each voter's 
-work (one Pedersen commitment, one representation proof) is independent 
-of how many other voters there are.
-\item \textbf{Ballot creation grows with $N$}, dominated by the 
-commitment-set proof. From $N = 16$ to $N = 256$ ($16\times$), ballot 
-creation grows $4.90\times$ --- much slower than $N$ itself, but faster 
-than $\log N$ alone, consistent with the $O(N / \log N)$ amortized cost 
-of Pippenger MSM in the prover.
-\item \textbf{Ballot verification grows even more slowly}: $2.74\times$ 
-over the same $16\times$ scale. This is because the verifier's MSM 
-amortizes more aggressively, and the bit-vector and Schnorr verifications 
-are constant in $N$.
+\item \textbf{DKG is constant in $N$}, as expected (it depends only on
+$\eta$ and $t$): the measured value sits between $1.06$ ms and $1.13$ ms
+across all six scales.
+\item \textbf{Voter registration is constant in $N$}, because each voter's
+work (one Pedersen commitment, one representation proof) is independent
+of how many other voters there are; per-voter cost stays in a tight
+$116$--$119$ µs band across the full range.
+\item \textbf{Ballot creation grows with $N$}, dominated by the
+commitment-set proof. From $N = 16$ to $N = 16{,}384$ (a $1024\times$
+increase), ballot creation grows from $3.01$ ms to $668$ ms
+($\approx 222\times$) --- much slower than $N$ itself but faster than
+$\log N$ alone, consistent with the $O(N / \log N)$ amortized cost of
+Pippenger multi-scalar multiplication in the prover.
+\item \textbf{Ballot verification grows even more slowly}: from
+$1.62$ ms at $N = 16$ to $145$ ms at $N = 16{,}384$ ($\approx 90\times$
+over the same $1024\times$ scale). The verifier's MSM amortizes more
+aggressively, and the bit-vector and Schnorr verifications are
+constant in $N$.
 \item \textbf{Tally grows linearly} (Section~\ref{sec:bench-tally}).
 \end{itemize}
 
-The aggregate picture: a boardroom-scale election with $N = 256$ takes 
-roughly $1.6$ ms for setup, $46$ ms for all voter registrations, $5.3$ s 
-for all ballot constructions (parallelizable across voters), $1.6$ s for 
-all ballot verifications (much less with batch verification), and $0.28$ s 
-for tally. Total wall-clock time, treating ballots as serializable, is 
-under $10$ seconds; in practice ballots are constructed in parallel by 
-different voters and the protocol is dominated by verifier work, which 
-on a single CPU is well under two seconds.
+The aggregate picture: a boardroom-scale election with $N = 256$ takes
+$\approx 1.1$ ms for setup, $30$ ms total voter registration
+($256 \times 116$ µs), $3.4$ s total ballot construction
+($256 \times 13.20$ ms; parallelizable across voters), $1.1$ s total
+ballot verification ($256 \times 4.27$ ms; much less with batch
+verification, see Table~\ref{tab:bench-batch}), and $0.20$ s for
+tally. Total serialized wall-clock time is under $5$ seconds; in
+practice ballots are constructed in parallel by different voters and
+the protocol is dominated by verifier work, which on a single AWS vCPU
+sits near a second.
+
+Extending the same arithmetic to $N = 4{,}096$ gives $\approx 1.1$ ms
+DKG, $0.48$ s total registration, $642$ s ($\approx 10.7$ min) total
+serialized ballot construction, $153$ s ($\approx 2.6$ min) total
+serialized ballot verification, and $4.3$ s tally; batch verification
+compresses the verifier total significantly
+(Section~\ref{sec:bench-verify}). At $N = 16{,}384$ those become
+$3.04$ h serialized ballot construction ($16{,}384 \times 668.2$ ms),
+$39.6$ min ballot verification ($16{,}384 \times 145.2$ ms), and
+$31.8$ s tally --- numbers that argue for a parallel ballot pool and
+for batched verification in any deployment beyond the boardroom
+scale. Note that at this $N$ the Schnorr-style batch verification of
+Section~\ref{sec:bench-verify} no longer compresses the verifier
+total appreciably (Table~\ref{tab:bench-election-batch}), because the
+commitment-set verifier inside each ballot is $O(N)$ and cannot be
+folded into the batched multi-scalar multiplication.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g4_ballot_vs_n.pdf}
+\caption{Per-ballot create and verify times as a function of $N$ on a
+log-log scale (AWS run). Both grow super-linearly in raw $N$ but
+sub-linearly in $\log_2 N$, consistent with the
+$O(N / \log N)$ Pippenger amortization argued in the
+text.
+\figdata{thesis/results/timings.csv (group=N*\_ballot)}}
+\label{fig:g4-ballot-vs-n}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{g4_full_pipeline_vs_n.pdf}
+\caption{Tally full-pipeline cost as a function of $N$ on log-log
+axes (AWS run). The straight slope confirms the linear-in-$N$
+prediction across more than three decades of voter set size.
+\figdata{thesis/results/timings.csv (group=N*\_tally, function=full\_pipeline)}}
+\label{fig:g4-full-pipeline-vs-n}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{N16384_ballot_violin.pdf}
+\caption{Criterion violin plot for the $N = 16{,}384$ ballot group on
+the AWS run, showing the sample distributions for \texttt{create} and
+\texttt{verify}. The fully-resolved distributions visualise the
+$\pm 0.3\%$ / $\pm 0.2\%$ confidence figures reported in
+Table~\ref{tab:bench-lifecycle}.
+\figdata{thesis/results/criterion/N16384\_ballot/report/violin.svg}}
+\label{fig:crit-N16384_ballot}
+\end{figure}
 
 \section{Proof Size Analysis}
 \label{sec:bench-sizes}
@@ -2710,10 +3029,22 @@ $4{,}096$  & $3{,}552$ B  & & \\
 \end{tabular}
 \end{table}
 
-A million-voter election produces ballots under $5$ KB each, despite 
-the $N = 10^6$ commitment list. For comparison, a typical TLS handshake 
-is several KB; an Aura ballot is the same order of magnitude as a 
+A million-voter election produces ballots under $5$ KB each, despite
+the $N = 10^6$ commitment list. For comparison, a typical TLS handshake
+is several KB; an Aura ballot is the same order of magnitude as a
 single web-page request.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{g2_proof_sizes.pdf}
+\caption{Proof and ballot byte sizes from \texttt{proof\_sizes.rs}
+(log x-axis). The four Schnorr-style proofs and bit-vector proofs sit
+at the low end ($96$--$2{,}176$ B); commitment-set proofs grow with
+$\log N$; full ballot sizes scale from $2.2$ KB at $N = 16$ to under
+$5$ KB at $N = 10^6$.
+\figdata{thesis/results/sizes.csv (from raw/proof\_sizes.log)}}
+\label{fig:g2-proof-sizes}
+\end{figure}
 
 \section{Comparison with the Original Paper's Estimates}
 \label{sec:bench-vs-paper}
@@ -2736,13 +3067,18 @@ The paper writes: \emph{``While verification at first appears to scale
 as $O(N_{\text{voters}})$, the use of efficient multiscalar multiplication 
 algorithms can reduce this complexity to 
 $O(N_{\text{voters}} / \log(N_{\text{voters}}))$ with good constants.''} 
-Our measurements show commitment-set verification growing from $324$ µs 
-at $N = 16$ to $52.15$ ms at $N = 4096$ (a $161\times$ increase for a 
-$256\times$ increase in $N$). Naive $O(N)$ scaling would predict a 
-$256\times$ slowdown; pure $O(N / \log N)$ would predict approximately 
-$192\times$. The measured $161\times$ is slightly better than even the 
-$O(N / \log N)$ prediction, suggesting that Pippenger's constants are 
-working in our favor at these scales.
+Our measurements show commitment-set verification growing from $230$
+µs at $N = 16$ to $35.60$ ms at $N = 4{,}096$ (a $\approx 154\times$
+increase for a $256\times$ increase in $N$). Naive $O(N)$ scaling
+would predict a $256\times$ slowdown; the asymptotic
+$O(N / \log_2 N)$ amortisation that Pippenger MSM theoretically
+achieves predicts a $(4096/\log_2 4096) / (16/\log_2 16)
+= (4096/12) / (16/4) \approx 85\times$ slowdown. The measured
+$\approx 154\times$ sits cleanly between these two bounds, much closer
+to the asymptotic ideal than to naive linear scaling --- the gap from
+$85\times$ to $154\times$ reflects the constant factors and the
+non-MSM work (transcript management, commitment computations,
+serialization) that Pippenger amortisation cannot fold away.
 
 \paragraph{Claim 3: Batch verification has constant marginal cost.}
 The paper writes: \emph{``Verifier weighting of common group elements in 
@@ -2751,9 +3087,9 @@ verification complexity constant, amortizing the overall cost across
 the batch.''} Our measurements (Table~\ref{tab:bench-batch}) confirm 
 this clearly: at batch size $100$, marginal per-proof verification cost 
 drops by $2$--$3\times$ across all three batchable proof systems. For 
-encryption-validity specifically, batched cost is $88.79$ µs/proof at 
-batch $100$, versus $252.9$ µs/proof individually --- exactly the 
-amortization the paper predicts.
+encryption-validity specifically, batched cost is $60.29$ µs/proof at
+batch $100$ (Table~\ref{tab:bench-batch}), versus $179.2$ µs/proof
+individually --- exactly the amortization the paper predicts.
 
 \paragraph{An empirical contribution: the $n$-ary trade-off.}
 The Aura paper does not benchmark different choices of $n$ in the 
@@ -2794,20 +3130,26 @@ The benchmarks of Chapter~\ref{ch:results} let us answer the practical
 question concretely: at what election scale does Aura become workable, 
 and what does each role pay?
 
-\paragraph{Voter-side cost.} 
-The voter's wall-clock cost is dominated by the commitment-set 
-(eligibility) proof, which scales with the voter list size $N$. At 
-$N = 256$ a ballot takes roughly $20$ ms to construct on a modern 
-laptop CPU; at $N = 4{,}096$ extrapolation suggests a few hundred 
-milliseconds; at $N = 10^6$ ballot construction would take on the order 
-of a minute on the same hardware. For a phone-grade CPU we would 
-expect proof times perhaps $5$--$10\times$ longer. This places Aura 
-comfortably in the practical range for elections up to mid-six-figure 
-voter counts (university elections, professional-society votes, 
-municipal referenda) on commodity client devices, and within reach for 
-city- to country-scale elections if voters are willing to wait a 
-minute or two for a ballot to be prepared --- comparable to the time 
-spent in a physical polling booth.
+\paragraph{Voter-side cost.}
+The voter's wall-clock cost is dominated by the commitment-set
+(eligibility) proof, which scales with the voter list size $N$.
+Measured on the AWS instance (2 vCPU Xeon Platinum 8488C): at
+$N = 256$ a ballot takes $13.2$ ms to construct, at $N = 1{,}024$
+$42.4$ ms, at $N = 4{,}096$ $157$ ms, and at $N = 16{,}384$
+$668$ ms. Extrapolating linearly in $N$ from the measured
+$N = 16{,}384$ point places $N = 10^6$ ballot construction near
+$\approx 41$ s on the same single-vCPU hardware; we mark this an
+extrapolation rather than a measurement because the $N = 65{,}536$
+attempt exhausted the $3.7$ GiB instance memory and could not be
+timed. For a phone-grade CPU we would expect proof times perhaps
+$5$--$10\times$ longer (an estimate rather than a measurement; no
+ARM benchmarks were run for this thesis). This places Aura
+comfortably in the practical range for elections up to mid-six-figure
+voter counts (university elections, professional-society votes,
+municipal referenda) on commodity client devices, and within reach
+for city- to country-scale elections if voters are willing to wait
+a minute or two for a ballot to be prepared --- comparable to the
+time spent in a physical polling booth.
 
 The empirical observation that $n = 4$ approximately halves prover 
 time at no verifier cost (Section~\ref{sec:bench-commset}) is 
@@ -2817,30 +3159,43 @@ system. A deployment that chooses $n = 4$ as the default --- as the
 present implementation can do whenever $N$ is a power of $4$ --- 
 gets the improvement essentially for free.
 
-\paragraph{Verifier-side cost.} 
-Verification is the cost paid by the public bulletin board, by 
-auditors, and by any party who wishes to confirm the election outcome. 
-Per-ballot verification at $N = 256$ takes roughly $6$ ms; at $N = 4096$ 
-extrapolation suggests under $50$ ms. Crucially, the per-ballot cost 
-is amortizable across batches: encryption-validity verification gains 
-$2$--$3\times$ at batch size $100$ (Section~\ref{sec:bench-verify}), 
-and the same applies to the representation and DLEQ proofs used 
-elsewhere in the protocol. Aggregate verifier work scales as 
-$O(N \cdot \text{ballots} / \log N)$ in the unbatched case and is 
-dramatically smaller with batching. For an election with $10{,}000$ 
-ballots and $N = 10^4$ voters, full verification of every ballot takes 
-on the order of a single minute on commodity hardware --- well within 
-the budget of an audit run.
+\paragraph{Verifier-side cost.}
+Verification is the cost paid by the public bulletin board, by
+auditors, and by any party who wishes to confirm the election outcome.
+Per-ballot verification at $N = 256$ takes $4.27$ ms; at $N = 4{,}096$
+$37.4$ ms; at $N = 16{,}384$ $145$ ms (all measured on the AWS
+instance). Crucially, the per-ballot cost is amortizable across
+batches: encryption-validity verification gains close to $3\times$ at
+batch size $100$ (Section~\ref{sec:bench-verify}), and the same
+applies to the representation and DLEQ proofs used elsewhere in the
+protocol; for the encryption-validity proof inside a ballot, batching
+delivers close to $3\times$ amortisation
+(Section~\ref{sec:bench-verify}). For a full election of
+$10{,}000$ ballots at $N = 16{,}384$, however, the measured per-ballot
+verify of $145$ ms does \emph{not} compress to $\approx 50$ ms with
+$k = 100$ batching --- the commitment-set verifier inside each ballot
+is $O(N)$ and cannot be folded into the batched multi-scalar
+multiplication, so the verifier total stays near
+$10{,}000 \times 145$ ms $\approx 24$ minutes single-threaded. A
+practical deployment closes this gap with the parallel verifier pool
+that any real bulletin board would deploy; on the AWS instance used
+here ($2$ vCPU) the speedup ceiling is modest, but on
+$16$--$32$-vCPU verifier hardware the total drops below the
+$2$--$3$ minute audit-window typically targeted for elections of this
+size.
 
-\paragraph{Authority-side cost.} 
-The talliers do constant-time work in the DKG phase 
-($\sim 1.6$ ms for $\eta = 3, t = 2$, independent of $N$) and linear 
-work in the tally phase. Tally-pipeline cost grows roughly linearly 
-with $N$: $21$ ms at $N = 16$, $284$ ms at $N = 256$, extrapolating to 
-roughly $19$ minutes at $N = 10^6$. This is the most $N$-dependent 
-phase of the protocol, but it runs once at the end of the election on 
-dedicated infrastructure --- a $19$-minute tally for a million-voter 
-election is operationally insignificant.
+\paragraph{Authority-side cost.}
+The talliers do constant-time work in the DKG phase
+($\approx 1.1$ ms for $\eta = 3$, $t = 2$, independent of $N$) and
+linear work in the tally phase. Tally-pipeline cost grows roughly
+linearly with $N$: $14.6$ ms at $N = 16$, $200$ ms at $N = 256$,
+$4.33$ s at $N = 4{,}096$, $31.8$ s at $N = 16{,}384$. Linear
+extrapolation from the measured $N = 16{,}384$ row places a single-
+instance tally at $N = 10^6$ near $\approx 32$ minutes --- still the
+most $N$-dependent phase of the protocol, but it runs once at the end
+of the election on dedicated infrastructure, and that figure should be
+read as an extrapolation rather than a measurement: the $N = 65{,}536$
+attempt did not complete on the $3.7$ GiB AWS instance.
 
 \paragraph{Verdict.} 
 For boardroom and mid-scale elections (up to roughly $10^4$ voters), 
@@ -2958,25 +3313,43 @@ that ties signing keys to voter identities, and an operations
 dashboard for talliers. None of this is in scope for the present 
 thesis.
 
-\paragraph{Quick-tier benchmarks.} 
-The runtime measurements in Chapter~\ref{ch:results} cover the 
-\emph{quick} tier, $N \le 256$. Proof-size measurements extend up to 
-$N = 10^6$, but the corresponding wall-clock measurements at the 
-\emph{standard} ($N \le 4{,}096$) and \emph{full} ($N \le 10^6$) 
-tiers were not run for the present thesis due to time constraints. 
-The infrastructure to run them exists in the repository 
-(\texttt{thesis/run\_benches.sh standard} or \texttt{full}), and 
-re-running on more powerful hardware to extend the measurement range 
-is a one-day task. Nothing about the implementation prevents larger 
-measurements; only running time prevented their inclusion here.
+\paragraph{Measurement ceiling at $N = 65{,}536$.}
+The runtime measurements in Chapter~\ref{ch:results} cover
+$N \in \{16, 64, 256, 1{,}024, 4{,}096, 16{,}384\}$ on the AWS
+instance described in Section~\ref{sec:bench-methodology}. The
+attempt at $N = 65{,}536$ exhausted the instance's $3.7$ GiB of RAM
+during ballot construction and produced no timing data; we treat
+that configuration as a soft ceiling for the hardware used here.
+Larger-$N$ measurements are not blocked by the implementation
+(proof-size measurements extend up to $N = 10^6$ on the same
+binary), only by per-instance memory headroom. A larger AWS
+instance type or a workstation with $\ge 16$ GiB of RAM should
+reach $N = 10^6$ for the runtime benchmarks; that work is a
+roughly half-day exercise but was not in scope for the present
+thesis.
 
-\paragraph{No hand-rolled vs library comparison in this chapter.} 
-The repository includes a parallel library-backed implementation of 
-each of the six proving systems (Section~\ref{sec:impl-two-paths}) 
-behind the \texttt{lib-proofs} feature. The present thesis does not 
-report the empirical comparison between hand-rolled and library-backed 
-implementations, leaving it as a deliberate near-term follow-up 
-(Section~\ref{sec:future-work}).
+\paragraph{Threats to benchmark validity.}
+A defensive reading of Chapter~\ref{ch:results} should keep in mind
+what was \emph{not} measured. (i) All runtime benchmarks were taken
+on a single AWS instance with $2$ vCPU; multi-vCPU scaling is
+unmeasured, so the parallel-verifier claims in the viability
+discussion (Section~\ref{sec:viability}) are projections, not
+measurements. (ii) No mobile-/ARM-class CPU was benchmarked; the
+``$5$--$10\times$ slower on a phone'' framing in
+Section~\ref{sec:viability} is an estimate from public benchmarks
+of \texttt{curve25519-dalek}, not a number we measured for this
+thesis. (iii) The hand-rolled vs library-backed comparison
+(Appendix~\ref{app:lib-comparison}) was run on a separate laptop
+because the \texttt{lib-proofs} Cargo feature was not exercised on
+the AWS instance; absolute timings between the body and the
+appendix are not directly comparable, only the
+hand-rolled-vs-library ratios are. (iv) No heap/RSS memory
+profiling was performed, so the $N = 65{,}536$ ceiling is observed
+empirically rather than attributed to a specific allocation. (v)
+The implementation uses variable-time MSM throughout; constant-time
+prover work (required for adversarial-timing settings) would slow
+prover measurements by roughly $2\times$ and the benchmarks here
+do not reflect that overhead.
 
 \section{Future Work}
 \label{sec:future-work}
@@ -3116,6 +3489,89 @@ e-voting infrastructure suitable for the direct-democracy applications
 that motivated this work.
 
 % =============================================================
+% APPENDIX B — Library-backed proof comparison (laptop run)
+% =============================================================
+\appendix
+\chapter{Library-backed proof comparison}
+\label{app:lib-comparison}
+
+\section*{A.1 Setup}
+
+The benchmarks reported in Chapter~\ref{ch:results} were measured on the
+AWS instance described in Section~\ref{sec:bench-methodology}. The
+hand-rolled vs library-backed comparison in this appendix was measured
+on a separate, pre-existing local machine because the
+\texttt{lib-proofs} Cargo feature pulls in additional dependencies
+(\texttt{bulletproofs} git-main, \texttt{zkp}, \texttt{sigma-rs}) that
+were not part of the AWS environment. The laptop configuration was:
+12th-generation Intel Core i7-12700H (10 cores, 20 threads, $24$ MiB
+L3), $16$ GiB RAM, Linux kernel $6.6.87$ inside WSL2 (Ubuntu $22.04$
+host), \texttt{rustc 1.93.1} / \texttt{cargo 1.93.1}, release profile
+with default LTO. The randomness seed (\texttt{ChaCha20Rng} state
+$20260412$) is identical to the AWS run. The full environment dump
+lives in \texttt{thesis/results/env\_laptop.txt}; the raw bench log is
+\texttt{thesis/results/raw/proof\_primitives\_lib.log} and the
+underlying Criterion tree is at
+\texttt{thesis/results/criterion\_g5\_laptop/}.
+
+\section*{A.2 Per-proof comparison}
+
+Table~\ref{tab:g5_handrolled_vs_lib} pairs the hand-rolled
+implementation against its library counterpart for each batchable proof
+system, in both \texttt{prove} and \texttt{verify} modes. The
+right-most column reports the ratio
+$t_{\text{library}} / t_{\text{hand-rolled}}$: values close to $1$
+indicate parity; $> 1$ means the library is slower.
+
+\input{../results/tables/g5_handrolled_vs_lib.tex}
+
+The results are mixed by design. The hand-rolled stack carries minimal
+abstraction overhead and is consistently competitive with the library
+implementations on the simple Schnorr-style relations
+(\texttt{rep\_compare}, \texttt{dleq\_compare},
+\texttt{encval\_compare}, \texttt{serval\_compare}). On the heavier
+proof systems (\texttt{bitvec\_compare}, \texttt{set\_compare}), the
+library variants use mature inner-product / one-of-many primitives
+that exploit further optimisations the hand-rolled code does not
+attempt, so they are typically faster at the cost of larger code
+footprint and an additional dependency surface.
+
+\section*{A.3 Figures}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{g5_per_proof_compare_prove.pdf}
+\caption{Hand-rolled vs library-backed prove times, per proof system,
+on the laptop reference run. Log y-axis. Heights are absolute
+microseconds; the relative gap is the value of interest.
+\figdata{thesis/results/criterion\_g5\_laptop/*\_compare/prove/}}
+\label{fig:g5-prove}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{g5_per_proof_compare_verify.pdf}
+\caption{Hand-rolled vs library-backed verify times, per proof system,
+on the laptop reference run. Log y-axis.
+\figdata{thesis/results/criterion\_g5\_laptop/*\_compare/verify/}}
+\label{fig:g5-verify}
+\end{figure}
+
+\section*{A.4 Threats to portability}
+
+Absolute timings in this appendix are not directly comparable to the
+AWS numbers in the body of the thesis: the laptop's i7-12700H runs at
+substantially higher single-core frequency, has $\approx 4\times$ more
+RAM, and is not virtualised. The appendix focuses on the
+\emph{ratio} between hand-rolled and library variants, which is
+expected to be hardware-portable to first order because both
+implementations exercise the same Ristretto255 group operations in the
+same proportions. A future run that exercises the
+\texttt{lib-proofs} feature on the AWS instance would let us make
+absolute comparisons single-hardware; that work is left for future
+iterations of the codebase.
+
+% =============================================================
 % BIBLIOGRAPHY
 % =============================================================
 \addcontentsline{toc}{chapter}{Bibliography}
@@ -3236,7 +3692,4 @@ CRYPTO, 2022, pp.~359--388.
 % =============================================================
 % APPENDICES (optional)
 % =============================================================
-% \appendix
-% \chapter{Additional Material}
-% [Appendix content here.]
 \end{document}

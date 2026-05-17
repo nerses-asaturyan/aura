@@ -1,0 +1,133 @@
+   Compiling aura v0.1.0 (/home/ubuntu/aura)
+    Finished `bench` profile [optimized] target(s) in 4.05s
+     Running benches/election_n4096.rs (target/release/deps/election_n4096-3659e1d5473abd75)
+Benchmarking N4096/dkg/2of3
+Benchmarking N4096/dkg/2of3: Warming up for 2.0000 s
+Benchmarking N4096/dkg/2of3: Collecting 100 samples in estimated 10.760 s (10k iterations)
+Benchmarking N4096/dkg/2of3: Analyzing
+N4096/dkg/2of3          time:   [1.0577 ms 1.0610 ms 1.0644 ms]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+Benchmarking N4096/voter/registration
+Benchmarking N4096/voter/registration: Warming up for 2.0000 s
+Benchmarking N4096/voter/registration: Collecting 200 samples in estimated 11.777 s (100k iterations)
+Benchmarking N4096/voter/registration: Analyzing
+N4096/voter/registration
+                        time:   [116.32 µs 116.67 µs 117.04 µs]
+Found 6 outliers among 200 measurements (3.00%)
+  6 (3.00%) high mild
+
+Benchmarking N4096/ballot/create
+Benchmarking N4096/ballot/create: Warming up for 3.0000 s
+Benchmarking N4096/ballot/create: Collecting 50 samples in estimated 25.227 s (150 iterations)
+Benchmarking N4096/ballot/create: Analyzing
+N4096/ballot/create     time:   [156.29 ms 156.69 ms 157.09 ms]
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) high mild
+Benchmarking N4096/ballot/verify
+Benchmarking N4096/ballot/verify: Warming up for 3.0000 s
+Benchmarking N4096/ballot/verify: Collecting 50 samples in estimated 20.430 s (550 iterations)
+Benchmarking N4096/ballot/verify: Analyzing
+N4096/ballot/verify     time:   [37.257 ms 37.345 ms 37.437 ms]
+Found 5 outliers among 50 measurements (10.00%)
+  3 (6.00%) low mild
+  2 (4.00%) high mild
+
+Benchmarking N4096/verify_batch/1
+Benchmarking N4096/verify_batch/1: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch/1: Collecting 10 samples in estimated 30.054 s (810 iterations)
+Benchmarking N4096/verify_batch/1: Analyzing
+N4096/verify_batch/1    time:   [37.074 ms 37.142 ms 37.221 ms]
+Benchmarking N4096/verify_batch/10
+Benchmarking N4096/verify_batch/10: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch/10: Collecting 10 samples in estimated 33.362 s (90 iterations)
+Benchmarking N4096/verify_batch/10: Analyzing
+N4096/verify_batch/10   time:   [373.32 ms 374.41 ms 375.51 ms]
+Benchmarking N4096/verify_batch/50
+Benchmarking N4096/verify_batch/50: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch/50: Collecting 10 samples in estimated 37.303 s (20 iterations)
+Benchmarking N4096/verify_batch/50: Analyzing
+N4096/verify_batch/50   time:   [1.8585 s 1.8613 s 1.8643 s]
+Benchmarking N4096/verify_batch/100
+Benchmarking N4096/verify_batch/100: Warming up for 3.0000 s
+
+Warning: Unable to complete 10 samples in 30.0s. You may wish to increase target time to 37.4s.
+Benchmarking N4096/verify_batch/100: Collecting 10 samples in estimated 37.382 s (10 iterations)
+Benchmarking N4096/verify_batch/100: Analyzing
+N4096/verify_batch/100  time:   [3.7214 s 3.7317 s 3.7428 s]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) low mild
+  1 (10.00%) high mild
+
+Benchmarking N4096/verify_batch_encval/individual/1
+Benchmarking N4096/verify_batch_encval/individual/1: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/individual/1: Collecting 10 samples in estimated 30.004 s (33k iterations)
+Benchmarking N4096/verify_batch_encval/individual/1: Analyzing
+N4096/verify_batch_encval/individual/1
+                        time:   [896.56 µs 898.74 µs 900.89 µs]
+Benchmarking N4096/verify_batch_encval/batch/1
+Benchmarking N4096/verify_batch_encval/batch/1: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/batch/1: Collecting 10 samples in estimated 30.002 s (80k iterations)
+Benchmarking N4096/verify_batch_encval/batch/1: Analyzing
+N4096/verify_batch_encval/batch/1
+                        time:   [379.90 µs 380.58 µs 381.27 µs]
+Benchmarking N4096/verify_batch_encval/individual/10
+Benchmarking N4096/verify_batch_encval/individual/10: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/individual/10: Collecting 10 samples in estimated 30.011 s (3350 iterations)
+Benchmarking N4096/verify_batch_encval/individual/10: Analyzing
+N4096/verify_batch_encval/individual/10
+                        time:   [8.9605 ms 8.9970 ms 9.0387 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+Benchmarking N4096/verify_batch_encval/batch/10
+Benchmarking N4096/verify_batch_encval/batch/10: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/batch/10: Collecting 10 samples in estimated 30.025 s (9200 iterations)
+Benchmarking N4096/verify_batch_encval/batch/10: Analyzing
+N4096/verify_batch_encval/batch/10
+                        time:   [3.2498 ms 3.2559 ms 3.2634 ms]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) high mild
+  1 (10.00%) high severe
+Benchmarking N4096/verify_batch_encval/individual/50
+Benchmarking N4096/verify_batch_encval/individual/50: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/individual/50: Collecting 10 samples in estimated 30.083 s (670 iterations)
+Benchmarking N4096/verify_batch_encval/individual/50: Analyzing
+N4096/verify_batch_encval/individual/50
+                        time:   [44.660 ms 44.809 ms 44.972 ms]
+Benchmarking N4096/verify_batch_encval/batch/50
+Benchmarking N4096/verify_batch_encval/batch/50: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/batch/50: Collecting 10 samples in estimated 30.093 s (2140 iterations)
+Benchmarking N4096/verify_batch_encval/batch/50: Analyzing
+N4096/verify_batch_encval/batch/50
+                        time:   [13.849 ms 13.883 ms 13.918 ms]
+Benchmarking N4096/verify_batch_encval/individual/100
+Benchmarking N4096/verify_batch_encval/individual/100: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/individual/100: Collecting 10 samples in estimated 30.311 s (340 iterations)
+Benchmarking N4096/verify_batch_encval/individual/100: Analyzing
+N4096/verify_batch_encval/individual/100
+                        time:   [88.689 ms 88.981 ms 89.267 ms]
+Benchmarking N4096/verify_batch_encval/batch/100
+Benchmarking N4096/verify_batch_encval/batch/100: Warming up for 3.0000 s
+Benchmarking N4096/verify_batch_encval/batch/100: Collecting 10 samples in estimated 30.155 s (1120 iterations)
+Benchmarking N4096/verify_batch_encval/batch/100: Analyzing
+N4096/verify_batch_encval/batch/100
+                        time:   [27.033 ms 27.109 ms 27.206 ms]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+
+Benchmarking N4096/tally/serial_decrypt_per_tallier
+Benchmarking N4096/tally/serial_decrypt_per_tallier: Warming up for 5.0000 s
+Benchmarking N4096/tally/serial_decrypt_per_tallier: Collecting 10 samples in estimated 61.101 s (130 iterations)
+Benchmarking N4096/tally/serial_decrypt_per_tallier: Analyzing
+N4096/tally/serial_decrypt_per_tallier
+                        time:   [472.72 ms 474.36 ms 476.07 ms]
+Benchmarking N4096/tally/full_pipeline
+Benchmarking N4096/tally/full_pipeline: Warming up for 5.0000 s
+Benchmarking N4096/tally/full_pipeline: Collecting 10 samples in estimated 86.151 s (20 iterations)
+Benchmarking N4096/tally/full_pipeline: Analyzing
+N4096/tally/full_pipeline
+                        time:   [4.3236 s 4.3345 s 4.3493 s]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+
